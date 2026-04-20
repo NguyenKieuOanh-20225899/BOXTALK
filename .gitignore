@@ -1,17 +1,18 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environment
+# Python virtual environment
 .venv/
 venv/
 ENV/
 env/
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Distribution / packaging
 .Python
 build/
+develop-eggs/
 dist/
 downloads/
 eggs/
@@ -45,8 +46,13 @@ nosetests.xml
 coverage.xml
 *,cover
 
+# Environment variables
+.env
+.env.*
+
 # Jupyter Notebook
 .ipynb_checkpoints
+.ipynb_checkpoints/
 
 # pyenv
 .python-version
@@ -57,8 +63,10 @@ coverage.xml
 *.sublime-project
 *.sublime-workspace
 
-# macOS
-.DS_Store
+# Data and results directories
+/data/
+/results/
+/out/
 
 # Logs
 *.log
@@ -66,12 +74,11 @@ coverage.xml
 # SQLite database files
 *.sqlite3
 
-# Local environment variables
-.env
-.env.*
-
 # Temporary files
 *.tmp
 *.temp
 *.swp
 *~
+
+# OS files
+.DS_Store

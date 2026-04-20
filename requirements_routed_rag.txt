@@ -1,3 +1,15 @@
 fastapi>=0.115.0
-uvicorn>=0.30.0
+uvicorn[standard]>=0.30.0
 pydantic>=2.8.0
+pymupdf>=1.24.0
+python-multipart>=0.0.9
+rank-bm25>=0.2.2
+numpy>=1.26.0
+sentence-transformers>=3.0.0
+faiss-cpu
+
+# Optional model-based ingest backend
+torch>=2.3.0
+transformers>=4.45.0
+timm>=1.0.0
+pillow>=10.0.0
