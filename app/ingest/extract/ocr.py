@@ -18,6 +18,7 @@ def _get_ocr():
     if _OCR is None:
         try:
             from paddleocr import PaddleOCR
+            import paddle
         except Exception as e:
             raise RuntimeError(f"PaddleOCR is not installed: {e}") from e
 
@@ -33,6 +34,15 @@ def _get_ocr():
             )
         except TypeError:
             _OCR = PaddleOCR(use_angle_cls=orientation_enabled, lang=lang)
+        except Exception as e:
+            message = str(e)
+            if "ConvertPirAttribute2RuntimeAttribute" in message:
+                raise RuntimeError(
+                    "PaddleOCR failed during CPU inference because the installed "
+                    f"paddlepaddle build is incompatible ({paddle.__version__}). "
+                    "Use paddlepaddle==3.2.2 for this repo's OCR and benchmark flow."
+                ) from e
+            raise
     return _OCR
 
 
@@ -396,13 +406,22 @@ def _run_ocr(ocr, image_path: str | Path) -> list[dict]:
     image_path = str(image_path)
 
     predict = getattr(ocr, "predict", None)
-    if callable(predict):
-        result = predict(image_path)
-    else:
-        try:
-            result = ocr.ocr(image_path, cls=True)
-        except TypeError:
-            result = ocr.ocr(image_path)
+    try:
+        if callable(predict):
+            result = predict(image_path)
+        else:
+            try:
+                result = ocr.ocr(image_path, cls=True)
+            except TypeError:
+                result = ocr.ocr(image_path)
+    except Exception as e:
+        message = str(e)
+        if "ConvertPirAttribute2RuntimeAttribute" in message:
+            raise RuntimeError(
+                "PaddleOCR inference hit a known paddlepaddle 3.3.x CPU regression. "
+                "Use paddlepaddle==3.2.2 for OCR in this repo."
+            ) from e
+        raise
 
     return _normalize_ocr_result(result)
 

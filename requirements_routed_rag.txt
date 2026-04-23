@@ -7,6 +7,7 @@ rank-bm25>=0.2.2
 numpy>=1.26.0
 sentence-transformers>=3.0.0
 faiss-cpu
+beir>=2.0.0
 
 # Optional model-based ingest backend
 torch>=2.3.0

@@ -10,7 +10,17 @@
 	benchmark-suite-all \
 	benchmark-suite-pubtables-test \
 	benchmark-mac-quick \
-	benchmark-mac-full
+	benchmark-mac-full \
+	retrieval-smoke \
+	retrieval-build \
+	retrieval-benchmark \
+	retrieval-beir-scifact \
+	qa-dataset \
+	qa-index \
+	qa-benchmark \
+	qa-benchmark-all \
+	user-pdf-suite \
+	baseline-gate
 
 PYTHON ?= .venv/bin/python
 BENCHMARKS_ROOT ?= data/benchmarks
@@ -26,6 +36,23 @@ DOCLAYNET_SPLIT ?= test
 DOCLAYNET_LIMIT ?= 0
 PUBTABLES_SPLIT ?= test
 PUBTABLES_LIMIT ?= 0
+RETRIEVAL_PDF ?= data/retrieval_smoke/employee_handbook_smoke.pdf
+RETRIEVAL_INDEX_DIR ?= results/retrieval_index/smoke_test
+RETRIEVAL_BENCHMARK_DIR ?= results/retrieval_benchmark/smoke_test
+RETRIEVAL_QUERIES ?= data/retrieval_smoke/queries.jsonl
+RETRIEVAL_DENSE_PRESET ?= minilm
+QA_BENCHMARK_DIR ?= results/qa_benchmark/smoke_test
+QA_PDF ?= data/qa_benchmark/operations_handbook.pdf
+QA_QUERIES ?= data/qa_benchmark/queries.jsonl
+QA_INDEX_DIR ?= results/retrieval_index/qa_operations_minilm
+QA_CONFIGS ?= routed_grounded
+USER_PDF_SUITE_MANIFEST ?= data/user_pdf_benchmark_suite.json
+USER_PDF_SUITE_DIR ?= results/user_pdf_benchmark_suite/current
+USER_PDF_SUITE_ARGS ?=
+BASELINE_GATE_ARGS ?=
+BEIR_DATASET ?= scifact
+BEIR_QUERY_LIMIT ?= 50
+BEIR_CORPUS_LIMIT ?= 2000
 
 help:
 	@printf '%s\n' \
@@ -40,7 +67,17 @@ help:
 		'benchmark-suite-all             run production + scientific suite' \
 		'benchmark-suite-pubtables-test  run production + PubTables-only scientific suite' \
 		'benchmark-mac-quick            one-command Mac-safe flow: setup + validate + baseline scientific sample' \
-		'benchmark-mac-full             one-command Mac flow: setup + validate + full PubTables-only scientific run'
+		'benchmark-mac-full             one-command Mac flow: setup + validate + full PubTables-only scientific run' \
+		'retrieval-smoke                create smoke PDF/queries, build index, benchmark retrieval' \
+		'retrieval-build                build retrieval index from RETRIEVAL_PDF' \
+		'retrieval-benchmark            benchmark RETRIEVAL_INDEX_DIR against RETRIEVAL_QUERIES' \
+		'retrieval-beir-scifact         run a BEIR SciFact retrieval benchmark sample' \
+		'qa-dataset                     create controlled QA benchmark PDF + queries' \
+		'qa-index                       build retrieval index for QA_PDF' \
+		'qa-benchmark                   benchmark grounded QA over QA_INDEX_DIR' \
+		'qa-benchmark-all               create QA dataset, build index, run baseline + ablation' \
+		'user-pdf-suite                 run aggregate QA benchmark over user PDF suite manifest' \
+		'baseline-gate                  fail if locked benchmark baselines regress'
 
 benchmark-setup-all:
 	$(PYTHON) scripts/setup_benchmark_datasets.py --dataset all --benchmarks-root $(BENCHMARKS_ROOT) --pubtables-splits $(PUBTABLES_SPLITS)
@@ -82,3 +119,37 @@ benchmark-mac-full:
 	$(MAKE) benchmark-setup-pubtables-test
 	$(MAKE) benchmark-validate-pubtables-test
 	$(MAKE) benchmark-scientific-pubtables-test
+
+retrieval-smoke:
+	$(PYTHON) scripts/create_retrieval_smoke_dataset.py
+	$(MAKE) retrieval-build
+	$(MAKE) retrieval-benchmark
+
+retrieval-build:
+	$(PYTHON) scripts/build_retrieval_index.py --pdf $(RETRIEVAL_PDF) --output-dir $(RETRIEVAL_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+retrieval-benchmark:
+	$(PYTHON) scripts/benchmark_retrieval.py --index-dir $(RETRIEVAL_INDEX_DIR) --queries $(RETRIEVAL_QUERIES) --output-dir $(RETRIEVAL_BENCHMARK_DIR) --top-k 5 --strategy all
+
+retrieval-beir-scifact:
+	$(PYTHON) scripts/benchmark_beir_retrieval.py --dataset $(BEIR_DATASET) --query-limit $(BEIR_QUERY_LIMIT) --corpus-limit $(BEIR_CORPUS_LIMIT) --strategy bm25 --strategy dense --strategy hybrid --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+qa-dataset:
+	$(PYTHON) scripts/create_qa_benchmark_dataset.py
+
+qa-index:
+	$(PYTHON) scripts/build_retrieval_index.py --pdf $(QA_PDF) --output-dir $(QA_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+qa-benchmark:
+	$(PYTHON) scripts/benchmark_qa.py --index-dir $(QA_INDEX_DIR) --queries $(QA_QUERIES) --output-dir $(QA_BENCHMARK_DIR) --config $(QA_CONFIGS)
+
+qa-benchmark-all:
+	$(MAKE) qa-dataset
+	$(MAKE) qa-index
+	$(MAKE) qa-benchmark QA_BENCHMARK_DIR=results/qa_benchmark/qa_operations_minilm_all QA_CONFIGS=all
+
+user-pdf-suite:
+	$(PYTHON) scripts/benchmark_user_pdf_suite.py --manifest $(USER_PDF_SUITE_MANIFEST) --output-dir $(USER_PDF_SUITE_DIR) $(USER_PDF_SUITE_ARGS)
+
+baseline-gate:
+	$(PYTHON) scripts/check_regression_gates.py $(BASELINE_GATE_ARGS)

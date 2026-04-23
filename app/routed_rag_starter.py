@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 import os
 import re
 from dataclasses import dataclass
@@ -9,10 +8,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from rank_bm25 import BM25Okapi
 
 from app.loaders.pdf_loader import PDFLoader
-from app.models import DocumentChunk
+from app.qa.pipeline import GroundedQAPipeline
+from app.retrieval.reranker import make_reranker
+from app.retrieval.route_planner import QueryAwareRetrievalPlanner
+from app.retrieval.schemas import RetrievedHit
+from app.retrieval.service import RetrievalService
 
 
 
@@ -33,18 +35,6 @@ class RouteAction(str, Enum):
     EXPAND_RETRIEVAL = "expand_retrieval"
     SWITCH_STRATEGY = "switch_strategy"
     ABSTAIN = "abstain"
-
-
-@dataclass
-class RetrievalHit:
-    chunk: DocumentChunk
-    bm25_score: float = 0.0
-    dense_score: float = 0.0
-    rerank_score: float = 0.0
-
-    @property
-    def hybrid_score(self) -> float:
-        return 0.50 * self.bm25_score + 0.35 * self.dense_score + 0.15 * self.rerank_score
 
 
 @dataclass
@@ -76,12 +66,12 @@ class AskResponse(BaseModel):
 
 class InMemoryCorpus:
     def __init__(self) -> None:
-        self.chunks: List[DocumentChunk] = []
+        self.chunks: List[Any] = []
 
-    def add_chunks(self, chunks: List[DocumentChunk]) -> None:
+    def add_chunks(self, chunks: List[Any]) -> None:
         self.chunks.extend(chunks)
 
-    def all_chunks(self) -> List[DocumentChunk]:
+    def all_chunks(self) -> List[Any]:
         return self.chunks
 
 
@@ -135,129 +125,12 @@ class QueryRouter:
 
 
 
-# Retrieval stack
-
-
-class HybridRetriever:
-    WORD_RE = re.compile(r"\w+", re.UNICODE)
-
-    def __init__(self, corpus: InMemoryCorpus) -> None:
-        self.corpus = corpus
-        self._tokenized_chunks: List[List[str]] = []
-        self._bm25: Optional[BM25Okapi] = None
-        self._build_indexes()
-
-    def _build_indexes(self) -> None:
-        self._tokenized_chunks = []
-        for chunk in self.corpus.all_chunks():
-            text = " ".join(
-                x for x in [
-                    chunk.section or "",
-                    chunk.heading_path or "",
-                    chunk.text or "",
-                ] if x
-            )
-            self._tokenized_chunks.append(self._tokenize(text))
-
-        if self._tokenized_chunks:
-            self._bm25 = BM25Okapi(self._tokenized_chunks)
-
-    def retrieve(self, question: str, query_type: QueryType, top_k: int = 5) -> List[RetrievalHit]:
-        q_tokens = self._tokenize(question)
-        if not q_tokens:
-            return []
-
-        bm25_scores = self._bm25.get_scores(q_tokens) if self._bm25 else [0.0] * len(self.corpus.all_chunks())
-
-        hits: List[RetrievalHit] = []
-        for idx, chunk in enumerate(self.corpus.all_chunks()):
-            c_tokens = self._tokenized_chunks[idx] if idx < len(self._tokenized_chunks) else self._tokenize(chunk.text)
-            bm25 = self._normalize_bm25_score(float(bm25_scores[idx]), bm25_scores)
-            dense = self._jaccard_score(q_tokens, c_tokens)
-            rerank = self._structure_bonus(query_type, chunk, question)
-
-            if bm25 + dense + rerank <= 0:
-                continue
-
-            hits.append(
-                RetrievalHit(
-                    chunk=chunk,
-                    bm25_score=bm25,
-                    dense_score=dense,
-                    rerank_score=rerank,
-                )
-            )
-
-        hits.sort(key=lambda x: x.hybrid_score, reverse=True)
-        return hits[:top_k]
-
-    def _normalize_bm25_score(self, score: float, all_scores: Any) -> float:
-        try:
-            max_score = max(all_scores) if len(all_scores) > 0 else 0.0
-        except Exception:
-            max_score = 0.0
-        if max_score <= 0:
-            return 0.0
-        return score / max_score
-
-    def _tokenize(self, text: str) -> List[str]:
-        return [t.lower() for t in self.WORD_RE.findall(text)]
-
-    def _jaccard_score(self, q_tokens: List[str], c_tokens: List[str]) -> float:
-        q_set, c_set = set(q_tokens), set(c_tokens)
-        if not q_set or not c_set:
-            return 0.0
-        return len(q_set & c_set) / len(q_set | c_set)
-
-    def _structure_bonus(self, query_type: QueryType, chunk: DocumentChunk, question: str) -> float:
-        bonus = 0.0
-        section_text = (chunk.section or "").lower()
-        heading_path = (chunk.heading_path or "").lower()
-        q = question.lower()
-
-        if query_type == QueryType.DEFINITION:
-            if chunk.block_type in {"paragraph", "heading", "metadata_line"}:
-                bonus += 0.20
-            if chunk.block_type == "section_summary":
-                bonus += 0.10
-
-        if query_type == QueryType.POLICY:
-            if "quy" in section_text or "nội quy" in section_text or "quy" in heading_path:
-                bonus += 0.30
-            if chunk.block_type == "list":
-                bonus += 0.25
-            if chunk.block_type == "section_summary":
-                bonus += 0.12
-
-        if query_type == QueryType.COMPARISON:
-            if chunk.block_type in {"table", "table_like", "list", "section_summary", "metadata_line"}:
-                bonus += 0.25
-
-        if query_type == QueryType.PROCEDURAL:
-            if chunk.block_type in {"list", "table_like"}:
-                bonus += 0.35
-            elif chunk.block_type in {"paragraph", "metadata_line"}:
-                bonus += 0.15
-            if chunk.block_type == "section_summary":
-                bonus += 0.10
-
-        if "mã học phần" in q and chunk.block_type == "metadata_line":
-            bonus += 0.35
-        if "email" in q and chunk.block_type == "metadata_line":
-            bonus += 0.35
-        if "thời gian" in q and chunk.block_type == "metadata_line":
-            bonus += 0.30
-
-        return bonus
-
-
-
 # Evidence-aware routing
 
 class EvidenceChecker:
     WORD_RE = re.compile(r"\w+", re.UNICODE)
 
-    def assess(self, question: str, hits: List[RetrievalHit], query_type: QueryType) -> EvidenceReport:
+    def assess(self, question: str, hits: List[RetrievedHit], query_type: QueryType) -> EvidenceReport:
         if not hits:
             return EvidenceReport(
                 relevance=0.0,
@@ -323,7 +196,7 @@ class EvidenceChecker:
 # Answer synthesis
 
 class AnswerGenerator:
-    def _select_top_hits(self, query_type: QueryType, hits: List[RetrievalHit]) -> List[RetrievalHit]:
+    def _select_top_hits(self, query_type: QueryType, hits: List[RetrievedHit]) -> List[RetrievedHit]:
         if not hits:
             return []
 
@@ -389,7 +262,7 @@ class AnswerGenerator:
         self,
         question: str,
         query_type: QueryType,
-        hits: List[RetrievalHit],
+        hits: List[RetrievedHit],
         evidence: EvidenceReport,
     ) -> Tuple[str, List[Dict[str, Any]]]:
         selected_hits = self._select_top_hits(query_type, hits)
@@ -459,45 +332,47 @@ class AnswerGenerator:
 # Orchestrator
 
 class RoutedRAGService:
-    def __init__(self, pdf_path: str) -> None:
+    def __init__(self, pdf_path: str | None = None, index_dir: str | None = None) -> None:
         self.corpus = InMemoryCorpus()
         self.router = QueryRouter()
-        self._load_pdf_data(pdf_path)
-        self.retriever = HybridRetriever(self.corpus)
+        self.retrieval_planner = QueryAwareRetrievalPlanner()
+        if index_dir:
+            self.retrieval_service = self._load_retrieval_index(index_dir)
+        else:
+            if not pdf_path:
+                raise ValueError("RoutedRAGService requires either pdf_path or index_dir")
+            self._load_pdf_data(pdf_path)
+            self.retrieval_service = self._build_retrieval_service()
+        self.qa_pipeline = GroundedQAPipeline(
+            retrieval_service=self.retrieval_service,
+            router=self.router,
+            retrieval_planner=self.retrieval_planner,
+        )
         self.evidence_checker = EvidenceChecker()
         self.answer_generator = AnswerGenerator()
 
     def ask(self, question: str) -> AskResponse:
-        query_type = self.router.route(question)
-
-        top_k_map = {
-            QueryType.FACTOID: 3,
-            QueryType.DEFINITION: 4,
-            QueryType.POLICY: 6,
-            QueryType.COMPARISON: 6,
-            QueryType.PROCEDURAL: 5,
-            QueryType.MULTI_HOP: 7,
-            QueryType.AMBIGUOUS: 4,
-        }
-
-        hits = self.retriever.retrieve(question, query_type, top_k=top_k_map[query_type])
-        evidence = self.evidence_checker.assess(question, hits, query_type)
-        answer, citations = self.answer_generator.generate(question, query_type, hits, evidence)
+        qa_result = self.qa_pipeline.answer(question)
+        query_type = QueryType(qa_result.query_type)
+        route_action = RouteAction(qa_result.decision)
+        evidence_report = qa_result.evidence.to_dict()
+        evidence_report.update(
+            {
+                "retrieval_strategy": qa_result.retrieval_strategy,
+                "retrieval_latency_ms": round(qa_result.retrieval_latency_ms, 3),
+                "answer_latency_ms": round(qa_result.answer_latency_ms, 3),
+                "total_latency_ms": round(qa_result.total_latency_ms, 3),
+                "retrieval_config": qa_result.retrieval_config.to_dict(),
+            }
+        )
 
         return AskResponse(
             question=question,
             query_type=query_type,
-            route_action=evidence.decision,
-            answer=answer,
-            evidence_report={
-                "relevance": evidence.relevance,
-                "coverage": evidence.coverage,
-                "consistency": evidence.consistency,
-                "citation_support": evidence.citation_support,
-                "sufficiency": evidence.sufficiency,
-                "reason": evidence.reason,
-            },
-            citations=citations,
+            route_action=route_action,
+            answer=qa_result.answer,
+            evidence_report=evidence_report,
+            citations=qa_result.citations,
             retrieved_chunks=[
                 {
                     "chunk_id": h.chunk.chunk_id,
@@ -512,9 +387,12 @@ class RoutedRAGService:
                     "dense_score": round(h.dense_score, 3),
                     "rerank_score": round(h.rerank_score, 3),
                     "hybrid_score": round(h.hybrid_score, 3),
+                    "source": h.source,
+                    "rank": h.rank,
+                    "source_scores": h.source_scores,
                     "text": h.chunk.text,
                 }
-                for h in hits
+                for h in qa_result.retrieved_hits
             ],
         )
 
@@ -523,12 +401,33 @@ class RoutedRAGService:
         chunks = loader.load_pdf(pdf_path)
         self.corpus.add_chunks(chunks)
 
+    def _load_retrieval_index(self, index_dir: str) -> RetrievalService:
+        reranker_name = os.getenv("BOXTALK_ROUTED_RAG_RERANKER", "heuristic")
+        retrieval_service = RetrievalService.from_index(index_dir, reranker=make_reranker(reranker_name))
+        self.corpus.add_chunks(retrieval_service.retriever.chunks)
+        return retrieval_service
+
+    def _build_retrieval_service(self) -> RetrievalService:
+        build_dense = os.getenv("BOXTALK_ROUTED_RAG_BUILD_DENSE", "1").strip().lower() not in {
+            "0",
+            "false",
+            "no",
+        }
+        reranker_name = os.getenv("BOXTALK_ROUTED_RAG_RERANKER", "heuristic")
+        return RetrievalService.from_chunks(
+            self.corpus.all_chunks(),
+            model_name=os.getenv("BOXTALK_EMBED_MODEL_NAME"),
+            build_dense=build_dense,
+            reranker=make_reranker(reranker_name),
+        )
+
 
 # FastAPI app
 
 app = FastAPI(title="Routed RAG Starter", version="0.2.0")
 PDF_PATH = os.getenv("PDF_PATH", "data/sample.pdf")
-service = RoutedRAGService(pdf_path=PDF_PATH)
+INDEX_DIR = os.getenv("BOXTALK_RETRIEVAL_INDEX_DIR")
+service = RoutedRAGService(pdf_path=PDF_PATH, index_dir=INDEX_DIR)
 
 
 @app.get("/health")
@@ -560,6 +459,19 @@ def debug_chunks(limit: int = 20):
             }
             for c in chunks[:limit]
         ],
+    }
+
+
+@app.get("/debug/retrieval-plan")
+def debug_retrieval_plan(question: str) -> Dict[str, Any]:
+    query_type = service.router.route(question)
+    plan = service.retrieval_planner.plan(query_type.value, question)
+    return {
+        "question": question,
+        "query_type": query_type,
+        "strategy": plan.strategy,
+        "reason": plan.reason,
+        "config": plan.config.to_dict(),
     }
 
 

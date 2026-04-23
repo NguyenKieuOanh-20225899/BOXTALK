@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import os
+import shutil
 import statistics
 import subprocess
 import sys
@@ -322,10 +323,20 @@ def _synthesize_single_page_pdf(image_path: Path, pdf_path: Path) -> tuple[float
     page = pdf_doc[0]
     page_width = float(page.rect.width)
     page_height = float(page.rect.height)
+    del page
     pdf_doc.save(str(pdf_path))
     pdf_doc.close()
     image_doc.close()
     return page_width, page_height
+
+
+def _cleanup_temp_dir(tmp_dir: Path) -> None:
+    for _ in range(10):
+        try:
+            shutil.rmtree(tmp_dir)
+            return
+        except PermissionError:
+            time.sleep(0.2)
 
 
 def _bbox_iou(left: tuple[float, float, float, float], right: tuple[float, float, float, float]) -> float:
@@ -437,13 +448,16 @@ def _record_metric_counts(
 def evaluate_scientific_entry(entry: dict[str, Any]) -> dict[str, Any]:
     from app.ingest.pipeline import ingest_pdf
 
-    with tempfile.TemporaryDirectory(prefix=f"bench_{entry['dataset']}_") as tmp_dir:
-        pdf_path = Path(tmp_dir) / f"{entry['entry_id']}.pdf"
+    tmp_dir = Path(tempfile.mkdtemp(prefix=f"bench_{entry['dataset']}_"))
+    try:
+        pdf_path = tmp_dir / f"{entry['entry_id']}.pdf"
         page_width, page_height = _synthesize_single_page_pdf(entry["image_path"], pdf_path)
 
         started = time.perf_counter()
         out = ingest_pdf(pdf_path)
         elapsed = time.perf_counter() - started
+    finally:
+        _cleanup_temp_dir(tmp_dir)
 
     blocks = out.get("blocks", [])
     probe = out.get("probe", {})
