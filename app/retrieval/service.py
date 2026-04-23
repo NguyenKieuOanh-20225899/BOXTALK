@@ -41,8 +41,22 @@ class RetrievalService:
         )
 
     @classmethod
-    def from_index(cls, index_dir: str | Path, *, reranker: Reranker | None = None) -> "RetrievalService":
-        return cls(HybridRetriever.load(index_dir, reranker=reranker))
+    def from_index(
+        cls,
+        index_dir: str | Path,
+        *,
+        reranker: Reranker | None = None,
+        load_dense: bool = True,
+        load_colbert: bool = True,
+    ) -> "RetrievalService":
+        return cls(
+            HybridRetriever.load(
+                index_dir,
+                reranker=reranker,
+                load_dense=load_dense,
+                load_colbert=load_colbert,
+            )
+        )
 
     def retrieve(
         self,

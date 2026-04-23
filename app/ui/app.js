@@ -131,6 +131,7 @@ function renderDocuments() {
             <button class="danger-button" type="button" data-delete-doc="${escapeHtml(doc.doc_id)}">× Xóa</button>
           </div>
           ${doc.last_error ? `<div class="status-line">${escapeHtml(doc.last_error)}</div>` : ""}
+          ${doc.warnings?.length ? `<div class="status-line">${escapeHtml(doc.warnings.join(" "))}</div>` : ""}
         </article>
       `;
     })

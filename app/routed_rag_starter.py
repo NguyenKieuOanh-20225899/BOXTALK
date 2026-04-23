@@ -373,12 +373,23 @@ class AnswerGenerator:
 # Orchestrator
 
 class RoutedRAGService:
-    def __init__(self, pdf_path: str | None = None, index_dir: str | None = None) -> None:
+    def __init__(
+        self,
+        pdf_path: str | None = None,
+        index_dir: str | None = None,
+        *,
+        load_dense_index: bool = True,
+        load_colbert_index: bool = True,
+    ) -> None:
         self.corpus = InMemoryCorpus()
         self.router = QueryRouter()
         self.retrieval_planner = QueryAwareRetrievalPlanner()
         if index_dir:
-            self.retrieval_service = self._load_retrieval_index(index_dir)
+            self.retrieval_service = self._load_retrieval_index(
+                index_dir,
+                load_dense_index=load_dense_index,
+                load_colbert_index=load_colbert_index,
+            )
         else:
             if not pdf_path:
                 raise ValueError("RoutedRAGService requires either pdf_path or index_dir")
@@ -442,9 +453,20 @@ class RoutedRAGService:
         chunks = loader.load_pdf(pdf_path)
         self.corpus.add_chunks(chunks)
 
-    def _load_retrieval_index(self, index_dir: str) -> RetrievalService:
+    def _load_retrieval_index(
+        self,
+        index_dir: str,
+        *,
+        load_dense_index: bool = True,
+        load_colbert_index: bool = True,
+    ) -> RetrievalService:
         reranker_name = os.getenv("BOXTALK_ROUTED_RAG_RERANKER", "heuristic")
-        retrieval_service = RetrievalService.from_index(index_dir, reranker=make_reranker(reranker_name))
+        retrieval_service = RetrievalService.from_index(
+            index_dir,
+            reranker=make_reranker(reranker_name),
+            load_dense=load_dense_index,
+            load_colbert=load_colbert_index,
+        )
         self.corpus.add_chunks(retrieval_service.retriever.chunks)
         return retrieval_service
 
@@ -521,6 +543,25 @@ class DocumentRegistry:
 
 def _utc_now() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+def _bool_env(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _ui_dense_allowed() -> bool:
+    return _bool_env("BOXTALK_UI_ALLOW_DENSE", False)
+
+
+def _resolve_ui_dense_request(requested: bool) -> Tuple[bool, List[str]]:
+    if requested and not _ui_dense_allowed():
+        return False, [
+            "Dense indexing was skipped in UI safe mode. Set BOXTALK_UI_ALLOW_DENSE=1 to enable it.",
+        ]
+    return requested, []
 
 
 def _new_doc_id() -> str:
@@ -600,7 +641,12 @@ def _infer_document_type(filename: str, chunks: List[DocumentChunkRef], report: 
     return report.get("probe", {}).get("probe_detected_mode") or "general_pdf"
 
 
-def _build_document_index(document: Dict[str, Any], *, build_dense: bool) -> Dict[str, Any]:
+def _build_document_index(
+    document: Dict[str, Any],
+    *,
+    build_dense: bool,
+    initial_warnings: Optional[List[str]] = None,
+) -> Dict[str, Any]:
     pdf_path = Path(document["pdf_path"])
     index_dir = Path(document["index_dir"])
     if not pdf_path.exists():
@@ -619,7 +665,7 @@ def _build_document_index(document: Dict[str, Any], *, build_dense: bool) -> Dic
     if not chunks:
         raise RuntimeError("PDF ingest produced no chunks")
 
-    warnings: List[str] = []
+    warnings: List[str] = list(initial_warnings or [])
     try:
         retrieval_service = RetrievalService.from_chunks(
             chunks,
@@ -729,7 +775,11 @@ def _get_document_service(document: Dict[str, Any]) -> RoutedRAGService:
     if cached and cached[0] == indexed_at:
         return cached[1]
 
-    service = RoutedRAGService(index_dir=str(index_dir))
+    service = RoutedRAGService(
+        index_dir=str(index_dir),
+        load_dense_index=_ui_dense_allowed() and document.get("index_mode") == "hybrid",
+        load_colbert_index=False,
+    )
     _document_services[doc_id] = (indexed_at, service)
     return service
 
@@ -762,6 +812,7 @@ async def upload_document(
 
     doc_id = _new_doc_id()
     filename = _safe_filename(file.filename)
+    build_dense, dense_warnings = _resolve_ui_dense_request(build_dense)
     doc_dir = DOCUMENT_STORE_ROOT / doc_id
     pdf_path = doc_dir / filename
     index_dir = DOCUMENT_INDEX_ROOT / doc_id
@@ -796,7 +847,11 @@ async def upload_document(
     registry.upsert(document)
 
     try:
-        document = _build_document_index(document, build_dense=build_dense)
+        document = _build_document_index(
+            document,
+            build_dense=build_dense,
+            initial_warnings=dense_warnings,
+        )
     except Exception as exc:
         document = {
             **document,
@@ -838,6 +893,7 @@ def reindex_document(doc_id: str, req: ReindexRequest) -> DocumentInfo:
     build_dense = req.build_dense
     if build_dense is None:
         build_dense = document.get("index_mode") == "hybrid"
+    build_dense, dense_warnings = _resolve_ui_dense_request(build_dense)
     document = {
         **document,
         "status": "processing",
@@ -847,7 +903,11 @@ def reindex_document(doc_id: str, req: ReindexRequest) -> DocumentInfo:
     registry.upsert(document)
 
     try:
-        document = _build_document_index(document, build_dense=build_dense)
+        document = _build_document_index(
+            document,
+            build_dense=build_dense,
+            initial_warnings=dense_warnings,
+        )
     except Exception as exc:
         document = {
             **document,

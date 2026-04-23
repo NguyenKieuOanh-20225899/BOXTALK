@@ -238,17 +238,24 @@ class HybridRetriever:
         )
 
     @classmethod
-    def load(cls, input_dir: str | Path, *, reranker: Reranker | None = None) -> "HybridRetriever":
+    def load(
+        cls,
+        input_dir: str | Path,
+        *,
+        reranker: Reranker | None = None,
+        load_dense: bool = True,
+        load_colbert: bool = True,
+    ) -> "HybridRetriever":
         input_path = Path(input_dir)
         chunks = RetrievalIndexStore(input_path).read_corpus()
         retriever = cls(chunks, build_dense=False, reranker=reranker)
         dense_config = input_path / "dense_config.json"
         dense_embeddings = input_path / "dense_embeddings.npy"
-        if dense_config.exists() and dense_embeddings.exists():
+        if load_dense and dense_config.exists() and dense_embeddings.exists():
             retriever.dense = DenseRetriever.load(input_path, chunks)
         colbert_config = input_path / "colbert_config.json"
         colbert_embeddings = input_path / "colbert_embeddings.npz"
-        if colbert_config.exists() and colbert_embeddings.exists():
+        if load_colbert and colbert_config.exists() and colbert_embeddings.exists():
             retriever.colbert = ColBERTRetriever.load(input_path, chunks)
         return retriever
 
