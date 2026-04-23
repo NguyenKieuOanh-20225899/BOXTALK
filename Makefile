@@ -19,6 +19,11 @@
 	qa-index \
 	qa-benchmark \
 	qa-benchmark-all \
+	llm-fallback-dataset \
+	llm-fallback-index \
+	llm-fallback-smoke \
+	llm-fallback-benchmark \
+	ui-dev \
 	user-pdf-suite \
 	baseline-gate
 
@@ -49,10 +54,18 @@ QA_CONFIGS ?= routed_grounded
 USER_PDF_SUITE_MANIFEST ?= data/user_pdf_benchmark_suite.json
 USER_PDF_SUITE_DIR ?= results/user_pdf_benchmark_suite/current
 USER_PDF_SUITE_ARGS ?=
+LLM_FALLBACK_DATASET_DIR ?= data/llm_fallback_benchmark
+LLM_FALLBACK_MANIFEST ?= $(LLM_FALLBACK_DATASET_DIR)/manifest.json
+LLM_FALLBACK_INDEX_DIR ?= results/retrieval_index/llm_fallback_reference
+LLM_FALLBACK_BENCHMARK_DIR ?= results/llm_fallback_benchmark/current
+LLM_FALLBACK_PROVIDER ?= dummy
+LLM_FALLBACK_ARGS ?=
 BASELINE_GATE_ARGS ?=
 BEIR_DATASET ?= scifact
 BEIR_QUERY_LIMIT ?= 50
 BEIR_CORPUS_LIMIT ?= 2000
+UI_HOST ?= 127.0.0.1
+UI_PORT ?= 8000
 
 help:
 	@printf '%s\n' \
@@ -76,6 +89,11 @@ help:
 		'qa-index                       build retrieval index for QA_PDF' \
 		'qa-benchmark                   benchmark grounded QA over QA_INDEX_DIR' \
 		'qa-benchmark-all               create QA dataset, build index, run baseline + ablation' \
+		'llm-fallback-dataset           create the focused fallback benchmark chunks + queries' \
+		'llm-fallback-index             build retrieval index for the focused fallback benchmark' \
+		'llm-fallback-smoke             run the fallback benchmark with the dummy provider' \
+		'llm-fallback-benchmark         run the fallback benchmark with the configured provider' \
+		'ui-dev                         run the FastAPI backend plus static MVP UI' \
 		'user-pdf-suite                 run aggregate QA benchmark over user PDF suite manifest' \
 		'baseline-gate                  fail if locked benchmark baselines regress'
 
@@ -147,6 +165,23 @@ qa-benchmark-all:
 	$(MAKE) qa-dataset
 	$(MAKE) qa-index
 	$(MAKE) qa-benchmark QA_BENCHMARK_DIR=results/qa_benchmark/qa_operations_minilm_all QA_CONFIGS=all
+
+llm-fallback-dataset:
+	$(PYTHON) scripts/create_llm_fallback_benchmark.py --output-dir $(LLM_FALLBACK_DATASET_DIR)
+
+llm-fallback-index:
+	$(MAKE) llm-fallback-dataset
+	$(PYTHON) scripts/build_retrieval_index.py --chunks-jsonl $(LLM_FALLBACK_DATASET_DIR)/llm_fallback_reference_chunks.jsonl --output-dir $(LLM_FALLBACK_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+llm-fallback-smoke:
+	$(MAKE) llm-fallback-benchmark LLM_FALLBACK_PROVIDER=dummy
+
+llm-fallback-benchmark:
+	$(MAKE) llm-fallback-dataset
+	$(PYTHON) scripts/benchmark_llm_fallback.py --manifest $(LLM_FALLBACK_MANIFEST) --output-dir $(LLM_FALLBACK_BENCHMARK_DIR) --llm-fallback-provider $(LLM_FALLBACK_PROVIDER) $(LLM_FALLBACK_ARGS)
+
+ui-dev:
+	$(PYTHON) -m uvicorn app.routed_rag_starter:app --host $(UI_HOST) --port $(UI_PORT) --reload
 
 user-pdf-suite:
 	$(PYTHON) scripts/benchmark_user_pdf_suite.py --manifest $(USER_PDF_SUITE_MANIFEST) --output-dir $(USER_PDF_SUITE_DIR) $(USER_PDF_SUITE_ARGS)

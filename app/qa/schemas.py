@@ -38,6 +38,8 @@ class GroundedAnswer:
     support_sentences: list[str]
     grounded: bool
     answer_type: str = "extractive"
+    source: str = "standard"
+    fallback_trace: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -60,6 +62,10 @@ class QAResult:
     answer_latency_ms: float
     route_attempts: list[dict[str, Any]] = field(default_factory=list)
     selected_route_attempt: int = 0
+    grounded: bool = False
+    standard_answer: str | None = None
+    final_answer_source: str = "standard"
+    fallback_trace: dict[str, Any] = field(default_factory=dict)
 
     @property
     def total_latency_ms(self) -> float:
@@ -70,6 +76,8 @@ class QAResult:
             "question": self.question,
             "query_type": self.query_type,
             "answer": self.answer,
+            "standard_answer": self.standard_answer,
+            "final_answer_source": self.final_answer_source,
             "decision": self.decision,
             "evidence": self.evidence.to_dict(),
             "citations": self.citations,
@@ -81,4 +89,6 @@ class QAResult:
             "total_latency_ms": self.total_latency_ms,
             "route_attempts": list(self.route_attempts),
             "selected_route_attempt": self.selected_route_attempt,
+            "grounded": self.grounded,
+            "fallback_trace": dict(self.fallback_trace),
         }

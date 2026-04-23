@@ -3,8 +3,10 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import statistics
 import sys
+import unicodedata
 from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -18,6 +20,12 @@ if str(ROOT) not in sys.path:
 from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
 from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.evidence_checker import EvidenceChecker
+from app.qa.llm_fallback import (
+    DummyGroundedLLMClient,
+    GroundedLLMFallback,
+    LLMFallbackConfig,
+    OpenAICompatibleGroundedLLMClient,
+)
 from app.qa.pipeline import GroundedQAPipeline
 from app.qa.router import QueryRouter
 from app.qa.schemas import EvidenceAssessment
@@ -35,6 +43,11 @@ DEFAULT_CONFIGS = [
     "hybrid_no_routing",
     "routed_grounded",
     "adaptive_route_retry",
+    "routed_grounded_with_llm_fallback",
+    "routed_grounded_with_table_llm",
+    "routed_grounded_with_formula_llm",
+    "routed_grounded_with_multimodal_textual_fallback",
+    "adaptive_route_retry_with_final_route_llm_fallback",
     "no_evidence_checker",
     "no_router",
     "no_citation_grounding",
@@ -143,6 +156,30 @@ def parse_args() -> argparse.Namespace:
         default=0.82,
         help="Retry when adaptive route quality is below this threshold.",
     )
+    parser.add_argument(
+        "--llm-fallback-provider",
+        choices=["dummy", "openai-compatible"],
+        default="dummy",
+        help="Provider for routed_grounded_with_* fallback configs.",
+    )
+    parser.add_argument(
+        "--llm-fallback-sufficiency-threshold",
+        type=float,
+        default=0.72,
+        help="Call fallback below this evidence sufficiency threshold when evidence is still relevant.",
+    )
+    parser.add_argument(
+        "--llm-fallback-min-confidence",
+        type=float,
+        default=0.30,
+        help="Minimum accepted grounded fallback confidence.",
+    )
+    parser.add_argument(
+        "--llm-fallback-min-override-confidence",
+        type=float,
+        default=0.65,
+        help="Minimum confidence required when fallback overrides a non-answer standard decision.",
+    )
     return parser.parse_args()
 
 
@@ -193,6 +230,41 @@ def fixed_retrieval_config(args: argparse.Namespace, *, use_rerank: bool = False
     )
 
 
+def make_benchmark_llm_fallback(config_name: str, args: argparse.Namespace) -> GroundedLLMFallback:
+    enable_table = config_name in {
+        "routed_grounded_with_llm_fallback",
+        "routed_grounded_with_table_llm",
+        "routed_grounded_with_multimodal_textual_fallback",
+        "adaptive_route_retry_with_final_route_llm_fallback",
+    }
+    enable_formula = config_name in {
+        "routed_grounded_with_llm_fallback",
+        "routed_grounded_with_formula_llm",
+        "routed_grounded_with_multimodal_textual_fallback",
+        "adaptive_route_retry_with_final_route_llm_fallback",
+    }
+    enable_figure = config_name in {
+        "routed_grounded_with_llm_fallback",
+        "routed_grounded_with_multimodal_textual_fallback",
+        "adaptive_route_retry_with_final_route_llm_fallback",
+    }
+    config = LLMFallbackConfig(
+        enable_llm_fallback=True,
+        enable_table_llm_reasoning=enable_table,
+        enable_formula_llm_reasoning=enable_formula,
+        enable_figure_llm_reasoning=enable_figure,
+        fallback_only_if_grounded_evidence_present=True,
+        sufficiency_threshold=args.llm_fallback_sufficiency_threshold,
+        min_llm_confidence=args.llm_fallback_min_confidence,
+        min_non_answer_override_confidence=args.llm_fallback_min_override_confidence,
+    )
+    if args.llm_fallback_provider == "openai-compatible":
+        client = OpenAICompatibleGroundedLLMClient(timeout_s=config.request_timeout_s)
+    else:
+        client = DummyGroundedLLMClient()
+    return GroundedLLMFallback(config=config, client=client)
+
+
 def make_pipeline(
     *,
     config_name: str,
@@ -235,6 +307,19 @@ def make_pipeline(
             ),
         )
 
+    if config_name in {
+        "routed_grounded_with_llm_fallback",
+        "routed_grounded_with_table_llm",
+        "routed_grounded_with_formula_llm",
+        "routed_grounded_with_multimodal_textual_fallback",
+    }:
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+            llm_fallback=make_benchmark_llm_fallback(config_name, args),
+        )
+
     if config_name == "no_evidence_checker":
         return GroundedQAPipeline(
             retrieval_service=retrieval_service,
@@ -250,6 +335,17 @@ def make_pipeline(
             retrieval_planner=QueryAwareRetrievalPlanner(),
             max_attempts=args.adaptive_max_attempts,
             retry_quality_threshold=args.adaptive_retry_threshold,
+        )
+
+    if config_name == "adaptive_route_retry_with_final_route_llm_fallback":
+        return AdaptiveRouteRetryQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+            llm_fallback=make_benchmark_llm_fallback(config_name, args),
+            max_attempts=args.adaptive_max_attempts,
+            retry_quality_threshold=args.adaptive_retry_threshold,
+            enable_final_route_llm_fallback=True,
         )
 
     if config_name == "no_router":
@@ -408,11 +504,46 @@ def answer_supported_by_citations(answer: str, result_dict: dict[str, Any]) -> b
         for hit in result_dict["retrieved_hits"]
         if hit.get("chunk_id") in cited_ids
     )
+    fallback_trace = result_dict.get("fallback_trace") or {}
+    reasoning_mode = str(fallback_trace.get("reasoning_mode") or "")
     if contains_text(cited_text, answer):
+        return True
+    if reasoning_mode in {"table", "formula", "figure"} and structured_answer_supported(
+        answer=answer,
+        cited_text=cited_text,
+        reasoning_mode=reasoning_mode,
+    ):
         return True
     answer_terms = token_set(answer)
     cited_terms = token_set(cited_text)
     return bool(answer_terms) and len(answer_terms & cited_terms) / len(answer_terms) >= 0.45
+
+
+def structured_answer_supported(*, answer: str, cited_text: str, reasoning_mode: str) -> bool:
+    answer_folded = folded_text(answer)
+    cited_folded = folded_text(cited_text)
+    if not answer_folded or not cited_folded:
+        return False
+
+    answer_numbers = re.findall(r"\d+(?:[.,]\d+)?", answer_folded)
+    answer_grades = re.findall(r"(?<!\w)[a-f][+-]?(?!\w)", answer_folded)
+    if answer_numbers and not all(number in cited_folded for number in answer_numbers):
+        return False
+    if reasoning_mode == "table" and answer_grades and not all(grade in cited_folded for grade in answer_grades):
+        return False
+
+    answer_terms = token_set(answer)
+    cited_terms = token_set(cited_text)
+    if not answer_terms:
+        return False
+    overlap = len(answer_terms & cited_terms) / len(answer_terms)
+    if reasoning_mode == "table":
+        return overlap >= 0.20 or bool(answer_numbers or answer_grades)
+    if reasoning_mode == "formula":
+        return overlap >= 0.30 or bool(answer_numbers)
+    if reasoning_mode == "figure":
+        return overlap >= 0.30
+    return overlap >= 0.45
 
 
 def answer_status(*, expected_answerable: bool, decision: str) -> str:
@@ -479,12 +610,18 @@ def evaluate_case(
     selected_route_matches_gold = bool(gold_query_type and str(selected_route_type).lower() == gold_query_type)
     selected_hit_ids = result_dict["evidence"].get("selected_hit_ids") or []
     citation_chunk_ids = [citation.get("chunk_id") for citation in result_dict["citations"]]
+    fallback_trace = result_dict.get("fallback_trace") or {}
 
     return {
         "config_name": config_name,
         "query_id": case.get("query_id") or case.get("id"),
         "question": question_text(case),
         "query_type": case.get("query_type") or result_dict["query_type"],
+        "fallback_category": case.get("fallback_category"),
+        "weak_standard_answer_case": bool(case.get("weak_standard_answer_case", False)),
+        "expected_modality": case.get("expected_modality"),
+        "expected_fallback_mode": case.get("expected_fallback_mode"),
+        "should_require_fallback": bool(case.get("should_require_fallback", False)),
         "routed_query_type": result_dict["query_type"],
         "initial_route_type": initial_route_type,
         "selected_route_type": selected_route_type,
@@ -510,6 +647,21 @@ def evaluate_case(
             "metadata_filters": retrieval_config.get("metadata_filters") or {},
         },
         "answer": result_dict["answer"],
+        "standard_answer": result_dict.get("standard_answer"),
+        "final_answer_source": result_dict.get("final_answer_source") or "standard",
+        "fallback_called": bool(fallback_trace.get("called", False)),
+        "fallback_used": bool(fallback_trace.get("used", False)),
+        "fallback_reason": fallback_trace.get("reason"),
+        "fallback_reasoning_mode": fallback_trace.get("reasoning_mode"),
+        "fallback_decision": fallback_trace.get("decision"),
+        "fallback_confidence": fallback_trace.get("confidence", 0.0),
+        "override_confidence": fallback_trace.get("confidence", 0.0),
+        "fallback_latency_ms": fallback_trace.get("latency_ms", 0.0),
+        "fallback_provider": fallback_trace.get("provider"),
+        "provider_name": fallback_trace.get("provider") or "standard",
+        "fallback_llm_called": bool(fallback_trace.get("llm_called", False)),
+        "fallback_answer": fallback_trace.get("answer"),
+        "fallback_used_evidence_ids": fallback_trace.get("used_evidence_ids") or [],
         "gold_answer": case.get("gold_answer"),
         "match_text": case.get("match_text"),
         "answer_match": answer_ok,
@@ -548,6 +700,9 @@ def evaluate_case(
             "selected_hit_ids": selected_hit_ids,
             "evidence_decision": decision,
             "answer_status": status,
+            "fallback_called": bool(fallback_trace.get("called", False)),
+            "fallback_reasoning_mode": fallback_trace.get("reasoning_mode"),
+            "final_answer_source": result_dict.get("final_answer_source") or "standard",
         },
     }
 
@@ -563,6 +718,51 @@ def ratio(numerator: int, denominator: int) -> float | None:
     return numerator / denominator
 
 
+def folded_text(value: Any) -> str:
+    normalized = unicodedata.normalize("NFKD", str(value or ""))
+    ascii_text = normalized.encode("ascii", "ignore").decode("ascii")
+    return " ".join(ascii_text.lower().split())
+
+
+def row_has_table_signal(row: dict[str, Any]) -> bool:
+    text = folded_text(
+        " ".join(
+            [
+                str(row.get("question") or ""),
+                str(row.get("fallback_reasoning_mode") or ""),
+                str(row.get("expected_modality") or ""),
+            ]
+        )
+    )
+    return any(term in text for term in ("table", "bang", "row", "column", "cell", "tuong ung"))
+
+
+def row_has_formula_signal(row: dict[str, Any]) -> bool:
+    text = folded_text(
+        " ".join(
+            [
+                str(row.get("question") or ""),
+                str(row.get("fallback_reasoning_mode") or ""),
+                str(row.get("expected_modality") or ""),
+            ]
+        )
+    )
+    return any(term in text for term in ("formula", "equation", "cong thuc", "symbol", "metric", "ffn("))
+
+
+def row_has_figure_signal(row: dict[str, Any]) -> bool:
+    text = folded_text(
+        " ".join(
+            [
+                str(row.get("question") or ""),
+                str(row.get("fallback_reasoning_mode") or ""),
+                str(row.get("expected_modality") or ""),
+            ]
+        )
+    )
+    return any(term in text for term in ("figure", "fig.", "chart", "image", "caption", "bieu do", "hinh"))
+
+
 def summarize_flat(rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not rows:
         return {}
@@ -574,6 +774,26 @@ def summarize_flat(rows: list[dict[str, Any]]) -> dict[str, Any]:
     answerable_abstentions = [row for row in answerable if row["decision"] != "answer"]
     false_answers = [row for row in unanswerable if row["decision"] == "answer"]
     rows_with_gold_route = [row for row in rows if row.get("query_type")]
+    fallback_called = [row for row in rows if row.get("fallback_called")]
+    fallback_used = [row for row in rows if row.get("fallback_used")]
+    fallback_answered = [row for row in rows if row.get("final_answer_source") != "standard"]
+    table_rows = [row for row in rows if row_has_table_signal(row)]
+    formula_rows = [row for row in rows if row_has_formula_signal(row)]
+    figure_rows = [row for row in rows if row_has_figure_signal(row)]
+    table_rule_resolved = [
+        row
+        for row in table_rows
+        if row.get("final_answer_source") == "table_rule_fallback" and row.get("end_to_end_success")
+    ]
+    table_llm_resolved = [
+        row
+        for row in table_rows
+        if row.get("fallback_llm_called")
+        and row.get("fallback_used")
+        and row.get("fallback_reasoning_mode") == "table"
+        and row.get("end_to_end_success")
+    ]
+    fallback_helped = [row for row in rows if row.get("fallback_used") and row.get("end_to_end_success")]
 
     return {
         "query_count": len(rows),
@@ -603,6 +823,27 @@ def summarize_flat(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "route_changed_rate": mean_float(float(row.get("route_changed", False)) for row in rows),
         "route_initial_match_rate": mean_float(float(row.get("route_initial_matches_gold", False)) for row in rows_with_gold_route),
         "route_selected_match_rate": mean_float(float(row.get("route_selected_matches_gold", False)) for row in rows_with_gold_route),
+        "llm_fallback_call_rate": mean_float(float(row.get("fallback_called", False)) for row in rows),
+        "llm_fallback_llm_call_rate": mean_float(float(row.get("fallback_llm_called", False)) for row in rows),
+        "llm_fallback_used_rate": mean_float(float(row.get("fallback_used", False)) for row in rows),
+        "llm_fallback_success_gain": mean_float(
+            float(row["end_to_end_success"] and row.get("fallback_used", False)) for row in rows
+        ),
+        "llm_fallback_latency_overhead_ms": mean_float(float(row.get("fallback_latency_ms") or 0.0) for row in fallback_called),
+        "fallback_helped_count": len(
+            [row for row in fallback_answered if row["end_to_end_success"] and row.get("fallback_used")]
+        ),
+        "fallback_helped_rate": mean_float(float(row.get("fallback_used", False) and row.get("end_to_end_success", False)) for row in rows),
+        "fallback_override_count": len(fallback_answered),
+        "fallback_hallucination_rate": mean_float(float(row["hallucinated"]) for row in fallback_called),
+        "table_question_success": mean_float(float(row["end_to_end_success"]) for row in table_rows),
+        "table_rule_resolved_count": len(table_rule_resolved),
+        "table_llm_resolved_count": len(table_llm_resolved),
+        "table_total_success": mean_float(float(row["end_to_end_success"]) for row in table_rows),
+        "formula_question_success": mean_float(float(row["end_to_end_success"]) for row in formula_rows),
+        "figure_caption_question_success": mean_float(float(row["end_to_end_success"]) for row in figure_rows),
+        "fallback_used_count": len(fallback_used),
+        "fallback_success_count": len(fallback_helped),
     }
 
 
@@ -648,6 +889,28 @@ def ablation_deltas(config_summaries: dict[str, dict[str, Any]]) -> dict[str, An
             "route_retry_rate_delta": adaptive.get("route_retry_rate", 0.0) - routed.get("route_retry_rate", 0.0),
             "route_selected_match_delta": adaptive.get("route_selected_match_rate", 0.0)
             - routed.get("route_selected_match_rate", 0.0),
+        }
+    for fallback_name in (
+        "routed_grounded_with_llm_fallback",
+        "routed_grounded_with_table_llm",
+        "routed_grounded_with_formula_llm",
+        "routed_grounded_with_multimodal_textual_fallback",
+        "adaptive_route_retry_with_final_route_llm_fallback",
+    ):
+        fallback = config_summaries.get(fallback_name)
+        if not fallback:
+            continue
+        deltas[f"{fallback_name}_vs_routed_grounded"] = {
+            "llm_fallback_success_gain": fallback.get("end_to_end_success_rate", 0.0)
+            - routed.get("end_to_end_success_rate", 0.0),
+            "answer_match_delta": fallback.get("answer_match_rate", 0.0) - routed.get("answer_match_rate", 0.0),
+            "grounded_rate_delta": fallback.get("grounded_rate", 0.0) - routed.get("grounded_rate", 0.0),
+            "hallucination_rate_delta": fallback.get("hallucination_rate", 0.0)
+            - routed.get("hallucination_rate", 0.0),
+            "avg_total_latency_ms_delta": fallback.get("avg_total_latency_ms", 0.0)
+            - routed.get("avg_total_latency_ms", 0.0),
+            "fallback_call_rate": fallback.get("llm_fallback_call_rate", 0.0),
+            "fallback_helped_count": fallback.get("fallback_helped_count", 0),
         }
     return deltas
 

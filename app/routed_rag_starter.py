@@ -19,6 +19,8 @@ from pydantic import BaseModel, Field
 
 from app.ingest.pipeline import ingest_pdf
 from app.loaders.pdf_loader import PDFLoader
+from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
+from app.qa.llm_fallback import make_llm_fallback_from_env
 from app.qa.pipeline import GroundedQAPipeline
 from app.retrieval.reranker import make_reranker
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner
@@ -66,6 +68,13 @@ class AskResponse(BaseModel):
     query_type: QueryType
     route_action: RouteAction
     answer: str
+    grounded: bool = False
+    standard_answer: Optional[str] = None
+    final_answer_source: str = "standard"
+    fallback_trace: Dict[str, Any] = Field(default_factory=dict)
+    route_attempts: List[Dict[str, Any]] = Field(default_factory=list)
+    selected_route_attempt: int = 0
+    latency_ms: float = 0.0
     evidence_report: Dict[str, Any]
     citations: List[Dict[str, Any]]
     retrieved_chunks: List[Dict[str, Any]]
@@ -395,11 +404,23 @@ class RoutedRAGService:
                 raise ValueError("RoutedRAGService requires either pdf_path or index_dir")
             self._load_pdf_data(pdf_path)
             self.retrieval_service = self._build_retrieval_service()
-        self.qa_pipeline = GroundedQAPipeline(
-            retrieval_service=self.retrieval_service,
-            router=self.router,
-            retrieval_planner=self.retrieval_planner,
-        )
+        llm_fallback = make_llm_fallback_from_env()
+        if _qa_pipeline_mode() == "adaptive_route_retry":
+            enable_final_route_llm_fallback = _bool_env("BOXTALK_ENABLE_LLM_FALLBACK_ON_FINAL_ROUTE_ONLY", False)
+            self.qa_pipeline = AdaptiveRouteRetryQAPipeline(
+                retrieval_service=self.retrieval_service,
+                router=self.router,
+                retrieval_planner=self.retrieval_planner,
+                llm_fallback=llm_fallback if enable_final_route_llm_fallback else None,
+                enable_final_route_llm_fallback=enable_final_route_llm_fallback,
+            )
+        else:
+            self.qa_pipeline = GroundedQAPipeline(
+                retrieval_service=self.retrieval_service,
+                router=self.router,
+                retrieval_planner=self.retrieval_planner,
+                llm_fallback=llm_fallback,
+            )
         self.evidence_checker = EvidenceChecker()
         self.answer_generator = AnswerGenerator()
 
@@ -415,6 +436,9 @@ class RoutedRAGService:
                 "answer_latency_ms": round(qa_result.answer_latency_ms, 3),
                 "total_latency_ms": round(qa_result.total_latency_ms, 3),
                 "retrieval_config": qa_result.retrieval_config.to_dict(),
+                "grounded": qa_result.grounded,
+                "final_answer_source": qa_result.final_answer_source,
+                "fallback_trace": qa_result.fallback_trace,
             }
         )
 
@@ -423,6 +447,13 @@ class RoutedRAGService:
             query_type=query_type,
             route_action=route_action,
             answer=qa_result.answer,
+            grounded=qa_result.grounded,
+            standard_answer=qa_result.standard_answer,
+            final_answer_source=qa_result.final_answer_source,
+            fallback_trace=qa_result.fallback_trace,
+            route_attempts=qa_result.route_attempts,
+            selected_route_attempt=qa_result.selected_route_attempt,
+            latency_ms=round(qa_result.total_latency_ms, 3),
             evidence_report=evidence_report,
             citations=qa_result.citations,
             retrieved_chunks=[
@@ -562,6 +593,13 @@ def _resolve_ui_dense_request(requested: bool) -> Tuple[bool, List[str]]:
             "Dense indexing was skipped in UI safe mode. Set BOXTALK_UI_ALLOW_DENSE=1 to enable it.",
         ]
     return requested, []
+
+
+def _qa_pipeline_mode() -> str:
+    raw = os.getenv("BOXTALK_UI_QA_PIPELINE", "routed_grounded").strip().lower()
+    if raw in {"adaptive", "adaptive_route_retry"}:
+        return "adaptive_route_retry"
+    return "routed_grounded"
 
 
 def _new_doc_id() -> str:
