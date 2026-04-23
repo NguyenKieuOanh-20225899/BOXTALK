@@ -142,9 +142,16 @@ class HybridRetriever:
                     seen.add(hit.chunk_id)
                 continue
 
-            start_idx = max(0, base_idx - config.context_window)
-            end_idx = min(len(self.chunks), base_idx + config.context_window + 1)
-            for idx in range(start_idx, end_idx):
+            neighbor_indices: list[int] = []
+            for distance in range(1, config.context_window + 1):
+                left_idx = base_idx - distance
+                right_idx = base_idx + distance
+                if left_idx >= 0:
+                    neighbor_indices.append(left_idx)
+                if right_idx < len(self.chunks):
+                    neighbor_indices.append(right_idx)
+
+            for idx in [base_idx, *neighbor_indices]:
                 chunk = self.chunks[idx]
                 if chunk.chunk_id in seen:
                     continue

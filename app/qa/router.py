@@ -41,7 +41,6 @@ class QueryRouter:
         "xét công nhận",
     }
     PROCEDURAL_TERMS = {
-        "how",
         "procedure",
         "process",
         "steps",
@@ -83,6 +82,16 @@ class QueryRouter:
         "đặc điểm",
     }
     FACTOID_TERMS = {
+        "how many",
+        "how much",
+        "how long",
+        "what score",
+        "what bleu",
+        "what f1",
+        "what beam",
+        "what label",
+        "what value",
+        "where",
         "bao nhiêu",
         "bao lâu",
         "khi nào",
@@ -100,8 +109,18 @@ class QueryRouter:
         q = question.lower().strip()
         if any(term in q for term in self.COMPARISON_TERMS):
             return "comparison"
+        if q.startswith(("how many ", "how much ", "how long ", "where ")):
+            return "factoid"
+        if q.startswith("how "):
+            return "procedural"
         if any(term in q for term in self.PROCEDURAL_TERMS):
             return "procedural"
+        if q.startswith("why "):
+            return "definition"
+        if q.startswith(("what does ", "what did ", "what two ", "what three ", "what new ")):
+            return "factoid"
+        if q.startswith(("what are ", "what benefit ")):
+            return "definition"
         if self._is_definition(q):
             return "definition"
         if self._is_factoid(q):

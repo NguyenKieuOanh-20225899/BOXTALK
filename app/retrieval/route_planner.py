@@ -23,30 +23,36 @@ class QueryAwareRetrievalPlanner:
 
         if normalized_type == "factoid":
             bm25_weight, dense_weight = self._weights(question, bm25_default=0.45, dense_default=0.55)
+            scientific_like = self._is_scientific_like(question)
             return QueryRetrievalPlan(
-                strategy="hybrid",
+                strategy="hybrid_rerank" if scientific_like else "hybrid",
                 config=RetrievalConfig(
-                    top_k=3,
-                    candidate_k=30,
+                    top_k=5 if scientific_like else 3,
+                    candidate_k=50 if scientific_like else 30,
                     bm25_weight=bm25_weight,
                     dense_weight=dense_weight,
+                    rerank_top_n=20 if scientific_like else 0,
                     combination="weighted_sum",
-                    context_window=1,
+                    use_rerank=scientific_like,
+                    context_window=2 if scientific_like else 1,
                 ),
                 reason="factoid queries need compact evidence with lexical anchoring and dense recall",
             )
 
         if normalized_type == "definition":
             bm25_weight, dense_weight = self._weights(question, bm25_default=0.50, dense_default=0.50)
+            scientific_like = self._is_scientific_like(question)
             return QueryRetrievalPlan(
-                strategy="hybrid",
+                strategy="hybrid_rerank" if scientific_like else "hybrid",
                 config=RetrievalConfig(
-                    top_k=4,
-                    candidate_k=50,
+                    top_k=5 if scientific_like else 4,
+                    candidate_k=70 if scientific_like else 50,
                     bm25_weight=bm25_weight,
                     dense_weight=dense_weight,
+                    rerank_top_n=25 if scientific_like else 0,
                     combination="weighted_sum",
-                    context_window=1,
+                    use_rerank=scientific_like,
+                    context_window=2 if scientific_like else 1,
                 ),
                 reason="definition queries benefit from balanced sparse and dense evidence",
             )
@@ -144,3 +150,28 @@ class QueryAwareRetrievalPlanner:
 
     def _is_vietnamese(self, question: str) -> bool:
         return any("à" <= char.lower() <= "ỹ" or char.lower() == "đ" for char in question)
+
+    def _is_scientific_like(self, question: str) -> bool:
+        question_lower = question.lower()
+        return any(
+            term in question_lower
+            for term in (
+                "paper",
+                "model",
+                "architecture",
+                "attention",
+                "transformer",
+                "encoder",
+                "decoder",
+                "bleu",
+                "f1",
+                "wmt",
+                "feed-forward",
+                "positional encoding",
+                "dot-product",
+                "dot products",
+                "square root",
+                "beam size",
+                "label smoothing",
+            )
+        )
