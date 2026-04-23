@@ -15,9 +15,17 @@ User PDF suite snapshot:
 
 | Config | Role | Success | Evidence | Grounded | Hallucination | Latency ms |
 |---|---|---:|---:|---:|---:|---:|
-| `bm25_only` | strongest overall baseline | 0.777 | 0.942 | 1.000 | 0.010 | 2.1 |
-| `routed_grounded` | production-like grounded architecture baseline | 0.728 | 0.971 | 1.000 | 0.000 | 10.8 |
-| `adaptive_route_retry` | experimental branch | 0.718 | 0.971 | 1.000 | 0.000 | 15.9 |
+| `bm25_only` | strongest fast baseline | 0.825 | 0.942 | 1.000 | 0.010 | 2.4 |
+| `routed_grounded` | production-like grounded architecture baseline | 0.845 | 1.000 | 1.000 | 0.000 | 12.6 |
+| `adaptive_route_retry` | experimental branch | 0.816 | 0.990 | 1.000 | 0.000 | 18.6 |
+
+Scientific paper QA snapshot:
+
+| Config | Success | Evidence | Grounded | Hallucination | Latency ms |
+|---|---:|---:|---:|---:|---:|
+| `bm25_only` | 0.739 | 0.783 | 1.000 | 0.000 | 3.6 |
+| `routed_grounded` | 1.000 | 1.000 | 1.000 | 0.000 | 17.4 |
+| `adaptive_route_retry` | 0.913 | 0.957 | 1.000 | 0.000 | 29.6 |
 
 Controlled QA snapshot on `operations_handbook_en`:
 
@@ -37,10 +45,12 @@ Scientific ingest readiness:
 
 The current interpretation is:
 
-- `bm25_only` is the strongest overall QA baseline.
-- `routed_grounded` is the safe grounded architecture baseline.
+- `bm25_only` remains the strongest fast baseline.
+- `routed_grounded` is now the strongest grounded architecture baseline.
 - `adaptive_route_retry` remains experimental because it increases latency
-  without a clear aggregate quality win.
+  without a clear aggregate quality win over `routed_grounded`.
+- Scientific paper QA is protected as a separate gate because it was the main
+  previously weak document type.
 - Retrieval is ready for prototyping, but not for production claims until
   labeled production PDFs are added.
 
@@ -49,10 +59,13 @@ The current interpretation is:
 The default regression gate checks:
 
 - user PDF suite has at least `100` unique questions and `3` documents
-- `bm25_only.end_to_end_success_rate >= 0.77`
-- `routed_grounded.end_to_end_success_rate >= 0.72`
+- `bm25_only.end_to_end_success_rate >= 0.82`
+- `routed_grounded.end_to_end_success_rate >= 0.83`
 - `routed_grounded.grounded_rate >= 1.0`
 - `routed_grounded.hallucination_rate <= 0.0`
+- `scientific_paper / routed_grounded.end_to_end_success_rate >= 0.95`
+- `scientific_paper / routed_grounded.evidence_match_rate >= 0.95`
+- `scientific_paper / routed_grounded.hallucination_rate <= 0.0`
 - scientific readiness verdict is true for prototyping
 - all scientific ingest gates in the latest readiness report pass
 

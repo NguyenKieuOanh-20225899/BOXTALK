@@ -36,10 +36,13 @@ def parse_args() -> argparse.Namespace:
         default=100,
     )
     parser.add_argument("--min-suite-documents", type=int, default=3)
-    parser.add_argument("--bm25-success-min", type=float, default=0.77)
-    parser.add_argument("--routed-success-min", type=float, default=0.72)
+    parser.add_argument("--bm25-success-min", type=float, default=0.82)
+    parser.add_argument("--routed-success-min", type=float, default=0.83)
     parser.add_argument("--routed-grounded-min", type=float, default=1.0)
     parser.add_argument("--routed-hallucination-max", type=float, default=0.0)
+    parser.add_argument("--scientific-routed-success-min", type=float, default=0.95)
+    parser.add_argument("--scientific-routed-evidence-min", type=float, default=0.95)
+    parser.add_argument("--scientific-routed-hallucination-max", type=float, default=0.0)
     parser.add_argument("--tolerance", type=float, default=1e-9)
     parser.add_argument("--write-report", type=Path, default=None)
     return parser.parse_args()
@@ -84,6 +87,25 @@ def metric(summary: dict[str, Any], config_name: str, metric_name: str) -> float
     value = config.get(metric_name)
     if value is None:
         raise KeyError(f"suite_summary.json is missing by_config.{config_name}.{metric_name}")
+    return float(value)
+
+
+def grouped_metric(
+    summary: dict[str, Any],
+    group_key: str,
+    group_name: str,
+    config_name: str,
+    metric_name: str,
+) -> float:
+    groups = summary.get(group_key)
+    if not isinstance(groups, dict):
+        raise KeyError(f"suite_summary.json is missing {group_key}")
+    payload = groups.get(f"{group_name} / {config_name}")
+    if not isinstance(payload, dict):
+        raise KeyError(f"suite_summary.json is missing {group_key}.{group_name} / {config_name}")
+    value = payload.get(metric_name)
+    if value is None:
+        raise KeyError(f"suite_summary.json is missing {group_key}.{group_name} / {config_name}.{metric_name}")
     return float(value)
 
 
@@ -143,6 +165,42 @@ def check_user_suite(summary: dict[str, Any], args: argparse.Namespace) -> list[
             "user_suite.routed_grounded.hallucination_rate",
             metric(summary, "routed_grounded", "hallucination_rate"),
             args.routed_hallucination_max,
+            tolerance,
+        ),
+        min_gate(
+            "user_suite.scientific_paper.routed_grounded.end_to_end_success_rate",
+            grouped_metric(
+                summary,
+                "by_document_type_and_config",
+                "scientific_paper",
+                "routed_grounded",
+                "end_to_end_success_rate",
+            ),
+            args.scientific_routed_success_min,
+            tolerance,
+        ),
+        min_gate(
+            "user_suite.scientific_paper.routed_grounded.evidence_match_rate",
+            grouped_metric(
+                summary,
+                "by_document_type_and_config",
+                "scientific_paper",
+                "routed_grounded",
+                "evidence_match_rate",
+            ),
+            args.scientific_routed_evidence_min,
+            tolerance,
+        ),
+        max_gate(
+            "user_suite.scientific_paper.routed_grounded.hallucination_rate",
+            grouped_metric(
+                summary,
+                "by_document_type_and_config",
+                "scientific_paper",
+                "routed_grounded",
+                "hallucination_rate",
+            ),
+            args.scientific_routed_hallucination_max,
             tolerance,
         ),
     ]
