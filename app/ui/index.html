@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BOXTALK Document QA</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">BOXTALK</p>
+          <h1>Document QA</h1>
+        </div>
+        <div class="health" id="healthStatus">API</div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel upload-panel" aria-labelledby="uploadTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">01</p>
+              <h2 id="uploadTitle">Upload tài liệu</h2>
+            </div>
+            <button class="icon-button" id="refreshDocs" type="button" title="Làm mới danh sách" aria-label="Làm mới danh sách">
+              ↻
+            </button>
+          </div>
+
+          <form id="uploadForm" class="upload-box">
+            <label class="file-drop" for="pdfFile">
+              <span class="file-icon">↑</span>
+              <span id="fileName">Chọn PDF</span>
+              <input id="pdfFile" name="file" type="file" accept="application/pdf" />
+            </label>
+            <label class="toggle-row">
+              <input id="buildDense" type="checkbox" />
+              <span>Hybrid dense index</span>
+            </label>
+            <button class="primary-button" type="submit">
+              <span>↑</span>
+              Index PDF
+            </button>
+            <p class="status-line" id="uploadStatus">Sẵn sàng</p>
+          </form>
+        </section>
+
+        <section class="panel docs-panel" aria-labelledby="docsTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">02</p>
+              <h2 id="docsTitle">Tài liệu</h2>
+            </div>
+            <span class="count-pill" id="docCount">0</span>
+          </div>
+          <div class="doc-list" id="docList"></div>
+        </section>
+
+        <section class="panel qa-panel" aria-labelledby="qaTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">03</p>
+              <h2 id="qaTitle">Hỏi đáp grounded</h2>
+            </div>
+            <span class="active-doc" id="activeDoc">Chưa chọn PDF</span>
+          </div>
+
+          <form id="askForm" class="ask-row">
+            <input id="questionInput" type="text" placeholder="Nhập câu hỏi về tài liệu đã chọn" autocomplete="off" />
+            <button class="primary-button" type="submit">
+              <span>?</span>
+              Hỏi
+            </button>
+          </form>
+
+          <div class="answer-band">
+            <div>
+              <p class="eyebrow">Answer</p>
+              <div class="answer-text" id="answerText">Chọn một tài liệu và đặt câu hỏi.</div>
+            </div>
+            <div class="metrics" id="answerMetrics"></div>
+          </div>
+
+          <div class="evidence-grid">
+            <div>
+              <div class="subhead">
+                <h3>Citations</h3>
+                <span id="citationCount">0</span>
+              </div>
+              <div class="citation-list" id="citationList"></div>
+            </div>
+            <aside class="evidence-panel" id="evidencePanel">
+              <p class="eyebrow">Evidence</p>
+              <h3>Chưa chọn citation</h3>
+              <p class="evidence-text">Citation sẽ hiện đoạn trích, trang và section tại đây.</p>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

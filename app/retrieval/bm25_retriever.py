@@ -97,6 +97,8 @@ class BM25Retriever:
             candidates.append((idx, raw_score))
 
         if not candidates:
+            candidates = self._lexical_overlap_candidates(q_tokens, config)
+        if not candidates:
             return []
 
         max_score = max(score for _, score in candidates)
@@ -115,6 +117,23 @@ class BM25Retriever:
             )
             for rank, (idx, raw_score) in enumerate(ranked, start=1)
         ]
+
+    def _lexical_overlap_candidates(
+        self,
+        q_tokens: list[str],
+        config: RetrievalConfig | None,
+    ) -> list[tuple[int, float]]:
+        query_terms = set(q_tokens)
+        candidates: list[tuple[int, float]] = []
+        for idx, chunk_tokens in enumerate(self._tokenized_chunks):
+            chunk = self.chunks[idx]
+            if not chunk_matches_config(chunk, config):
+                continue
+            overlap = len(query_terms & set(chunk_tokens))
+            if overlap <= 0:
+                continue
+            candidates.append((idx, overlap / max(1, len(query_terms))))
+        return candidates
 
     def save_metadata(self, output_dir: str | Path) -> None:
         """Persist lightweight BM25 metadata; the index is rebuilt from corpus on load."""
