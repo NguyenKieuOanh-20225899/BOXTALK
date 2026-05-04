@@ -624,3 +624,44 @@ Quyết định sau khi có real-provider result:
 
 - Nếu `success_gain_vs_standard` và `answer_match_gain_vs_standard` ổn định dương, `hallucination_delta <= 0`, `groundedness_delta >= 0`, có thể cân nhắc gate phụ experimental.
 - Nếu `table_llm_resolved_count = 0` hoặc gain không ổn định, không thêm gate; vòng tiếp theo nên quay lại nâng table QA.
+
+### Kết quả Ollama real-provider ngày 2026-05-04
+
+Đã cài và chạy Ollama Portable bằng model `qwen2.5:7b-instruct` qua OpenAI-compatible endpoint local:
+
+```powershell
+$env:BOXTALK_LLM_PROVIDER="ollama"
+$env:BOXTALK_LLM_BASE_URL="http://localhost:11434/v1"
+$env:BOXTALK_LLM_API_KEY="ollama"
+$env:BOXTALK_LLM_MODEL="qwen2.5:7b-instruct"
+
+.\.venv-gpu\Scripts\python.exe scripts/run_llm_fallback_repeats.py --manifest data/llm_fallback_benchmark/manifest.json --output-dir results/llm_fallback_benchmark/ollama_repeats_gpu --repeat 3 --llm-fallback-provider ollama --skip-build --no-warmup
+```
+
+Output:
+
+- `results/llm_fallback_benchmark/ollama_repeats_gpu/README.md`
+- `results/llm_fallback_benchmark/ollama_repeats_gpu/repeat_summary.json`
+
+Kết quả aggregate 3 lần:
+
+| Metric | Mean | Min | Max | Std |
+|---|---:|---:|---:|---:|
+| `success_gain_vs_standard` | `0.133` | `0.080` | `0.160` | `0.046` |
+| `answer_match_gain_vs_standard` | `0.133` | `0.080` | `0.160` | `0.046` |
+| `groundedness` | `1.000` | `1.000` | `1.000` | `0.000` |
+| `hallucination_delta` | `0.000` | `0.000` | `0.000` | `0.000` |
+| `fallback_call_rate` | `0.240` | `0.240` | `0.240` | `0.000` |
+| `fallback_used_rate` | `0.133` | `0.080` | `0.160` | `0.046` |
+| `table_rule_resolved_count` | `2.000` | `2.000` | `2.000` | `0.000` |
+| `table_llm_resolved_count` | `0.000` | `0.000` | `0.000` | `0.000` |
+| `table_total_success` | `0.667` | `0.667` | `0.667` | `0.000` |
+| `latency_overhead_ms` | `1279.892` | `-91.828` | `3959.210` | `2320.579` |
+
+Đọc nhanh:
+
+- Gain thật: có, `success_gain_vs_standard` và `answer_match_gain_vs_standard` đều dương trong 3 run.
+- Grounded safety: giữ được, `groundedness = 1.000`, `hallucination_delta = 0.000`.
+- Table QA: chưa có bằng chứng LLM giúp table, vì `table_llm_resolved_count = 0`; table gain hiện vẫn đến từ `table_rule_resolved_count = 2`.
+
+Kết luận: có thể cân nhắc gate phụ experimental riêng cho fallback vì gain và safety ổn định, nhưng chưa nên gate cứng main path. Vòng tiếp theo nên ưu tiên nâng table QA nếu mục tiêu là tăng chất lượng table bằng LLM-assisted path.
