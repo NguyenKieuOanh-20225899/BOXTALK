@@ -599,6 +599,27 @@ $env:BOXTALK_LLM_MODEL="your-model"
 .\.venv-gpu\Scripts\python.exe scripts/run_llm_fallback_repeats.py --manifest data/llm_fallback_benchmark/manifest.json --output-dir results/llm_fallback_benchmark/openai_repeats_gpu --repeat 3 --llm-fallback-provider openai-compatible --skip-build --no-warmup
 ```
 
+Nếu dùng Ollama local, hệ thống có thể gọi qua OpenAI-compatible API của Ollama. Sau khi cài Ollama và pull model:
+
+```powershell
+ollama pull qwen2.5:7b-instruct
+```
+
+Chạy benchmark:
+
+```powershell
+$env:BOXTALK_LLM_PROVIDER="ollama"
+$env:BOXTALK_LLM_MODEL="qwen2.5:7b-instruct"
+
+.\.venv-gpu\Scripts\python.exe scripts/run_llm_fallback_repeats.py --manifest data/llm_fallback_benchmark/manifest.json --output-dir results/llm_fallback_benchmark/ollama_repeats_gpu --repeat 3 --llm-fallback-provider ollama --skip-build --no-warmup
+```
+
+Với provider `ollama`, mặc định:
+
+- `BOXTALK_LLM_BASE_URL = http://localhost:11434/v1`
+- `BOXTALK_LLM_API_KEY = ollama`
+- `BOXTALK_LLM_MODEL = qwen2.5:7b-instruct` nếu không set biến model khác
+
 Quyết định sau khi có real-provider result:
 
 - Nếu `success_gain_vs_standard` và `answer_match_gain_vs_standard` ổn định dương, `hallucination_delta <= 0`, `groundedness_delta >= 0`, có thể cân nhắc gate phụ experimental.

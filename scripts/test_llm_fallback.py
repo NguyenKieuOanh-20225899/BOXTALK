@@ -12,7 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.qa.llm_fallback import DummyGroundedLLMClient, GroundedLLMFallback, LLMFallbackConfig, provider_runtime_info
+from app.qa.llm_fallback import (
+    DummyGroundedLLMClient,
+    GroundedLLMFallback,
+    LLMFallbackConfig,
+    make_grounded_llm_client,
+    provider_runtime_info,
+)
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
 
@@ -155,6 +161,20 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertEqual(info["model"], "test-model")
         self.assertNotIn("BOXTALK_LLM_API_KEY", info["env"])
         self.assertNotIn("secret-test-key", json.dumps(info))
+
+    def test_ollama_provider_uses_local_openai_compatible_defaults(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            info = provider_runtime_info("ollama")
+            client = make_grounded_llm_client("ollama")
+
+        self.assertTrue(info["ready"])
+        self.assertEqual(info["provider"], "ollama")
+        self.assertEqual(info["base_url"], "http://localhost:11434/v1")
+        self.assertEqual(info["model"], "qwen2.5:7b-instruct")
+        self.assertTrue(info["api_key_present"])
+        self.assertEqual(getattr(client, "provider_name"), "ollama")
+        self.assertEqual(getattr(client, "base_url"), "http://localhost:11434/v1")
+        self.assertEqual(getattr(client, "model"), "qwen2.5:7b-instruct")
 
 
 if __name__ == "__main__":

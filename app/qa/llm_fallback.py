@@ -17,6 +17,11 @@ from app.retrieval.schemas import RetrievedHit
 
 FallbackDecision = Literal["answer", "insufficient_evidence", "not_called", "error"]
 ReasoningMode = Literal["text", "table", "formula", "figure", "multi_span"]
+OPENAI_COMPATIBLE_PROVIDERS = {"openai", "openai-compatible", "openai_compatible"}
+OLLAMA_PROVIDERS = {"ollama"}
+OLLAMA_DEFAULT_BASE_URL = "http://localhost:11434/v1"
+OLLAMA_DEFAULT_API_KEY = "ollama"
+OLLAMA_DEFAULT_MODEL = "qwen2.5:7b-instruct"
 
 NUMBER_RE = re.compile(r"\b\d+(?:[,.]\d+)?\b")
 NUMBER_UNIT_RE = re.compile(
@@ -244,8 +249,11 @@ class OpenAICompatibleGroundedLLMClient:
         base_url: str | None = None,
         api_key: str | None = None,
         model: str | None = None,
+        provider_name: str | None = None,
         timeout_s: float = 30.0,
     ) -> None:
+        if provider_name is not None:
+            self.provider_name = provider_name
         self.base_url = (base_url or os.getenv("BOXTALK_LLM_BASE_URL") or "https://api.openai.com/v1").rstrip("/")
         self.api_key = api_key if api_key is not None else os.getenv("BOXTALK_LLM_API_KEY")
         self.model = model or os.getenv("BOXTALK_LLM_MODEL") or "gpt-4o-mini"
@@ -766,11 +774,34 @@ def citation_from_packet(packet: EvidencePacket) -> dict[str, Any]:
     }
 
 
+def normalize_llm_provider_name(provider: str | None = None) -> str:
+    selected_provider = (provider or os.getenv("BOXTALK_LLM_PROVIDER") or "dummy").strip().lower()
+    if selected_provider in OPENAI_COMPATIBLE_PROVIDERS:
+        return "openai-compatible"
+    if selected_provider in OLLAMA_PROVIDERS:
+        return "ollama"
+    return "dummy"
+
+
+def make_grounded_llm_client(provider: str | None = None, *, timeout_s: float = 30.0) -> BaseGroundedLLMClient:
+    normalized_provider = normalize_llm_provider_name(provider)
+    if normalized_provider == "openai-compatible":
+        return OpenAICompatibleGroundedLLMClient(timeout_s=timeout_s)
+    if normalized_provider == "ollama":
+        return OpenAICompatibleGroundedLLMClient(
+            base_url=os.getenv("BOXTALK_LLM_BASE_URL") or OLLAMA_DEFAULT_BASE_URL,
+            api_key=os.getenv("BOXTALK_LLM_API_KEY") or OLLAMA_DEFAULT_API_KEY,
+            model=os.getenv("BOXTALK_LLM_MODEL") or OLLAMA_DEFAULT_MODEL,
+            provider_name="ollama",
+            timeout_s=timeout_s,
+        )
+    return DummyGroundedLLMClient()
+
+
 def make_llm_fallback_from_env(*, enabled: bool | None = None, provider: str | None = None) -> GroundedLLMFallback | None:
     is_enabled = _bool_env("BOXTALK_ENABLE_LLM_FALLBACK", False) if enabled is None else enabled
     if not is_enabled:
         return None
-    selected_provider = (provider or os.getenv("BOXTALK_LLM_PROVIDER") or "dummy").strip().lower()
     config = LLMFallbackConfig(
         enable_llm_fallback=True,
         enable_table_llm_reasoning=_bool_env("BOXTALK_ENABLE_TABLE_LLM_REASONING", False),
@@ -785,19 +816,20 @@ def make_llm_fallback_from_env(*, enabled: bool | None = None, provider: str | N
         max_packet_chars=int(os.getenv("BOXTALK_LLM_FALLBACK_MAX_PACKET_CHARS", "1800")),
         request_timeout_s=float(os.getenv("BOXTALK_LLM_TIMEOUT_SECONDS", "30")),
     )
-    if selected_provider in {"openai", "openai-compatible", "openai_compatible"}:
-        client: BaseGroundedLLMClient = OpenAICompatibleGroundedLLMClient(timeout_s=config.request_timeout_s)
-    else:
-        client = DummyGroundedLLMClient()
+    client = make_grounded_llm_client(provider, timeout_s=config.request_timeout_s)
     return GroundedLLMFallback(config=config, client=client)
 
 
 def provider_runtime_info(provider: str | None = None) -> dict[str, Any]:
-    selected_provider = (provider or os.getenv("BOXTALK_LLM_PROVIDER") or "dummy").strip().lower()
-    normalized_provider = "openai-compatible" if selected_provider in {"openai", "openai-compatible", "openai_compatible"} else "dummy"
+    normalized_provider = normalize_llm_provider_name(provider)
     base_url = os.getenv("BOXTALK_LLM_BASE_URL")
     model = os.getenv("BOXTALK_LLM_MODEL")
-    api_key_present = bool(os.getenv("BOXTALK_LLM_API_KEY"))
+    api_key = os.getenv("BOXTALK_LLM_API_KEY")
+    if normalized_provider == "ollama":
+        base_url = base_url or OLLAMA_DEFAULT_BASE_URL
+        model = model or OLLAMA_DEFAULT_MODEL
+        api_key = api_key or OLLAMA_DEFAULT_API_KEY
+    api_key_present = bool(api_key)
     missing_envs: list[str] = []
     if normalized_provider == "openai-compatible":
         for name in ("BOXTALK_LLM_BASE_URL", "BOXTALK_LLM_API_KEY", "BOXTALK_LLM_MODEL"):
@@ -807,9 +839,9 @@ def provider_runtime_info(provider: str | None = None) -> dict[str, Any]:
         "provider": normalized_provider,
         "ready": not missing_envs,
         "missing_envs": missing_envs,
-        "base_url": base_url if normalized_provider == "openai-compatible" else None,
-        "model": model if normalized_provider == "openai-compatible" else None,
-        "api_key_present": api_key_present if normalized_provider == "openai-compatible" else False,
+        "base_url": base_url if normalized_provider in {"openai-compatible", "ollama"} else None,
+        "model": model if normalized_provider in {"openai-compatible", "ollama"} else None,
+        "api_key_present": api_key_present if normalized_provider in {"openai-compatible", "ollama"} else False,
         "env": {
             "BOXTALK_ENABLE_LLM_FALLBACK": os.getenv("BOXTALK_ENABLE_LLM_FALLBACK"),
             "BOXTALK_ENABLE_TABLE_LLM_REASONING": os.getenv("BOXTALK_ENABLE_TABLE_LLM_REASONING"),

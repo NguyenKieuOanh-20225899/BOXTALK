@@ -51,7 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fallback-config", default="routed_grounded_with_llm_fallback", help="Fallback QA config.")
     parser.add_argument(
         "--llm-fallback-provider",
-        choices=["dummy", "openai-compatible"],
+        choices=["dummy", "openai-compatible", "ollama"],
         default=os.getenv("BOXTALK_LLM_PROVIDER", "dummy"),
         help="Provider used by the fallback QA config.",
     )
@@ -87,11 +87,10 @@ def load_json(path: Path) -> dict[str, Any]:
 
 def validate_provider_or_exit(provider: str) -> dict[str, Any]:
     info = provider_runtime_info(provider)
-    if info["provider"] == "openai-compatible" and not info["ready"]:
+    if not info["ready"]:
         missing = ", ".join(info["missing_envs"])
         raise SystemExit(
-            "OpenAI-compatible fallback provider is not ready. Missing required env: "
-            f"{missing}. Set BOXTALK_LLM_BASE_URL, BOXTALK_LLM_API_KEY, and BOXTALK_LLM_MODEL."
+            f"{info['provider']} fallback provider is not ready. Missing required env: {missing}."
         )
     return info
 
@@ -100,7 +99,7 @@ def print_provider_runtime(info: dict[str, Any]) -> None:
     print(
         "LLM fallback provider: "
         f"{info.get('provider')} | ready={info.get('ready')} | "
-        f"mode={'real_provider' if info.get('provider') == 'openai-compatible' else 'plumbing_check'} | "
+        f"mode={'plumbing_check' if info.get('provider') == 'dummy' else 'real_provider'} | "
         f"base_url={info.get('base_url') or 'n/a'} | "
         f"model={info.get('model') or 'n/a'} | "
         f"api_key_present={info.get('api_key_present')}",

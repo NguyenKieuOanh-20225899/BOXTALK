@@ -21,10 +21,9 @@ from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
 from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.evidence_checker import EvidenceChecker
 from app.qa.llm_fallback import (
-    DummyGroundedLLMClient,
     GroundedLLMFallback,
     LLMFallbackConfig,
-    OpenAICompatibleGroundedLLMClient,
+    make_grounded_llm_client,
 )
 from app.qa.pipeline import GroundedQAPipeline
 from app.qa.router import QueryRouter
@@ -158,7 +157,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--llm-fallback-provider",
-        choices=["dummy", "openai-compatible"],
+        choices=["dummy", "openai-compatible", "ollama"],
         default="dummy",
         help="Provider for routed_grounded_with_* fallback configs.",
     )
@@ -258,10 +257,7 @@ def make_benchmark_llm_fallback(config_name: str, args: argparse.Namespace) -> G
         min_llm_confidence=args.llm_fallback_min_confidence,
         min_non_answer_override_confidence=args.llm_fallback_min_override_confidence,
     )
-    if args.llm_fallback_provider == "openai-compatible":
-        client = OpenAICompatibleGroundedLLMClient(timeout_s=config.request_timeout_s)
-    else:
-        client = DummyGroundedLLMClient()
+    client = make_grounded_llm_client(args.llm_fallback_provider, timeout_s=config.request_timeout_s)
     return GroundedLLMFallback(config=config, client=client)
 
 
