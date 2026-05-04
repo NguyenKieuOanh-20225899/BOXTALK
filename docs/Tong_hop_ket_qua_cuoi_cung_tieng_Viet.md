@@ -324,16 +324,44 @@ Trạng thái chung:
 ## 7. Các bước tiếp theo được khuyến nghị
 
 1. Chạy benchmark ổn định với real provider cho `grounded_llm_fallback`.
-2. Nâng chất lượng table QA vượt ra ngoài rule-based lookup và interval mapping đơn giản.
-3. Hiển thị rõ hơn việc fallback có được dùng trong UI developer view, và hiển thị nhẹ trong user mode khi hữu ích.
-4. Giữ adaptive integration ở mức final-route-only cho đến khi chất lượng fallback với real provider được đo rõ.
-5. Cải thiện việc đóng gói figure textual:
+2. Giữ adaptive integration ở mức final-route-only cho đến khi chất lượng fallback với real provider được đo rõ.
+3. Nâng chất lượng table QA vượt ra ngoài rule-based lookup và interval mapping đơn giản.
+4. Cải thiện việc đóng gói figure textual:
    - caption
    - đoạn văn lân cận
    - figure references
    - chất lượng evidence packet
-6. Bổ sung PDF production có nhãn để hỗ trợ tuyên bố mạnh hơn về production readiness.
-7. Nếu fallback với real provider chứng minh được độ ổn định, hãy thêm một gate thử nghiệm riêng cho benchmark fallback tập trung thay vì gộp ngay vào gate chính.
+5. Bổ sung PDF production có nhãn để hỗ trợ tuyên bố mạnh hơn về production readiness.
+6. Nếu fallback với real provider chứng minh được độ ổn định, hãy thêm một gate thử nghiệm riêng cho benchmark fallback tập trung thay vì gộp ngay vào gate chính.
+7. Giữ mức trace/UI hiện tại là đủ cho debug trong giai đoạn này; chỉ nên thêm nhãn nhẹ phía user khi giá trị của real-provider fallback đã được chứng minh.
+
+### Kế hoạch thực thi ngay
+
+1. Đặt fallback provider là `openai-compatible`.
+2. Thiết lập các biến môi trường bắt buộc:
+   - `BOXTALK_LLM_BASE_URL`
+   - `BOXTALK_LLM_API_KEY`
+   - `BOXTALK_LLM_MODEL`
+3. Chạy benchmark fallback tập trung 2-3 lần trong cùng một môi trường:
+
+```powershell
+$env:BOXTALK_LLM_PROVIDER="openai-compatible"
+$env:BOXTALK_LLM_BASE_URL="..."
+$env:BOXTALK_LLM_API_KEY="..."
+$env:BOXTALK_LLM_MODEL="..."
+python scripts/benchmark_llm_fallback.py --llm-fallback-provider openai-compatible
+```
+
+4. Ghi lại các chỉ số sau qua nhiều lần chạy:
+   - mức tăng success của fallback so với `routed_grounded`
+   - groundedness / hallucination safety
+   - `table_llm_resolved_count` so với `table_rule_resolved_count`
+   - latency overhead
+5. Dùng luật quyết định sau:
+   - nếu gain ổn định và safety không giảm, tiếp tục giữ fallback ở mức experimental nhưng thêm gate riêng cho fallback benchmark
+   - nếu gain không ổn định hoặc vẫn chủ yếu đến từ rule-based path, không đưa fallback vào release gate và chuyển vòng cải tiến tiếp theo sang table QA
+6. Ghi chú về UI:
+   - API/UI hiện đã trả `final_answer_source` và `fallback_trace`, nên benchmark hiện không bị chặn bởi thiếu trace plumbing
 
 ## 8. Phiên bản báo cáo ngắn
 

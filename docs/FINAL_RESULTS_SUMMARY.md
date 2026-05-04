@@ -326,16 +326,44 @@ Overall status:
 ## 7. Recommended Next Steps
 
 1. Run a stable real-provider benchmark for `grounded_llm_fallback`.
-2. Strengthen table QA beyond simple rule-based lookup and interval mapping.
-3. Surface fallback usage more clearly in the UI developer view and lightly in user mode when useful.
-4. Keep adaptive integration limited to final-route-only until real-provider fallback quality is measured.
-5. Improve figure textual packaging:
+2. Keep adaptive integration limited to final-route-only until real-provider fallback quality is measured.
+3. Strengthen table QA beyond simple rule-based lookup and interval mapping.
+4. Improve figure textual packaging:
    - caption
    - nearby paragraph
    - figure references
    - evidence packet quality
-6. Add labeled production PDFs to support stronger production-readiness claims.
-7. If real-provider fallback proves stable, add a separate experimental gate for the focused fallback benchmark rather than folding it into the main gate immediately.
+5. Add labeled production PDFs to support stronger production-readiness claims.
+6. If real-provider fallback proves stable, add a separate experimental gate for the focused fallback benchmark rather than folding it into the main gate immediately.
+7. Keep the current developer trace/UI instrumentation as sufficient for debugging for now; only add lighter user-facing fallback labeling after real-provider utility is confirmed.
+
+### Immediate execution plan
+
+1. Set the fallback provider to `openai-compatible`.
+2. Set the required runtime env vars:
+   - `BOXTALK_LLM_BASE_URL`
+   - `BOXTALK_LLM_API_KEY`
+   - `BOXTALK_LLM_MODEL`
+3. Run the focused fallback benchmark 2-3 times in the same environment:
+
+```powershell
+$env:BOXTALK_LLM_PROVIDER="openai-compatible"
+$env:BOXTALK_LLM_BASE_URL="..."
+$env:BOXTALK_LLM_API_KEY="..."
+$env:BOXTALK_LLM_MODEL="..."
+python scripts/benchmark_llm_fallback.py --llm-fallback-provider openai-compatible
+```
+
+4. Record these outputs across repeated runs:
+   - fallback success gain versus `routed_grounded`
+   - groundedness / hallucination safety
+   - `table_llm_resolved_count` versus `table_rule_resolved_count`
+   - latency overhead
+5. Use this decision rule:
+   - if gain is stable and safety does not regress, keep fallback experimental but add a separate fallback gate
+   - if gain is unstable or still mostly rule-based, keep fallback out of release gates and focus the next engineering cycle on table QA
+6. UI note:
+   - current API/UI already exposes `final_answer_source` and `fallback_trace`, so benchmarking is not blocked by missing trace plumbing
 
 ## 8. Short Report Version
 

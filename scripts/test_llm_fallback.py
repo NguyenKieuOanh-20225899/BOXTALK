@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+import json
+import os
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.qa.llm_fallback import DummyGroundedLLMClient, GroundedLLMFallback, LLMFallbackConfig
+from app.qa.llm_fallback import DummyGroundedLLMClient, GroundedLLMFallback, LLMFallbackConfig, provider_runtime_info
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
 
@@ -123,6 +126,35 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertTrue(result.used)
         self.assertIn("C+", result.answer or "")
         self.assertNotIn("maps to C.", result.answer or "")
+
+    def test_openai_compatible_provider_reports_missing_envs(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            info = provider_runtime_info("openai-compatible")
+
+        self.assertFalse(info["ready"])
+        self.assertEqual(
+            set(info["missing_envs"]),
+            {"BOXTALK_LLM_BASE_URL", "BOXTALK_LLM_API_KEY", "BOXTALK_LLM_MODEL"},
+        )
+
+    def test_openai_compatible_provider_does_not_expose_api_key(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "BOXTALK_LLM_BASE_URL": "https://example.test/v1",
+                "BOXTALK_LLM_API_KEY": "secret-test-key",
+                "BOXTALK_LLM_MODEL": "test-model",
+            },
+            clear=True,
+        ):
+            info = provider_runtime_info("openai-compatible")
+
+        self.assertTrue(info["ready"])
+        self.assertTrue(info["api_key_present"])
+        self.assertEqual(info["base_url"], "https://example.test/v1")
+        self.assertEqual(info["model"], "test-model")
+        self.assertNotIn("BOXTALK_LLM_API_KEY", info["env"])
+        self.assertNotIn("secret-test-key", json.dumps(info))
 
 
 if __name__ == "__main__":

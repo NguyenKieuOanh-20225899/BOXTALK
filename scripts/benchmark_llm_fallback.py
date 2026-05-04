@@ -133,6 +133,18 @@ def validate_provider_or_exit(provider: str) -> dict[str, Any]:
     return info
 
 
+def print_provider_runtime(info: dict[str, Any]) -> None:
+    print(
+        "LLM fallback provider: "
+        f"{info.get('provider')} | ready={info.get('ready')} | "
+        f"mode={'real_provider' if info.get('provider') == 'openai-compatible' else 'plumbing_check'} | "
+        f"base_url={info.get('base_url') or 'n/a'} | "
+        f"model={info.get('model') or 'n/a'} | "
+        f"api_key_present={info.get('api_key_present')}",
+        flush=True,
+    )
+
+
 def run_raw_benchmark(
     *,
     manifest_dir: Path,
@@ -204,8 +216,11 @@ def build_comparison_rows(
         fallback_success = bool(fallback.get("end_to_end_success"))
         standard_answer_match = bool(standard.get("answer_match"))
         fallback_answer_match = bool(fallback.get("answer_match"))
+        standard_grounded = bool(standard.get("grounded_answer"))
+        fallback_grounded = bool(fallback.get("grounded_answer"))
         fallback_used = bool(fallback.get("fallback_used"))
         final_answer_source = str(fallback.get("final_answer_source") or "standard")
+        fallback_overrode_standard = final_answer_source != "standard"
         comparisons.append(
             {
                 "query_id": query_id,
@@ -220,6 +235,7 @@ def build_comparison_rows(
                 "standard_answer": standard.get("answer"),
                 "standard_answer_match": standard_answer_match,
                 "standard_end_to_end_success": standard_success,
+                "standard_grounded": standard_grounded,
                 "standard_hallucinated": bool(standard.get("hallucinated")),
                 "standard_total_latency_ms": float(standard.get("total_latency_ms") or 0.0),
                 "fallback_decision": fallback.get("decision"),
@@ -227,6 +243,7 @@ def build_comparison_rows(
                 "fallback_model_answer": fallback.get("fallback_answer"),
                 "fallback_answer_match": fallback_answer_match,
                 "fallback_end_to_end_success": fallback_success,
+                "fallback_grounded": fallback_grounded,
                 "fallback_hallucinated": bool(fallback.get("hallucinated")),
                 "fallback_total_latency_ms": float(fallback.get("total_latency_ms") or 0.0),
                 "fallback_called": bool(fallback.get("fallback_called")),
@@ -243,7 +260,10 @@ def build_comparison_rows(
                 "latency_delta_ms": float(fallback.get("total_latency_ms") or 0.0)
                 - float(standard.get("total_latency_ms") or 0.0),
                 "fallback_helped": fallback_success and not standard_success,
-                "fallback_overrode_standard": final_answer_source != "standard",
+                "fallback_overrode_standard": fallback_overrode_standard,
+                "fallback_override_success": fallback_overrode_standard and fallback_success,
+                "fallback_override_grounded": fallback_overrode_standard and fallback_grounded,
+                "fallback_override_hallucinated": fallback_overrode_standard and bool(fallback.get("hallucinated")),
                 "table_rule_resolved": final_answer_source == "table_rule_fallback" and fallback_success,
                 "table_llm_resolved": (
                     str(standard.get("expected_modality") or "") == "table"
@@ -264,10 +284,22 @@ def summarize_comparison(rows: list[dict[str, Any]]) -> dict[str, Any]:
     fallback_success = mean_float(float(bool(row["fallback_end_to_end_success"])) for row in rows)
     standard_answer_match = mean_float(float(bool(row["standard_answer_match"])) for row in rows)
     fallback_answer_match = mean_float(float(bool(row["fallback_answer_match"])) for row in rows)
+    standard_grounded = mean_float(float(bool(row["standard_grounded"])) for row in rows)
+    fallback_grounded = mean_float(float(bool(row["fallback_grounded"])) for row in rows)
     standard_hallucination = mean_float(float(bool(row["standard_hallucinated"])) for row in rows)
     fallback_hallucination = mean_float(float(bool(row["fallback_hallucinated"])) for row in rows)
     fallback_helped_count = sum(1 for row in rows if row["fallback_helped"])
+    fallback_override_rows = [row for row in rows if row["fallback_overrode_standard"]]
     table_rows = [row for row in rows if str(row.get("expected_modality") or "") == "table"]
+    table_rule_rows = [row for row in table_rows if row["final_answer_source"] == "table_rule_fallback"]
+    table_llm_attempt_rows = [
+        row
+        for row in table_rows
+        if row["fallback_llm_called"] and str(row.get("reasoning_mode") or "") == "table"
+    ]
+    table_rule_resolved_count = sum(1 for row in table_rows if row["table_rule_resolved"])
+    table_llm_resolved_count = sum(1 for row in table_rows if row["table_llm_resolved"])
+    table_total_success_count = sum(1 for row in table_rows if row["fallback_end_to_end_success"])
     return {
         "query_count": len(rows),
         "standard_success_rate": standard_success,
@@ -276,17 +308,47 @@ def summarize_comparison(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "standard_answer_match_rate": standard_answer_match,
         "fallback_answer_match_rate": fallback_answer_match,
         "answer_match_gain_vs_standard": fallback_answer_match - standard_answer_match,
+        "standard_grounded_rate": standard_grounded,
+        "fallback_grounded_rate": fallback_grounded,
+        "groundedness": fallback_grounded,
+        "groundedness_delta": fallback_grounded - standard_grounded,
         "fallback_call_rate": mean_float(float(bool(row["fallback_called"])) for row in rows),
         "fallback_used_rate": mean_float(float(bool(row["fallback_used"])) for row in rows),
         "fallback_helped_count": fallback_helped_count,
         "fallback_helped_rate": ratio(fallback_helped_count, len(rows)),
-        "fallback_override_count": sum(1 for row in rows if row["fallback_overrode_standard"]),
+        "fallback_override_count": len(fallback_override_rows),
+        "fallback_override_success_rate": mean_float(
+            float(bool(row["fallback_override_success"])) for row in fallback_override_rows
+        ),
+        "fallback_override_grounded_rate": mean_float(
+            float(bool(row["fallback_override_grounded"])) for row in fallback_override_rows
+        ),
+        "fallback_override_hallucination_rate": mean_float(
+            float(bool(row["fallback_override_hallucinated"])) for row in fallback_override_rows
+        ),
+        "fallback_override_quality": {
+            "override_count": len(fallback_override_rows),
+            "success_rate": mean_float(float(bool(row["fallback_override_success"])) for row in fallback_override_rows),
+            "grounded_rate": mean_float(float(bool(row["fallback_override_grounded"])) for row in fallback_override_rows),
+            "hallucination_rate": mean_float(
+                float(bool(row["fallback_override_hallucinated"])) for row in fallback_override_rows
+            ),
+        },
         "latency_overhead_ms": mean_float(float(row["latency_delta_ms"]) for row in rows),
         "standard_hallucination_rate": standard_hallucination,
         "fallback_hallucination_rate": fallback_hallucination,
         "hallucination_delta": fallback_hallucination - standard_hallucination,
-        "table_rule_resolved_count": sum(1 for row in rows if row["table_rule_resolved"]),
-        "table_llm_resolved_count": sum(1 for row in rows if row["table_llm_resolved"]),
+        "table_rule_resolved_count": table_rule_resolved_count,
+        "table_rule_resolved_rate": ratio(table_rule_resolved_count, len(table_rows)),
+        "table_rule_attempt_count": len(table_rule_rows),
+        "table_rule_success_rate": mean_float(float(bool(row["table_rule_resolved"])) for row in table_rule_rows),
+        "table_llm_resolved_count": table_llm_resolved_count,
+        "table_llm_resolved_rate": ratio(table_llm_resolved_count, len(table_rows)),
+        "table_llm_attempt_count": len(table_llm_attempt_rows),
+        "table_llm_attempt_success_rate": mean_float(
+            float(bool(row["table_llm_resolved"])) for row in table_llm_attempt_rows
+        ),
+        "table_total_success_count": table_total_success_count,
         "table_total_success": mean_float(float(bool(row["fallback_end_to_end_success"])) for row in table_rows),
         "table_question_count": len(table_rows),
         "multi_span_helped_count": sum(
@@ -319,6 +381,72 @@ def grouped_summary(rows: list[dict[str, Any]], key_name: str) -> dict[str, Any]
     return {key: summarize_comparison(group_rows) for key, group_rows in sorted(groups.items())}
 
 
+def build_decision_readout(summary: dict[str, Any]) -> dict[str, Any]:
+    aggregate = summary.get("aggregate", {})
+    by_reasoning_mode = summary.get("by_reasoning_mode", {})
+    by_expected_modality = summary.get("by_expected_modality", {})
+    success_gain = float(aggregate.get("success_gain_vs_standard") or 0.0)
+    answer_match_gain = float(aggregate.get("answer_match_gain_vs_standard") or 0.0)
+    hallucination_delta = float(aggregate.get("hallucination_delta") or 0.0)
+    groundedness = float(aggregate.get("groundedness") or 0.0)
+    groundedness_delta = float(aggregate.get("groundedness_delta") or 0.0)
+    table_llm_resolved_count = int(aggregate.get("table_llm_resolved_count") or 0)
+    fallback_used_rate = float(aggregate.get("fallback_used_rate") or 0.0)
+    fallback_override_quality = aggregate.get("fallback_override_quality") or {}
+    real_gain_status = (
+        "positive" if success_gain > 0.0 or answer_match_gain > 0.0 else "not_observed"
+    )
+    safety_status = (
+        "kept" if hallucination_delta <= 0.0 and groundedness_delta >= 0.0 else "needs_review"
+    )
+    targeting_status = (
+        "provider_helped_table" if table_llm_resolved_count > 0 else "no_table_llm_gain_observed"
+    )
+    is_real_provider = summary.get("benchmark_mode") == "real_provider"
+    gate_candidate = (
+        is_real_provider
+        and success_gain > 0.0
+        and answer_match_gain >= 0.0
+        and hallucination_delta <= 0.0
+        and groundedness_delta >= 0.0
+    )
+    return {
+        "real_gain": {
+            "status": real_gain_status,
+            "success_gain_vs_standard": success_gain,
+            "answer_match_gain_vs_standard": answer_match_gain,
+        },
+        "grounded_safety": {
+            "status": safety_status,
+            "groundedness": groundedness,
+            "groundedness_delta": groundedness_delta,
+            "hallucination_delta": hallucination_delta,
+            "fallback_override_quality": fallback_override_quality,
+        },
+        "targeting": {
+            "status": targeting_status,
+            "fallback_used_rate": fallback_used_rate,
+            "table_rule_resolved_count": int(aggregate.get("table_rule_resolved_count") or 0),
+            "table_llm_resolved_count": table_llm_resolved_count,
+            "table_total_success": aggregate.get("table_total_success"),
+            "by_reasoning_mode": by_reasoning_mode,
+            "by_expected_modality": by_expected_modality,
+        },
+        "experimental_gate_suggestion": {
+            "candidate": gate_candidate,
+            "reason": (
+                "Consider a separate experimental fallback gate only after repeated real-provider runs are stable."
+                if gate_candidate
+                else (
+                    "Dummy provider results are a plumbing check only; do not add a fallback gate from this run."
+                    if not is_real_provider
+                    else "Do not add a fallback gate yet; inspect real-provider stability and table QA behavior first."
+                )
+            ),
+        },
+    }
+
+
 def json_for_csv(value: Any) -> Any:
     if isinstance(value, (dict, list)):
         return json.dumps(value, ensure_ascii=False)
@@ -337,46 +465,132 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
             writer.writerow({key: json_for_csv(value) for key, value in row.items()})
 
 
+def format_metric(value: Any, *, digits: int = 3) -> str:
+    if value is None:
+        return "n/a"
+    try:
+        return f"{float(value):.{digits}f}"
+    except (TypeError, ValueError):
+        return str(value)
+
+
 def write_markdown(path: Path, summary: dict[str, Any]) -> None:
     aggregate = summary["aggregate"]
     provider = summary["provider"]
+    readout = summary.get("decision_readout", {})
+    real_gain = readout.get("real_gain", {})
+    grounded_safety = readout.get("grounded_safety", {})
+    targeting = readout.get("targeting", {})
+    gate_suggestion = readout.get("experimental_gate_suggestion", {})
     lines = [
         "# LLM Fallback Benchmark",
         "",
         f"- Provider: `{provider['provider']}`",
         f"- Provider ready: `{provider['ready']}`",
+        f"- Provider base URL: `{provider.get('base_url') or 'n/a'}`",
+        f"- Provider model: `{provider.get('model') or 'n/a'}`",
+        f"- API key present: `{provider.get('api_key_present')}`",
         f"- Benchmark mode: `{summary['benchmark_mode']}`",
         f"- Standard config: `{summary['standard_config']}`",
         f"- Fallback config: `{summary['fallback_config']}`",
         f"- Query count: {aggregate.get('query_count', 0)}",
         "",
+        "## Decision Readout",
+        "",
+        "| Question | Readout | Key metrics |",
+        "|---|---|---|",
+        (
+            "| Does the selected provider create gain? | `{status}` | success gain `{success}`, answer match gain `{answer}` |"
+        ).format(
+            status=real_gain.get("status", "n/a"),
+            success=format_metric(real_gain.get("success_gain_vs_standard")),
+            answer=format_metric(real_gain.get("answer_match_gain_vs_standard")),
+        ),
+        (
+            "| Does it stay grounded? | `{status}` | groundedness `{grounded}`, hallucination delta `{hallucination}` |"
+        ).format(
+            status=grounded_safety.get("status", "n/a"),
+            grounded=format_metric(grounded_safety.get("groundedness")),
+            hallucination=format_metric(grounded_safety.get("hallucination_delta")),
+        ),
+        (
+            "| Does it help in the right place? | `{status}` | fallback used `{used}`, table LLM resolved `{table_llm}` |"
+        ).format(
+            status=targeting.get("status", "n/a"),
+            used=format_metric(targeting.get("fallback_used_rate")),
+            table_llm=targeting.get("table_llm_resolved_count", 0),
+        ),
+        (
+            "| Experimental gate suggestion | `{candidate}` | {reason} |"
+        ).format(
+            candidate=gate_suggestion.get("candidate", False),
+            reason=gate_suggestion.get("reason", "n/a"),
+        ),
+        "",
+        "## Aggregate Metrics",
+        "",
         "| Metric | Value |",
         "|---|---:|",
         f"| Success gain vs standard | {aggregate.get('success_gain_vs_standard', 0.0):.3f} |",
         f"| Answer match gain vs standard | {aggregate.get('answer_match_gain_vs_standard', 0.0):.3f} |",
+        f"| Fallback grounded rate | {aggregate.get('fallback_grounded_rate', 0.0):.3f} |",
+        f"| Groundedness delta | {aggregate.get('groundedness_delta', 0.0):.3f} |",
         f"| Fallback call rate | {aggregate.get('fallback_call_rate', 0.0):.3f} |",
         f"| Fallback used rate | {aggregate.get('fallback_used_rate', 0.0):.3f} |",
         f"| Fallback helped count | {aggregate.get('fallback_helped_count', 0)} |",
         f"| Fallback override count | {aggregate.get('fallback_override_count', 0)} |",
+        f"| Fallback override success rate | {aggregate.get('fallback_override_success_rate', 0.0):.3f} |",
+        f"| Fallback override grounded rate | {aggregate.get('fallback_override_grounded_rate', 0.0):.3f} |",
         f"| Latency overhead ms | {aggregate.get('latency_overhead_ms', 0.0):.1f} |",
         f"| Hallucination delta | {aggregate.get('hallucination_delta', 0.0):.3f} |",
         f"| Table rule resolved count | {aggregate.get('table_rule_resolved_count', 0)} |",
+        f"| Table rule resolved rate | {format_metric(aggregate.get('table_rule_resolved_rate'))} |",
         f"| Table LLM resolved count | {aggregate.get('table_llm_resolved_count', 0)} |",
+        f"| Table LLM resolved rate | {format_metric(aggregate.get('table_llm_resolved_rate'))} |",
+        f"| Table LLM attempt count | {aggregate.get('table_llm_attempt_count', 0)} |",
+        f"| Table LLM attempt success rate | {aggregate.get('table_llm_attempt_success_rate', 0.0):.3f} |",
+        f"| Table total success | {aggregate.get('table_total_success', 0.0):.3f} |",
         "",
-        "## By Expected Modality",
+        "## By Reasoning Mode",
         "",
-        "| Modality | Queries | Success Gain | Call Rate | Used Rate | Helped |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Reasoning mode | Queries | Success Gain | Answer Gain | Grounded | Hallucination Delta | Used Rate | Table LLM Resolved |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
-    for name, metrics in summary.get("by_expected_modality", {}).items():
+    for name, metrics in summary.get("by_reasoning_mode", {}).items():
         lines.append(
-            "| {name} | {queries} | {gain:.3f} | {call:.3f} | {used:.3f} | {helped} |".format(
+            "| {name} | {queries} | {gain} | {answer} | {grounded} | {hallucination} | {used} | {table_llm} |".format(
                 name=name,
                 queries=metrics.get("query_count", 0),
-                gain=metrics.get("success_gain_vs_standard", 0.0),
-                call=metrics.get("fallback_call_rate", 0.0),
-                used=metrics.get("fallback_used_rate", 0.0),
-                helped=metrics.get("fallback_helped_count", 0),
+                gain=format_metric(metrics.get("success_gain_vs_standard")),
+                answer=format_metric(metrics.get("answer_match_gain_vs_standard")),
+                grounded=format_metric(metrics.get("groundedness")),
+                hallucination=format_metric(metrics.get("hallucination_delta")),
+                used=format_metric(metrics.get("fallback_used_rate")),
+                table_llm=metrics.get("table_llm_resolved_count", 0),
+            )
+        )
+    lines.extend(
+        [
+            "",
+        "## By Expected Modality",
+        "",
+            "| Modality | Queries | Success Gain | Answer Gain | Grounded | Call Rate | Used Rate | Table Rule | Table LLM | Total Table Success |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for name, metrics in summary.get("by_expected_modality", {}).items():
+        lines.append(
+            "| {name} | {queries} | {gain} | {answer} | {grounded} | {call} | {used} | {table_rule} | {table_llm} | {table_total} |".format(
+                name=name,
+                queries=metrics.get("query_count", 0),
+                gain=format_metric(metrics.get("success_gain_vs_standard")),
+                answer=format_metric(metrics.get("answer_match_gain_vs_standard")),
+                grounded=format_metric(metrics.get("groundedness")),
+                call=format_metric(metrics.get("fallback_call_rate")),
+                used=format_metric(metrics.get("fallback_used_rate")),
+                table_rule=metrics.get("table_rule_resolved_count", 0),
+                table_llm=metrics.get("table_llm_resolved_count", 0),
+                table_total=format_metric(metrics.get("table_total_success")),
             )
         )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -385,6 +599,8 @@ def write_markdown(path: Path, summary: dict[str, Any]) -> None:
 def main() -> None:
     args = parse_args()
     manifest_path = args.manifest if args.manifest.is_absolute() else (ROOT / args.manifest)
+    provider_info = validate_provider_or_exit(args.llm_fallback_provider)
+    print_provider_runtime(provider_info)
     ensure_dataset(manifest_path, args)
     if args.dry_run:
         return
@@ -392,7 +608,6 @@ def main() -> None:
     if not manifest_path.exists():
         raise SystemExit(f"Fallback benchmark manifest not found: {manifest_path}")
 
-    provider_info = validate_provider_or_exit(args.llm_fallback_provider)
     manifest = load_json(manifest_path)
     doc = manifest.get("document")
     if not isinstance(doc, dict):
@@ -463,6 +678,7 @@ def main() -> None:
             [row for row in comparison_rows if row["weak_standard_answer_case"]]
         ),
     }
+    summary["decision_readout"] = build_decision_readout(summary)
 
     (output_dir / "comparison_summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2),

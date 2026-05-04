@@ -795,6 +795,9 @@ def make_llm_fallback_from_env(*, enabled: bool | None = None, provider: str | N
 def provider_runtime_info(provider: str | None = None) -> dict[str, Any]:
     selected_provider = (provider or os.getenv("BOXTALK_LLM_PROVIDER") or "dummy").strip().lower()
     normalized_provider = "openai-compatible" if selected_provider in {"openai", "openai-compatible", "openai_compatible"} else "dummy"
+    base_url = os.getenv("BOXTALK_LLM_BASE_URL")
+    model = os.getenv("BOXTALK_LLM_MODEL")
+    api_key_present = bool(os.getenv("BOXTALK_LLM_API_KEY"))
     missing_envs: list[str] = []
     if normalized_provider == "openai-compatible":
         for name in ("BOXTALK_LLM_BASE_URL", "BOXTALK_LLM_API_KEY", "BOXTALK_LLM_MODEL"):
@@ -804,6 +807,9 @@ def provider_runtime_info(provider: str | None = None) -> dict[str, Any]:
         "provider": normalized_provider,
         "ready": not missing_envs,
         "missing_envs": missing_envs,
+        "base_url": base_url if normalized_provider == "openai-compatible" else None,
+        "model": model if normalized_provider == "openai-compatible" else None,
+        "api_key_present": api_key_present if normalized_provider == "openai-compatible" else False,
         "env": {
             "BOXTALK_ENABLE_LLM_FALLBACK": os.getenv("BOXTALK_ENABLE_LLM_FALLBACK"),
             "BOXTALK_ENABLE_TABLE_LLM_REASONING": os.getenv("BOXTALK_ENABLE_TABLE_LLM_REASONING"),
@@ -812,6 +818,7 @@ def provider_runtime_info(provider: str | None = None) -> dict[str, Any]:
             "BOXTALK_LLM_PROVIDER": os.getenv("BOXTALK_LLM_PROVIDER"),
             "BOXTALK_LLM_BASE_URL": os.getenv("BOXTALK_LLM_BASE_URL"),
             "BOXTALK_LLM_MODEL": os.getenv("BOXTALK_LLM_MODEL"),
+            "BOXTALK_LLM_API_KEY_PRESENT": str(api_key_present),
             "BOXTALK_LLM_FALLBACK_SUFFICIENCY_THRESHOLD": os.getenv("BOXTALK_LLM_FALLBACK_SUFFICIENCY_THRESHOLD"),
             "BOXTALK_LLM_FALLBACK_MIN_CONFIDENCE": os.getenv("BOXTALK_LLM_FALLBACK_MIN_CONFIDENCE"),
             "BOXTALK_LLM_FALLBACK_MIN_OVERRIDE_CONFIDENCE": os.getenv("BOXTALK_LLM_FALLBACK_MIN_OVERRIDE_CONFIDENCE"),
