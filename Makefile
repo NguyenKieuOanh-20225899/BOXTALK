@@ -25,7 +25,9 @@
 	llm-fallback-benchmark \
 	ui-dev \
 	user-pdf-suite \
-	baseline-gate
+	baseline-gate \
+	fallback-gate \
+	experimental-gate
 
 PYTHON ?= .venv/bin/python
 BENCHMARKS_ROOT ?= data/benchmarks
@@ -61,6 +63,8 @@ LLM_FALLBACK_BENCHMARK_DIR ?= results/llm_fallback_benchmark/current
 LLM_FALLBACK_PROVIDER ?= dummy
 LLM_FALLBACK_ARGS ?=
 BASELINE_GATE_ARGS ?=
+FALLBACK_GATE_SUMMARY ?= results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json
+FALLBACK_GATE_ARGS ?=
 BEIR_DATASET ?= scifact
 BEIR_QUERY_LIMIT ?= 50
 BEIR_CORPUS_LIMIT ?= 2000
@@ -95,7 +99,8 @@ help:
 		'llm-fallback-benchmark         run the fallback benchmark with the configured provider' \
 		'ui-dev                         run the FastAPI backend plus static MVP UI' \
 		'user-pdf-suite                 run aggregate QA benchmark over user PDF suite manifest' \
-		'baseline-gate                  fail if locked benchmark baselines regress'
+		'baseline-gate                  fail if locked benchmark baselines regress' \
+		'fallback-gate                  run optional experimental grounded_llm_fallback gate'
 
 benchmark-setup-all:
 	$(PYTHON) scripts/setup_benchmark_datasets.py --dataset all --benchmarks-root $(BENCHMARKS_ROOT) --pubtables-splits $(PUBTABLES_SPLITS)
@@ -188,3 +193,8 @@ user-pdf-suite:
 
 baseline-gate:
 	$(PYTHON) scripts/check_regression_gates.py $(BASELINE_GATE_ARGS)
+
+fallback-gate:
+	$(PYTHON) scripts/check_regression_gates.py --skip-user-suite --skip-readiness --fallback-summary $(FALLBACK_GATE_SUMMARY) $(FALLBACK_GATE_ARGS)
+
+experimental-gate: fallback-gate

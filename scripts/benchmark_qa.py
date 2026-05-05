@@ -523,9 +523,19 @@ def structured_answer_supported(*, answer: str, cited_text: str, reasoning_mode:
 
     answer_numbers = re.findall(r"\d+(?:[.,]\d+)?", answer_folded)
     answer_grades = re.findall(r"(?<!\w)[a-f][+-]?(?!\w)", answer_folded)
-    if answer_numbers and not all(number in cited_folded for number in answer_numbers):
-        return False
-    if reasoning_mode == "table" and answer_grades and not all(grade in cited_folded for grade in answer_grades):
+    if reasoning_mode == "table":
+        supported_numbers = [number for number in answer_numbers if number_supported_by_text(number, cited_folded)]
+        if answer_numbers and not supported_numbers and not answer_grades:
+            return False
+        if answer_grades and not all(grade in cited_folded for grade in answer_grades):
+            return False
+        answer_terms = token_set(answer)
+        cited_terms = token_set(cited_text)
+        if not answer_terms:
+            return False
+        overlap = len(answer_terms & cited_terms) / len(answer_terms)
+        return overlap >= 0.20 or bool(supported_numbers or answer_grades)
+    if answer_numbers and not all(number_supported_by_text(number, cited_folded) for number in answer_numbers):
         return False
 
     answer_terms = token_set(answer)
@@ -533,13 +543,19 @@ def structured_answer_supported(*, answer: str, cited_text: str, reasoning_mode:
     if not answer_terms:
         return False
     overlap = len(answer_terms & cited_terms) / len(answer_terms)
-    if reasoning_mode == "table":
-        return overlap >= 0.20 or bool(answer_numbers or answer_grades)
     if reasoning_mode == "formula":
         return overlap >= 0.30 or bool(answer_numbers)
     if reasoning_mode == "figure":
         return overlap >= 0.30
     return overlap >= 0.45
+
+
+def number_supported_by_text(number: str, text: str) -> bool:
+    normalized = number.replace(",", ".")
+    variants = {number, normalized, normalized.replace(".", ",")}
+    if normalized.endswith(".0"):
+        variants.add(normalized[:-2])
+    return any(variant in text for variant in variants)
 
 
 def answer_status(*, expected_answerable: bool, decision: str) -> str:

@@ -72,14 +72,51 @@ The default regression gate checks:
 Run:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\check_regression_gates.py
+.\.venv-gpu\Scripts\python.exe scripts\check_regression_gates.py
 ```
 
 or:
 
 ```bash
-make baseline-gate PYTHON=.venv/Scripts/python.exe
+make baseline-gate PYTHON=.venv-gpu/Scripts/python.exe
 ```
 
 Use `--require-production-ready` only after the production labeled PDF benchmark
 exists and should become a hard release gate.
+
+## Experimental Fallback Gate
+
+`grounded_llm_fallback` is protected by a separate optional gate. This is not
+part of the hard release gate for `bm25_only`, `routed_grounded`, or scientific
+paper QA.
+
+Current source artifact:
+
+- `results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json`
+
+The experimental fallback gate checks the worst repeated-run values where
+applicable:
+
+- `success_gain_vs_standard > 0.0`
+- `answer_match_gain_vs_standard >= 0.0`
+- `groundedness >= 1.0`
+- `hallucination_delta <= 0.0`
+- `table_llm_resolved_count > 0.0`
+
+Run only the experimental fallback gate:
+
+```powershell
+.\.venv-gpu\Scripts\python.exe scripts\check_regression_gates.py --skip-user-suite --skip-readiness --fallback-summary results\llm_fallback_benchmark\table_patch_ollama_repeats_gpu\repeat_summary.json
+```
+
+or:
+
+```bash
+make fallback-gate PYTHON=.venv-gpu/Scripts/python.exe FALLBACK_GATE_SUMMARY=results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json
+```
+
+If `--fallback-summary` is omitted, the fallback gate is reported as skipped
+and does not fail the main regression gate.
+
+Use `--write-report path\to\fallback_gate_report.json` when a machine-readable
+pass/fail report is needed.

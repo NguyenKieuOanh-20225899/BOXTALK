@@ -18,8 +18,10 @@ from app.qa.llm_fallback import (
     LLMFallbackConfig,
     make_grounded_llm_client,
     provider_runtime_info,
+    response_from_payload,
 )
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
+from app.qa.table_lookup_utils import lookup_table_answer, normalize_table_from_sources
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
 
 
@@ -133,6 +135,74 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertIn("C+", result.answer or "")
         self.assertNotIn("maps to C.", result.answer or "")
 
+    def test_table_rule_based_reverse_lookup_returns_interval_and_grade_point(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Score Range | Letter Grade | Grade Point\n8.0 - 8.9 | B+ | 3.5\n6.5 - 6.9 | C+ | 2.5"
+        result = fallback.maybe_generate(
+            question="What score band corresponds to B+ and what grade point does it carry?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table maps score ranges to grades."),
+        )
+
+        self.assertTrue(result.used)
+        self.assertFalse(result.llm_called)
+        self.assertIn("8.0 - 8.9", result.answer or "")
+        self.assertIn("3.5", result.answer or "")
+
+    def test_table_rule_based_boundary_and_below_are_not_confused(self) -> None:
+        table = normalize_table_from_sources(
+            table_text=(
+                "Score Range | Grade\n"
+                "4.0 - 5.4 | D\n"
+                "Below 4.0 | F"
+            )
+        )
+        self.assertIsNotNone(table)
+        boundary = lookup_table_answer("4.0 belongs to which range?", table)  # type: ignore[arg-type]
+        below = lookup_table_answer("3.9 belongs to which grade?", table)  # type: ignore[arg-type]
+
+        self.assertIsNotNone(boundary)
+        self.assertIn("D", boundary.answer if boundary else "")
+        self.assertIsNotNone(below)
+        self.assertIn("F", below.answer if below else "")
+
+    def test_table_normalizes_mixed_decimal_separators(self) -> None:
+        table = normalize_table_from_sources(
+            table_text=(
+                "Khoang diem | Diem chu\n"
+                "6,5 - 6,9 | C+\n"
+                "5.5 - 6.4 | C"
+            )
+        )
+        self.assertIsNotNone(table)
+        result = lookup_table_answer("6.5 la C hay C+?", table)  # type: ignore[arg-type]
+
+        self.assertIsNotNone(result)
+        self.assertIn("C+", result.answer if result else "")
+
+    def test_table_rule_based_multiple_column_lookup(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Model | Heads | Layers | BLEU\nBase | 8 | 6 | 27.3\nLarge | 16 | 12 | 29.8"
+        result = fallback.maybe_generate(
+            question="Which configuration uses 12 layers and what BLEU does it reach?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table compares model configurations."),
+        )
+
+        self.assertTrue(result.used)
+        self.assertIn("Large", result.answer or "")
+        self.assertIn("29.8", result.answer or "")
+
     def test_openai_compatible_provider_reports_missing_envs(self) -> None:
         with patch.dict(os.environ, {}, clear=True):
             info = provider_runtime_info("openai-compatible")
@@ -175,6 +245,21 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertEqual(getattr(client, "provider_name"), "ollama")
         self.assertEqual(getattr(client, "base_url"), "http://localhost:11434/v1")
         self.assertEqual(getattr(client, "model"), "qwen2.5:7b-instruct")
+
+    def test_llm_response_with_answer_and_evidence_ids_implies_answer_decision(self) -> None:
+        response = response_from_payload(
+            {
+                "answer": "B+ has a higher grade point than C+.",
+                "used_evidence_ids": ["E1"],
+                "reasoning_mode": "table",
+                "confidence": 0.95,
+            },
+            "table",
+        )
+
+        self.assertEqual(response.decision, "answer")
+        self.assertEqual(response.used_evidence_ids, ["E1"])
+        self.assertEqual(response.reasoning_mode, "table")
 
 
 if __name__ == "__main__":

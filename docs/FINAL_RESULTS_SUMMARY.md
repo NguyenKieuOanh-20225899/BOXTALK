@@ -50,6 +50,7 @@ The repo now has:
 - `results/user_pdf_benchmark_suite/attention_smoke/documents/attention_scientific_en/qa_summary.json`
 - `results/qa_benchmark/attention_scientific_focus/qa_summary.json`
 - `results/llm_fallback_benchmark/dummy_smoke/comparison_summary.json`
+- `results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json`
 - `results/qa_benchmark/llm_fallback_smoke/qa_summary.json`
 - `results/retrieval_readiness/20260420T150853Z/readiness_report.json`
 - `results/retrieval_benchmark/smoke_bm25_only/benchmark_summary.json`
@@ -241,9 +242,30 @@ Important modality breakdown:
 
 Interpretation:
 
-- Current measured gain exists, but in the dummy benchmark it comes from the rule-based table path rather than a real provider.
+- The dummy benchmark remains useful as a plumbing smoke test.
+- In the dummy benchmark, table gain mostly comes from the rule-based table path rather than a real provider.
 - The LLM plumbing, policy, trace, and benchmark infrastructure are ready.
-- Real-provider gain is still pending stable benchmarking.
+
+#### Focused fallback benchmark, Ollama real provider repeat
+
+From `results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json`:
+
+| Metric | Mean | Min | Max |
+|---|---:|---:|---:|
+| `success_gain_vs_standard` | 0.133 | 0.133 | 0.133 |
+| `answer_match_gain_vs_standard` | 0.133 | 0.133 | 0.133 |
+| `groundedness` | 1.000 | 1.000 | 1.000 |
+| `hallucination_delta` | 0.000 | 0.000 | 0.000 |
+| `table_rule_resolved_count` | 3.000 | 3.000 | 3.000 |
+| `table_llm_resolved_count` | 1.000 | 1.000 | 1.000 |
+| `table_total_success` | 0.643 | 0.643 | 0.643 |
+
+Interpretation:
+
+- Real-provider fallback now shows stable positive gain on the focused fallback benchmark.
+- Groundedness stayed at `1.000` and hallucination delta stayed at `0.000`.
+- `table_llm_resolved_count` is now above zero, so the LLM-assisted table path is measurable.
+- This supports an optional experimental fallback gate, not promotion to the main QA path.
 
 #### Controlled handbook smoke with fallback enabled
 
@@ -258,7 +280,7 @@ From `results/qa_benchmark/llm_fallback_smoke/qa_summary.json`:
 Interpretation:
 
 - On the normal controlled handbook benchmark, fallback currently stays safe and non-disruptive.
-- Real measured gain is therefore not yet general-purpose; it is still focused on targeted fallback cases.
+- Real measured gain is not yet general-purpose; it is currently strongest on the focused fallback benchmark.
 
 ## 4. Baseline And Gate Status
 
@@ -300,6 +322,26 @@ Overall status:
 
 - Main gates are currently passing.
 
+### Experimental fallback gate
+
+The `grounded_llm_fallback` gate is separate and optional. It is based on the
+Ollama real-provider repeat summary and is not folded into the main release
+gate.
+
+Current checks:
+
+- `success_gain_vs_standard > 0.0`
+- `answer_match_gain_vs_standard >= 0.0`
+- `groundedness >= 1.0`
+- `hallucination_delta <= 0.0`
+- `table_llm_resolved_count > 0.0`
+
+Run:
+
+```powershell
+.\.venv-gpu\Scripts\python.exe scripts\check_regression_gates.py --skip-user-suite --skip-readiness --fallback-summary results\llm_fallback_benchmark\table_patch_ollama_repeats_gpu\repeat_summary.json
+```
+
 ## 5. Main Conclusions
 
 1. `bm25_only` is still the strongest baseline for Vietnamese policy/regulation documents.
@@ -309,15 +351,15 @@ Overall status:
    - `grounded_rate = 1.0`
    - `hallucination_rate = 0.0` for `routed_grounded`
 5. Retrieval is strong enough for prototyping across BM25, dense, and hybrid modes, but not yet ready for production claims.
-6. The LLM fallback stack is now benchmarkable, traceable, and UI-ready, but still experimental.
-7. Current fallback gain is real on the focused benchmark, but mostly from the table rule-first path rather than a real LLM provider.
+6. The LLM fallback stack is now benchmarkable, traceable, UI-ready, and protected by an optional experimental gate.
+7. Current fallback gain is real and stable on the focused Ollama benchmark, including one stable LLM-assisted table resolution, but it remains experimental.
 8. The repo now has a usable MVP UI on top of the grounded QA stack.
 
 ## 6. Current Limitations
 
-- Real-provider LLM fallback has plumbing and benchmarking support, but not yet a stable benchmark result that is strong enough to lock into a gate.
+- Real-provider LLM fallback has a stable focused benchmark and an optional experimental gate, but it is not a main release gate.
 - `figure` handling is still textual fallback only; there is no vision-grounded answer path yet.
-- Table rule-based support currently covers simpler lookup/range mapping cases better than harder table reasoning.
+- Table QA improved, but harder table reasoning still needs more coverage before fallback can be considered a default path.
 - `adaptive_route_retry` is still experimental and is not the default main path.
 - UI is now usable, but still MVP quality rather than fully polished product UI.
 - Production ingest/retrieval claims are blocked by the absence of labeled production PDFs.
@@ -325,48 +367,32 @@ Overall status:
 
 ## 7. Recommended Next Steps
 
-1. Run a stable real-provider benchmark for `grounded_llm_fallback`.
-2. Keep adaptive integration limited to final-route-only until real-provider fallback quality is measured.
-3. Strengthen table QA beyond simple rule-based lookup and interval mapping.
+1. Keep the experimental fallback gate separate from the main gate and monitor it after table QA changes.
+2. Keep adaptive integration limited to final-route-only while fallback remains experimental.
+3. Continue strengthening table QA beyond lookup and interval mapping.
 4. Improve figure textual packaging:
    - caption
    - nearby paragraph
    - figure references
    - evidence packet quality
 5. Add labeled production PDFs to support stronger production-readiness claims.
-6. If real-provider fallback proves stable, add a separate experimental gate for the focused fallback benchmark rather than folding it into the main gate immediately.
+6. Re-run the Ollama fallback repeat benchmark after table QA changes and update the experimental gate input artifact.
 7. Keep the current developer trace/UI instrumentation as sufficient for debugging for now; only add lighter user-facing fallback labeling after real-provider utility is confirmed.
 
 ### Immediate execution plan
 
-1. Set the fallback provider to `openai-compatible`.
-2. Set the required runtime env vars:
-   - `BOXTALK_LLM_BASE_URL`
-   - `BOXTALK_LLM_API_KEY`
-   - `BOXTALK_LLM_MODEL`
-3. Run the focused fallback benchmark 2-3 times in the same environment:
+1. Keep using `.venv-gpu` for fallback benchmark and gate checks.
+2. Run the optional fallback gate against the current Ollama repeat artifact:
 
 ```powershell
-$env:BOXTALK_LLM_PROVIDER="openai-compatible"
-$env:BOXTALK_LLM_BASE_URL="..."
-$env:BOXTALK_LLM_API_KEY="..."
-$env:BOXTALK_LLM_MODEL="..."
-python scripts/benchmark_llm_fallback.py --llm-fallback-provider openai-compatible
+.\.venv-gpu\Scripts\python.exe scripts\check_regression_gates.py --skip-user-suite --skip-readiness --fallback-summary results\llm_fallback_benchmark\table_patch_ollama_repeats_gpu\repeat_summary.json
 ```
 
-4. Record these outputs across repeated runs:
-   - fallback success gain versus `routed_grounded`
-   - groundedness / hallucination safety
-   - `table_llm_resolved_count` versus `table_rule_resolved_count`
-   - latency overhead
-5. Use this decision rule:
-   - if gain is stable and safety does not regress, keep fallback experimental but add a separate fallback gate
-   - if gain is unstable or still mostly rule-based, keep fallback out of release gates and focus the next engineering cycle on table QA
-6. UI note:
-   - current API/UI already exposes `final_answer_source` and `fallback_trace`, so benchmarking is not blocked by missing trace plumbing
+3. Re-run the Ollama repeat benchmark after any table QA patch and point the gate at the new `repeat_summary.json`.
+4. Keep the main `baseline-gate` unchanged unless the locked main baselines are intentionally re-raised.
 
 ## 8. Short Report Version
 
 If only one slide or one paragraph is needed:
 
-> The project currently uses `routed_grounded` as the main grounded QA path, with `bm25_only` kept as the strongest lexical baseline and `adaptive_route_retry` plus `grounded_llm_fallback` kept experimental. Scientific ingest is stable on PubTables 25/100/500 with 100% success and strong IoU/F1 under the retained GPU path. On the latest user PDF suite recheck, `bm25_only` achieved `0.835` success and `routed_grounded` achieved `0.864` with `grounded_rate = 1.0` and `hallucination_rate = 0.0`. The largest QA improvement was scientific paper QA, where `routed_grounded` improved from `0.478` to `1.000` success. The LLM fallback layer is now benchmarkable and safe, with current dummy-provider gains concentrated in focused table-style cases, but it is still experimental and not yet part of the main release gate.
+> The project currently uses `routed_grounded` as the main grounded QA path, with `bm25_only` kept as the strongest lexical baseline and `adaptive_route_retry` plus `grounded_llm_fallback` kept experimental. Scientific ingest is stable on PubTables 25/100/500 with 100% success and strong IoU/F1 under the retained GPU path. On the latest user PDF suite recheck, `bm25_only` achieved `0.835` success and `routed_grounded` achieved `0.864` with `grounded_rate = 1.0` and `hallucination_rate = 0.0`. The largest QA improvement was scientific paper QA, where `routed_grounded` improved from `0.478` to `1.000` success. The Ollama fallback repeat benchmark now shows stable focused gain (`success_gain_vs_standard = 0.133`) with `groundedness = 1.000`, `hallucination_delta = 0.000`, and `table_llm_resolved_count = 1`; fallback is protected by a separate experimental gate, not the main release gate.

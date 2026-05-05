@@ -19,6 +19,7 @@ class GateResult:
     actual: object
     expected: str
     passed: bool
+    skipped: bool = False
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,6 +29,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-user-suite", action="store_true")
     parser.add_argument("--skip-readiness", action="store_true")
     parser.add_argument("--require-production-ready", action="store_true")
+    parser.add_argument(
+        "--fallback-summary",
+        type=Path,
+        default=None,
+        help=(
+            "Optional experimental grounded_llm_fallback benchmark summary. "
+            "Accepts repeat_summary.json or comparison_summary.json."
+        ),
+    )
+    parser.add_argument("--fallback-success-gain-min", type=float, default=0.0)
+    parser.add_argument("--fallback-answer-gain-min", type=float, default=0.0)
+    parser.add_argument("--fallback-groundedness-min", type=float, default=1.0)
+    parser.add_argument("--fallback-hallucination-delta-max", type=float, default=0.0)
+    parser.add_argument("--fallback-table-llm-resolved-min", type=float, default=0.0)
     parser.add_argument(
         "--min-suite-unique-questions",
         "--min-suite-queries",
@@ -125,12 +140,20 @@ def min_gate(name: str, actual: float, expected: float, tolerance: float) -> Gat
     return GateResult(name, actual, f">= {expected}", actual + tolerance >= expected)
 
 
+def greater_gate(name: str, actual: float, expected: float, tolerance: float) -> GateResult:
+    return GateResult(name, actual, f"> {expected}", actual > expected + tolerance)
+
+
 def max_gate(name: str, actual: float, expected: float, tolerance: float) -> GateResult:
     return GateResult(name, actual, f"<= {expected}", actual <= expected + tolerance)
 
 
 def bool_gate(name: str, actual: object, expected: bool = True) -> GateResult:
     return GateResult(name, actual, f"== {expected}", bool(actual) is expected)
+
+
+def skipped_gate(name: str, reason: str) -> GateResult:
+    return GateResult(name, reason, "provided to run experimental fallback gate", True, skipped=True)
 
 
 def check_user_suite(summary: dict[str, Any], args: argparse.Namespace) -> list[GateResult]:
@@ -239,9 +262,75 @@ def check_readiness(report: dict[str, Any], args: argparse.Namespace) -> list[Ga
     return results
 
 
+def fallback_metric(summary: dict[str, Any], metric_name: str, *, repeat_field: str) -> float:
+    metric_summary = summary.get("metric_summary")
+    if isinstance(metric_summary, dict):
+        metric_payload = metric_summary.get(metric_name)
+        if not isinstance(metric_payload, dict):
+            raise KeyError(f"fallback repeat_summary.json is missing metric_summary.{metric_name}")
+        value = metric_payload.get(repeat_field)
+        if value is None:
+            raise KeyError(f"fallback repeat_summary.json is missing metric_summary.{metric_name}.{repeat_field}")
+        return float(value)
+
+    aggregate = summary.get("aggregate")
+    if isinstance(aggregate, dict):
+        value = aggregate.get(metric_name)
+        if value is None and metric_name == "groundedness":
+            value = aggregate.get("fallback_grounded_rate")
+        if value is None:
+            raw_summary = summary.get("raw_benchmark_summary")
+            fallback_config = summary.get("fallback_config")
+            if isinstance(raw_summary, dict) and isinstance(fallback_config, str):
+                fallback_payload = raw_summary.get(fallback_config)
+                if isinstance(fallback_payload, dict) and metric_name == "groundedness":
+                    value = fallback_payload.get("grounded_rate")
+        if value is not None:
+            return float(value)
+        raise KeyError(f"fallback comparison_summary.json is missing aggregate.{metric_name}")
+
+    raise KeyError("fallback summary must contain metric_summary or aggregate")
+
+
+def check_fallback_experimental(summary: dict[str, Any], args: argparse.Namespace) -> list[GateResult]:
+    tolerance = float(args.tolerance)
+    return [
+        greater_gate(
+            "fallback_experimental.success_gain_vs_standard",
+            fallback_metric(summary, "success_gain_vs_standard", repeat_field="min"),
+            args.fallback_success_gain_min,
+            tolerance,
+        ),
+        min_gate(
+            "fallback_experimental.answer_match_gain_vs_standard",
+            fallback_metric(summary, "answer_match_gain_vs_standard", repeat_field="min"),
+            args.fallback_answer_gain_min,
+            tolerance,
+        ),
+        min_gate(
+            "fallback_experimental.groundedness",
+            fallback_metric(summary, "groundedness", repeat_field="min"),
+            args.fallback_groundedness_min,
+            tolerance,
+        ),
+        max_gate(
+            "fallback_experimental.hallucination_delta",
+            fallback_metric(summary, "hallucination_delta", repeat_field="max"),
+            args.fallback_hallucination_delta_max,
+            tolerance,
+        ),
+        greater_gate(
+            "fallback_experimental.table_llm_resolved_count",
+            fallback_metric(summary, "table_llm_resolved_count", repeat_field="min"),
+            args.fallback_table_llm_resolved_min,
+            tolerance,
+        ),
+    ]
+
+
 def print_results(results: list[GateResult]) -> None:
     for result in results:
-        status = "PASS" if result.passed else "FAIL"
+        status = "SKIP" if result.skipped else ("PASS" if result.passed else "FAIL")
         print(f"{status} {result.name}: actual={result.actual!r} expected {result.expected}")
 
 
@@ -256,6 +345,7 @@ def write_report(path: Path, results: list[GateResult]) -> None:
                 "actual": result.actual,
                 "expected": result.expected,
                 "passed": result.passed,
+                "skipped": result.skipped,
             }
             for result in results
         ],
@@ -275,6 +365,14 @@ def main() -> int:
         readiness_path = args.readiness_report or latest_readiness_report()
         readiness_report = load_json(readiness_path)
         results.extend(check_readiness(readiness_report, args))
+
+    if args.fallback_summary is None:
+        results.append(skipped_gate("fallback_experimental.summary", "not provided"))
+    else:
+        fallback_summary_path = resolve_path(args.fallback_summary)
+        print(f"INFO fallback_experimental.summary_path={display_path(fallback_summary_path)}")
+        fallback_summary = load_json(args.fallback_summary)
+        results.extend(check_fallback_experimental(fallback_summary, args))
 
     print_results(results)
     if args.write_report:

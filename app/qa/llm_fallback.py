@@ -11,6 +11,12 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Protocol
 
 from app.qa.schemas import EvidenceAssessment
+from app.qa.table_lookup_utils import (
+    lookup_table_answer,
+    normalize_table_from_sources,
+    table_metadata_for_prompt,
+    table_rows_for_prompt,
+)
 from app.qa.text_utils import normalize_text, split_sentences, token_set
 from app.retrieval.schemas import RetrievedHit
 
@@ -331,8 +337,9 @@ class GroundedLLMFallback:
 
         expected_shape = expected_answer_shape(question, query_type, packets)
         reasoning_mode = choose_reasoning_mode(question, query_type, packets)
+        request_packets = focus_evidence_packets(reasoning_mode, packets)
         if reasoning_mode == "table" and self.config.enable_table_llm_reasoning:
-            table_answer = try_rule_based_table_lookup(question, packets)
+            table_answer = try_rule_based_table_lookup(question, request_packets)
             if table_answer is not None:
                 packet, answer = table_answer
                 citation = citation_from_packet(packet)
@@ -359,7 +366,7 @@ class GroundedLLMFallback:
             query_type=query_type,
             expected_answer_shape=expected_shape,
             reasoning_mode=reasoning_mode,
-            evidence_packets=packets,
+            evidence_packets=request_packets,
         )
         start = time.perf_counter()
         try:
@@ -424,7 +431,7 @@ class GroundedLLMFallback:
                 diagnostics={**diagnostics, "raw_response": response.raw_response},
             )
 
-        packet_by_id = {packet.evidence_id: packet for packet in packets}
+        packet_by_id = {packet.evidence_id: packet for packet in request_packets}
         used_packets = [packet_by_id[eid] for eid in response.used_evidence_ids if eid in packet_by_id]
         citations = [citation_from_packet(packet) for packet in used_packets]
         return LLMFallbackResult(
@@ -498,13 +505,14 @@ def parse_llm_json(content: str) -> dict[str, Any]:
 
 def response_from_payload(payload: dict[str, Any], default_mode: ReasoningMode) -> GroundedLLMResponse:
     decision = str(payload.get("decision") or "").strip().lower()
-    if decision not in {"answer", "insufficient_evidence"}:
-        decision = "insufficient_evidence"
     used_raw = payload.get("used_evidence_ids") or []
     if isinstance(used_raw, str):
         used_ids = [used_raw]
     else:
         used_ids = [str(item) for item in used_raw if str(item).strip()]
+    answer = str(payload.get("answer") or "").strip()
+    if decision not in {"answer", "insufficient_evidence"}:
+        decision = "answer" if answer and used_ids else "insufficient_evidence"
     mode = str(payload.get("reasoning_mode") or default_mode).strip().lower()
     if mode not in {"text", "table", "formula", "figure", "multi_span"}:
         mode = default_mode
@@ -514,7 +522,7 @@ def response_from_payload(payload: dict[str, Any], default_mode: ReasoningMode) 
         confidence = 0.0
     return GroundedLLMResponse(
         decision=decision,  # type: ignore[arg-type]
-        answer=str(payload.get("answer") or "").strip(),
+        answer=answer,
         used_evidence_ids=used_ids,
         reasoning_mode=mode,  # type: ignore[arg-type]
         confidence=max(0.0, min(1.0, confidence)),
@@ -616,8 +624,19 @@ def build_evidence_packets(
         metadata = {**dict(hit.chunk.metadata or {}), **dict(hit.metadata or {})}
         modality = detect_modality(hit)
         raw_text = str(hit.chunk.text or "")
-        text = _truncate(normalize_text(raw_text), max_chars)
-        table_text = _truncate(raw_text.strip(), max_chars) if modality == "table" else None
+        normalized_table = None
+        if modality == "table":
+            normalized_table = normalize_table_from_sources(
+                table_text=raw_text,
+                table_rows=metadata.get("table_rows") or metadata.get("rows"),
+                table_json=metadata.get("table_json") or metadata.get("table"),
+            )
+            metadata = {**metadata, **table_metadata_for_prompt(normalized_table)}
+        text_source = normalized_table.rendered_text if normalized_table is not None else raw_text
+        text = _truncate(normalize_text(text_source), max_chars)
+        table_text = _truncate(normalized_table.rendered_text, max_chars) if normalized_table is not None else (
+            _truncate(raw_text.strip(), max_chars) if modality == "table" else None
+        )
         packets.append(
             EvidencePacket(
                 evidence_id=f"E{idx}",
@@ -631,7 +650,8 @@ def build_evidence_packets(
                 heading_path=list(hit.heading_path),
                 score=round(float(hit.final_score or hit.score), 4),
                 table_text=table_text,
-                table_rows=_coerce_list(metadata.get("table_rows") or metadata.get("rows")),
+                table_rows=table_rows_for_prompt(normalized_table)
+                or _coerce_list(metadata.get("table_rows") or metadata.get("rows")),
                 table_json=metadata.get("table_json") or metadata.get("table"),
                 formula_text=_extract_formula_text(text) if modality == "formula" else None,
                 caption=_extract_caption(text, metadata) if modality == "figure" else None,
@@ -703,34 +723,34 @@ def choose_reasoning_mode(question: str, query_type: str, packets: list[Evidence
     return "text"
 
 
-def try_rule_based_table_lookup(question: str, packets: list[EvidencePacket]) -> tuple[EvidencePacket, str] | None:
-    q_folded = _fold_text(question)
-    query_number = _first_float(q_folded)
-    query_grade = _first_grade(question)
+def focus_evidence_packets(reasoning_mode: ReasoningMode, packets: list[EvidencePacket]) -> list[EvidencePacket]:
+    if reasoning_mode == "table":
+        table_packets = [packet for packet in packets if packet.modality == "table"]
+        return table_packets[:3] or packets[:3]
+    if reasoning_mode == "formula":
+        formula_packets = [packet for packet in packets if packet.modality == "formula"]
+        return formula_packets[:3] or packets[:3]
+    if reasoning_mode == "figure":
+        figure_packets = [packet for packet in packets if packet.modality == "figure"]
+        return figure_packets[:3] or packets[:3]
+    return packets
 
+
+def try_rule_based_table_lookup(question: str, packets: list[EvidencePacket]) -> tuple[EvidencePacket, str] | None:
     for packet in packets:
         if packet.modality != "table":
             continue
-        lines = _table_lines(packet)
-        if query_number is not None:
-            for line in lines:
-                grade = _first_grade(line)
-                interval = _line_interval_text(line)
-                payload = _line_primary_payload(line)
-                if _line_range_contains(line, query_number):
-                    if grade and interval:
-                        return packet, f"{_format_number(query_number)} falls in {interval}, which maps to {grade}."
-                    if payload and interval:
-                        return packet, f"{_format_number(query_number)} falls in {interval}, which maps to {payload}."
-        if query_grade:
-            for line in lines:
-                grade = _first_grade(line)
-                if grade and grade.upper() == query_grade.upper():
-                    interval = _line_interval_text(line)
-                    payload = _line_secondary_payload(line, query_grade.upper())
-                    if interval:
-                        suffix = f" with {payload}" if payload else ""
-                        return packet, f"{query_grade.upper()} corresponds to {interval}{suffix}."
+        table = normalize_table_from_sources(table_text=packet.table_text or packet.text)
+        if table is None:
+            table = normalize_table_from_sources(
+                table_rows=packet.table_rows,
+                table_json=packet.table_json,
+            )
+        if table is None:
+            continue
+        result = lookup_table_answer(question, table)
+        if result is not None:
+            return packet, result.answer
     return None
 
 
@@ -878,6 +898,10 @@ def _prompt_safe_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
         "figure_label",
         "table_backend",
         "table_shape",
+        "table_header_rows",
+        "logical_columns",
+        "normalized_intervals",
+        "lookup_index",
         "formula_text",
         "equation",
         "section",
