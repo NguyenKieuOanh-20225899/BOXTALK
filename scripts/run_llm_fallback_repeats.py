@@ -32,6 +32,13 @@ PRIMARY_METRICS = [
     "table_rule_resolved_count",
     "table_llm_resolved_count",
     "table_total_success",
+    "reverse_lookup_success",
+    "interval_mapping_success",
+    "boundary_case_success",
+    "multi_column_lookup_success",
+    "table_text_reasoning_success",
+    "numerical_reasoning_success",
+    "fact_verification_success",
     "latency_overhead_ms",
     "fallback_override_success_rate",
     "fallback_override_grounded_rate",
@@ -231,6 +238,7 @@ def build_stability_readout(metric_summary: dict[str, Any], *, benchmark_mode: s
         and answer_gain_min >= 0.0
         and hallucination_delta_max <= 0.0
         and groundedness_delta_min >= 0.0
+        and table_llm_resolved_min > 0.0
     )
     return {
         "real_gain": {
@@ -408,6 +416,8 @@ def main() -> None:
         "stability_readout": build_stability_readout(metric_summary, benchmark_mode=benchmark_mode),
         "by_reasoning_mode": grouped_stats(run_summaries, "by_reasoning_mode"),
         "by_expected_modality": grouped_stats(run_summaries, "by_expected_modality"),
+        "by_table_reasoning_type": grouped_stats(run_summaries, "by_table_reasoning_type"),
+        "by_benchmark_family": grouped_stats(run_summaries, "by_benchmark_family"),
         "runs": runs,
     }
     (output_dir / "repeat_summary.json").write_text(

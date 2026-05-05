@@ -42,6 +42,8 @@ The repo now has:
 - `bm25_only` remains the strongest cheap lexical baseline.
 - `adaptive_route_retry` is still experimental because of latency and mixed aggregate benefit.
 - `grounded_llm_fallback` is experimental and currently useful mainly on focused table-style cases.
+- Thesis-level positioning and remaining gaps are summarized in
+  `docs/THESIS_READINESS_REPORT.md`.
 
 ## 2. Source Artifacts Used For This Summary
 
@@ -57,6 +59,7 @@ The repo now has:
 - `results/retrieval_benchmark/smoke_real_minilm_after/benchmark_summary.json`
 - `results/beir_retrieval_benchmark/scifact_*/beir_summary.json`
 - `docs/BASELINE_REGRESSION_GATES.md`
+- `docs/THESIS_READINESS_REPORT.md`
 
 ## 3. Main Benchmark Results
 

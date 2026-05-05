@@ -338,7 +338,11 @@ class GroundedLLMFallback:
         expected_shape = expected_answer_shape(question, query_type, packets)
         reasoning_mode = choose_reasoning_mode(question, query_type, packets)
         request_packets = focus_evidence_packets(reasoning_mode, packets)
-        if reasoning_mode == "table" and self.config.enable_table_llm_reasoning:
+        if (
+            reasoning_mode == "table"
+            and self.config.enable_table_llm_reasoning
+            and _should_try_rule_based_table_lookup(question, query_type)
+        ):
             table_answer = try_rule_based_table_lookup(question, request_packets)
             if table_answer is not None:
                 packet, answer = table_answer
@@ -592,6 +596,8 @@ def should_call_llm_fallback(
         reasons.append("standard_answer_shape_mismatch")
     if query_type in {"comparison", "procedural", "multi_hop"} or _needs_multi_span(q_folded):
         reasons.append("complex_synthesis_query")
+    if _needs_table_llm_reasoning(q_folded, query_type):
+        reasons.append("table_reasoning_query")
     if mode == "table" and config.enable_table_llm_reasoning:
         reasons.append("table_evidence_or_query")
     if mode == "formula" and config.enable_formula_llm_reasoning:
@@ -712,6 +718,8 @@ def expected_answer_shape(question: str, query_type: str, packets: list[Evidence
 def choose_reasoning_mode(question: str, query_type: str, packets: list[EvidencePacket]) -> ReasoningMode:
     q_folded = _fold_text(question)
     modalities = {packet.modality for packet in packets}
+    if ("table" in modalities or _is_table_question(q_folded)) and _needs_table_llm_reasoning(q_folded, query_type):
+        return "multi_span"
     if ("table" in modalities or _is_table_question(q_folded)):
         return "table"
     if ("formula" in modalities or _is_formula_question(q_folded)):
@@ -987,6 +995,41 @@ def _is_table_question(q_folded: str) -> bool:
     return any(term in q_folded for term in ("table", "bang", "row", "column", "cell", "muc nao", "tuong ung"))
 
 
+def _needs_table_llm_reasoning(q_folded: str, query_type: str) -> bool:
+    if query_type in {"verification", "multi_hop"}:
+        return True
+    return any(
+        term in q_folded
+        for term in (
+            "true or false",
+            "dung hay sai",
+            "according to",
+            "policy",
+            "probation",
+            "regulated customer",
+            "extra requirement",
+            "can they receive",
+            "difference between",
+            "how many more",
+            "how much more",
+            "total ",
+            "largest",
+            "smallest",
+            "highest",
+            "lowest",
+            "sum",
+            "minus",
+            "subtract",
+            "cfo review",
+            "department owner review",
+        )
+    )
+
+
+def _should_try_rule_based_table_lookup(question: str, query_type: str) -> bool:
+    return not _needs_table_llm_reasoning(_fold_text(question), query_type)
+
+
 def _is_formula_question(q_folded: str) -> bool:
     return any(term in q_folded for term in ("formula", "equation", "cong thuc", "symbol", "ffn(", "=", "metric"))
 
@@ -1023,6 +1066,10 @@ def _has_number_or_formula(text_folded: str) -> bool:
 
 
 def _standard_answer_shape_mismatch(*, question_folded: str, answer_folded: str, expected_shape: str) -> bool:
+    if _is_truth_value_question(question_folded):
+        return not _contains_truth_value(answer_folded)
+    if _is_computed_table_question(question_folded) and _looks_like_table_dump_answer(answer_folded):
+        return True
     if expected_shape in {"numeric", "formula"}:
         return not _has_number_or_formula(answer_folded)
     if expected_shape == "table":
@@ -1035,6 +1082,35 @@ def _standard_answer_shape_mismatch(*, question_folded: str, answer_folded: str,
     if expected_shape == "comparison":
         return any(term in question_folded for term in ("difference", "compare", "khac nhau")) and len(split_sentences(answer_folded)) < 2
     return False
+
+
+def _is_truth_value_question(q_folded: str) -> bool:
+    return any(term in q_folded for term in ("true or false", "dung hay sai", "is it true", "is this true"))
+
+
+def _contains_truth_value(answer_folded: str) -> bool:
+    return any(re.search(rf"(?:^|\W){term}(?:\W|$)", answer_folded) for term in ("true", "false", "dung", "sai"))
+
+
+def _is_computed_table_question(q_folded: str) -> bool:
+    return any(
+        term in q_folded
+        for term in (
+            "difference between",
+            "budget difference",
+            "how many more",
+            "how much more",
+            "total ",
+            "largest",
+            "smallest",
+            "highest",
+            "lowest",
+        )
+    )
+
+
+def _looks_like_table_dump_answer(answer_folded: str) -> bool:
+    return "|" in answer_folded or (len(NUMBER_RE.findall(answer_folded)) >= 4 and len(answer_folded) > 120)
 
 
 def _best_numeric_span(question_folded: str, packets: list[EvidencePacket]) -> tuple[EvidencePacket, str] | None:

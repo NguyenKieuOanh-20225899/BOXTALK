@@ -23,6 +23,10 @@
 	llm-fallback-index \
 	llm-fallback-smoke \
 	llm-fallback-benchmark \
+	table-reasoning-dataset \
+	table-reasoning-index \
+	table-reasoning-benchmark \
+	thesis-report \
 	ui-dev \
 	user-pdf-suite \
 	baseline-gate \
@@ -62,6 +66,15 @@ LLM_FALLBACK_INDEX_DIR ?= results/retrieval_index/llm_fallback_reference
 LLM_FALLBACK_BENCHMARK_DIR ?= results/llm_fallback_benchmark/current
 LLM_FALLBACK_PROVIDER ?= dummy
 LLM_FALLBACK_ARGS ?=
+TABLE_REASONING_DATASET_DIR ?= data/table_reasoning_benchmark
+TABLE_REASONING_MANIFEST ?= $(TABLE_REASONING_DATASET_DIR)/manifest.json
+TABLE_REASONING_INDEX_DIR ?= results/retrieval_index/table_reasoning_reference
+TABLE_REASONING_BENCHMARK_DIR ?= results/llm_fallback_benchmark/table_reasoning_current
+TABLE_REASONING_PROVIDER ?= dummy
+TABLE_REASONING_ARGS ?=
+THESIS_REPORT_MD ?= docs/THESIS_READINESS_REPORT.md
+THESIS_REPORT_JSON ?= results/thesis_readiness_report/summary.json
+THESIS_REPORT_ARGS ?=
 BASELINE_GATE_ARGS ?=
 FALLBACK_GATE_SUMMARY ?= results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json
 FALLBACK_GATE_ARGS ?=
@@ -97,6 +110,10 @@ help:
 		'llm-fallback-index             build retrieval index for the focused fallback benchmark' \
 		'llm-fallback-smoke             run the fallback benchmark with the dummy provider' \
 		'llm-fallback-benchmark         run the fallback benchmark with the configured provider' \
+		'table-reasoning-dataset        create the extended internal table reasoning benchmark' \
+		'table-reasoning-index          build retrieval index for the extended table benchmark' \
+		'table-reasoning-benchmark      run extended table benchmark through fallback comparison' \
+		'thesis-report                  summarize benchmark artifacts into thesis-readiness report' \
 		'ui-dev                         run the FastAPI backend plus static MVP UI' \
 		'user-pdf-suite                 run aggregate QA benchmark over user PDF suite manifest' \
 		'baseline-gate                  fail if locked benchmark baselines regress' \
@@ -184,6 +201,18 @@ llm-fallback-smoke:
 llm-fallback-benchmark:
 	$(MAKE) llm-fallback-dataset
 	$(PYTHON) scripts/benchmark_llm_fallback.py --manifest $(LLM_FALLBACK_MANIFEST) --output-dir $(LLM_FALLBACK_BENCHMARK_DIR) --llm-fallback-provider $(LLM_FALLBACK_PROVIDER) $(LLM_FALLBACK_ARGS)
+
+table-reasoning-dataset:
+	$(PYTHON) scripts/create_extended_table_benchmark.py --output-dir $(TABLE_REASONING_DATASET_DIR)
+
+table-reasoning-index: table-reasoning-dataset
+	$(PYTHON) scripts/build_retrieval_index.py --chunks-jsonl $(TABLE_REASONING_DATASET_DIR)/table_reasoning_reference_chunks.jsonl --output-dir $(TABLE_REASONING_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+table-reasoning-benchmark: table-reasoning-index
+	$(PYTHON) scripts/benchmark_llm_fallback.py --manifest $(TABLE_REASONING_MANIFEST) --output-dir $(TABLE_REASONING_BENCHMARK_DIR) --llm-fallback-provider $(TABLE_REASONING_PROVIDER) $(TABLE_REASONING_ARGS)
+
+thesis-report:
+	$(PYTHON) scripts/generate_thesis_readiness_report.py --output-md $(THESIS_REPORT_MD) --output-json $(THESIS_REPORT_JSON) $(THESIS_REPORT_ARGS)
 
 ui-dev:
 	$(PYTHON) -m uvicorn app.routed_rag_starter:app --host $(UI_HOST) --port $(UI_PORT) --reload

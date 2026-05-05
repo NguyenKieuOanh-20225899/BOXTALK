@@ -23,6 +23,7 @@ from app.qa.llm_fallback import (
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
 from app.qa.table_lookup_utils import lookup_table_answer, normalize_table_from_sources
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
+from scripts.benchmark_llm_fallback import summarize_comparison
 
 
 def make_hit(chunk_id: str, text: str, *, block_type: str = "paragraph", score: float = 0.8) -> RetrievedHit:
@@ -203,6 +204,32 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertIn("Large", result.answer or "")
         self.assertIn("29.8", result.answer or "")
 
+    def test_complex_table_reasoning_bypasses_rule_lookup_for_llm(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(
+                enable_llm_fallback=True,
+                enable_table_llm_reasoning=True,
+                min_llm_confidence=0.10,
+            ),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Program | Budget | Actual | Variance\nAlpha | 120 | 132 | 12\nBeta | 80 | 72 | -8"
+        policy_text = "For program finance reviews, an absolute variance greater than 10 requires CFO review."
+        result = fallback.maybe_generate(
+            question="Alpha has variance 12. According to the policy text, who reviews it?",
+            query_type="comparison",
+            hits=[
+                make_hit("h1", table_text, block_type="table"),
+                make_hit("h2", policy_text, block_type="paragraph"),
+            ],
+            evidence=make_evidence("answer", sufficiency=0.45),
+            standard_answer=standard_answer("The table lists Alpha variance."),
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.llm_called)
+        self.assertNotEqual(result.final_answer_source, "table_rule_fallback")
+
     def test_openai_compatible_provider_reports_missing_envs(self) -> None:
         with patch.dict(os.environ, {}, clear=True):
             info = provider_runtime_info("openai-compatible")
@@ -260,6 +287,111 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertEqual(response.decision, "answer")
         self.assertEqual(response.used_evidence_ids, ["E1"])
         self.assertEqual(response.reasoning_mode, "table")
+
+    def test_table_reasoning_summary_breaks_down_resolution_paths(self) -> None:
+        rows = [
+            {
+                "query_id": "q1",
+                "query_type": "factoid",
+                "table_reasoning_type": "reverse_lookup",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": True,
+                "standard_answer_match": False,
+                "fallback_answer_match": True,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": True,
+                "fallback_llm_called": False,
+                "reasoning_mode": "table",
+                "final_answer_source": "table_rule_fallback",
+                "latency_delta_ms": 1.0,
+                "fallback_helped": True,
+                "fallback_overrode_standard": True,
+                "fallback_override_success": True,
+                "fallback_override_grounded": True,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": True,
+                "table_llm_resolved": False,
+            },
+            {
+                "query_id": "q2",
+                "query_type": "comparison",
+                "table_reasoning_type": "numerical_reasoning",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": True,
+                "standard_answer_match": False,
+                "fallback_answer_match": True,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": True,
+                "fallback_llm_called": True,
+                "reasoning_mode": "table",
+                "final_answer_source": "llm_fallback",
+                "latency_delta_ms": 2.0,
+                "fallback_helped": True,
+                "fallback_overrode_standard": True,
+                "fallback_override_success": True,
+                "fallback_override_grounded": True,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": False,
+                "table_llm_resolved": True,
+            },
+            {
+                "query_id": "q3",
+                "query_type": "factoid",
+                "table_reasoning_type": "boundary_case",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": False,
+                "standard_answer_match": False,
+                "fallback_answer_match": False,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": False,
+                "fallback_llm_called": False,
+                "reasoning_mode": "table",
+                "final_answer_source": "standard",
+                "latency_delta_ms": 3.0,
+                "fallback_helped": False,
+                "fallback_overrode_standard": False,
+                "fallback_override_success": False,
+                "fallback_override_grounded": False,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": False,
+                "table_llm_resolved": False,
+            },
+        ]
+
+        summary = summarize_comparison(rows)
+
+        self.assertEqual(summary["table_rule_resolved_count"], 1)
+        self.assertEqual(summary["table_llm_resolved_count"], 1)
+        self.assertEqual(summary["reverse_lookup_success"], 1.0)
+        self.assertEqual(summary["numerical_reasoning_success"], 1.0)
+        self.assertEqual(summary["boundary_case_success"], 0.0)
+        self.assertEqual(summary["table_resolution_breakdown"]["solved_by_rule_based"], 1)
+        self.assertEqual(summary["table_resolution_breakdown"]["solved_by_llm_fallback"], 1)
+        self.assertEqual(summary["table_resolution_breakdown"]["wrong_due_to_interval_boundary"], 1)
 
 
 if __name__ == "__main__":

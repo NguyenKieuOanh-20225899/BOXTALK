@@ -197,6 +197,63 @@ def mode_key(row: dict[str, Any]) -> str:
     return "not_called"
 
 
+TABLE_RELATED_MODALITIES = {"table", "table_text"}
+TABLE_REASONING_METRIC_NAMES = {
+    "simple_lookup": "simple_lookup_success",
+    "reverse_lookup": "reverse_lookup_success",
+    "interval_mapping": "interval_mapping_success",
+    "boundary_case": "boundary_case_success",
+    "multi_column_lookup": "multi_column_lookup_success",
+    "table_text_reasoning": "table_text_reasoning_success",
+    "numerical_reasoning": "numerical_reasoning_success",
+    "fact_verification": "fact_verification_success",
+}
+
+
+def is_table_related(row: dict[str, Any]) -> bool:
+    modality = str(row.get("expected_modality") or "")
+    return modality in TABLE_RELATED_MODALITIES or bool(row.get("table_reasoning_type"))
+
+
+def table_reasoning_success(rows: list[dict[str, Any]], reasoning_type: str) -> float | None:
+    typed_rows = [row for row in rows if str(row.get("table_reasoning_type") or "") == reasoning_type]
+    if not typed_rows:
+        return None
+    return mean_float(float(bool(row["fallback_end_to_end_success"])) for row in typed_rows)
+
+
+def classify_table_resolution(row: dict[str, Any]) -> str:
+    if row.get("table_rule_resolved"):
+        return "solved_by_rule_based"
+    if row.get("table_llm_resolved"):
+        return "solved_by_llm_fallback"
+    if row.get("fallback_end_to_end_success"):
+        return "solved_by_standard_or_other"
+
+    expected = str(row.get("expected_failure_mode") or "").strip()
+    if expected:
+        return expected
+
+    reasoning_type = str(row.get("table_reasoning_type") or "")
+    if reasoning_type in {"interval_mapping", "boundary_case"}:
+        return "wrong_due_to_interval_boundary"
+    if reasoning_type in {"simple_lookup", "reverse_lookup", "multi_column_lookup"}:
+        return "wrong_due_to_row_column_mapping"
+    if reasoning_type in {"table_text_reasoning", "numerical_reasoning", "fact_verification"}:
+        return "wrong_due_to_weak_packaging_or_reasoning"
+    return "unresolved"
+
+
+def table_resolution_breakdown(rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in rows:
+        if not is_table_related(row):
+            continue
+        bucket = classify_table_resolution(row)
+        counts[bucket] = counts.get(bucket, 0) + 1
+    return dict(sorted(counts.items()))
+
+
 def build_comparison_rows(
     *,
     rows: list[dict[str, Any]],
@@ -226,6 +283,9 @@ def build_comparison_rows(
                 "question": standard.get("question"),
                 "query_type": standard.get("query_type"),
                 "fallback_category": standard.get("fallback_category"),
+                "benchmark_family": standard.get("benchmark_family"),
+                "table_reasoning_type": standard.get("table_reasoning_type"),
+                "expected_failure_mode": standard.get("expected_failure_mode"),
                 "weak_standard_answer_case": bool(standard.get("weak_standard_answer_case", False)),
                 "expected_modality": standard.get("expected_modality"),
                 "expected_fallback_mode": standard.get("expected_fallback_mode"),
@@ -265,10 +325,9 @@ def build_comparison_rows(
                 "fallback_override_hallucinated": fallback_overrode_standard and bool(fallback.get("hallucinated")),
                 "table_rule_resolved": final_answer_source == "table_rule_fallback" and fallback_success,
                 "table_llm_resolved": (
-                    str(standard.get("expected_modality") or "") == "table"
+                    is_table_related(standard)
                     and fallback_used
                     and bool(fallback.get("fallback_llm_called"))
-                    and str(fallback.get("fallback_reasoning_mode") or "") == "table"
                     and fallback_success
                 ),
             }
@@ -289,12 +348,12 @@ def summarize_comparison(rows: list[dict[str, Any]]) -> dict[str, Any]:
     fallback_hallucination = mean_float(float(bool(row["fallback_hallucinated"])) for row in rows)
     fallback_helped_count = sum(1 for row in rows if row["fallback_helped"])
     fallback_override_rows = [row for row in rows if row["fallback_overrode_standard"]]
-    table_rows = [row for row in rows if str(row.get("expected_modality") or "") == "table"]
+    table_rows = [row for row in rows if is_table_related(row)]
     table_rule_rows = [row for row in table_rows if row["final_answer_source"] == "table_rule_fallback"]
     table_llm_attempt_rows = [
         row
         for row in table_rows
-        if row["fallback_llm_called"] and str(row.get("reasoning_mode") or "") == "table"
+        if row["fallback_llm_called"]
     ]
     table_rule_resolved_count = sum(1 for row in table_rows if row["table_rule_resolved"])
     table_llm_resolved_count = sum(1 for row in table_rows if row["table_llm_resolved"])
@@ -350,6 +409,11 @@ def summarize_comparison(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "table_total_success_count": table_total_success_count,
         "table_total_success": mean_float(float(bool(row["fallback_end_to_end_success"])) for row in table_rows),
         "table_question_count": len(table_rows),
+        "table_resolution_breakdown": table_resolution_breakdown(table_rows),
+        **{
+            metric_name: table_reasoning_success(rows, reasoning_type)
+            for reasoning_type, metric_name in TABLE_REASONING_METRIC_NAMES.items()
+        },
         "multi_span_helped_count": sum(
             1
             for row in rows
@@ -384,6 +448,7 @@ def build_decision_readout(summary: dict[str, Any]) -> dict[str, Any]:
     aggregate = summary.get("aggregate", {})
     by_reasoning_mode = summary.get("by_reasoning_mode", {})
     by_expected_modality = summary.get("by_expected_modality", {})
+    by_table_reasoning_type = summary.get("by_table_reasoning_type", {})
     success_gain = float(aggregate.get("success_gain_vs_standard") or 0.0)
     answer_match_gain = float(aggregate.get("answer_match_gain_vs_standard") or 0.0)
     hallucination_delta = float(aggregate.get("hallucination_delta") or 0.0)
@@ -408,6 +473,7 @@ def build_decision_readout(summary: dict[str, Any]) -> dict[str, Any]:
         and answer_match_gain >= 0.0
         and hallucination_delta <= 0.0
         and groundedness_delta >= 0.0
+        and table_llm_resolved_count > 0
     )
     return {
         "real_gain": {
@@ -428,8 +494,10 @@ def build_decision_readout(summary: dict[str, Any]) -> dict[str, Any]:
             "table_rule_resolved_count": int(aggregate.get("table_rule_resolved_count") or 0),
             "table_llm_resolved_count": table_llm_resolved_count,
             "table_total_success": aggregate.get("table_total_success"),
+            "table_resolution_breakdown": aggregate.get("table_resolution_breakdown", {}),
             "by_reasoning_mode": by_reasoning_mode,
             "by_expected_modality": by_expected_modality,
+            "by_table_reasoning_type": by_table_reasoning_type,
         },
         "experimental_gate_suggestion": {
             "candidate": gate_candidate,
@@ -549,12 +617,72 @@ def write_markdown(path: Path, summary: dict[str, Any]) -> None:
         f"| Table LLM attempt count | {aggregate.get('table_llm_attempt_count', 0)} |",
         f"| Table LLM attempt success rate | {aggregate.get('table_llm_attempt_success_rate', 0.0):.3f} |",
         f"| Table total success | {aggregate.get('table_total_success', 0.0):.3f} |",
+        f"| Reverse lookup success | {format_metric(aggregate.get('reverse_lookup_success'))} |",
+        f"| Interval mapping success | {format_metric(aggregate.get('interval_mapping_success'))} |",
+        f"| Boundary case success | {format_metric(aggregate.get('boundary_case_success'))} |",
+        f"| Multi-column lookup success | {format_metric(aggregate.get('multi_column_lookup_success'))} |",
+        f"| Table + text reasoning success | {format_metric(aggregate.get('table_text_reasoning_success'))} |",
+        f"| Numerical reasoning success | {format_metric(aggregate.get('numerical_reasoning_success'))} |",
+        f"| Fact verification success | {format_metric(aggregate.get('fact_verification_success'))} |",
         "",
-        "## By Reasoning Mode",
+        "## Table Resolution Breakdown",
         "",
-        "| Reasoning mode | Queries | Success Gain | Answer Gain | Grounded | Hallucination Delta | Used Rate | Table LLM Resolved |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| Bucket | Count |",
+        "|---|---:|",
     ]
+    for bucket, count in (aggregate.get("table_resolution_breakdown") or {}).items():
+        lines.append(f"| {bucket} | {count} |")
+    lines.extend(
+        [
+            "",
+            "## By Table Reasoning Type",
+            "",
+            "| Type | Queries | Success Gain | Answer Gain | Fallback Success | Rule Resolved | LLM Resolved | Resolution Breakdown |",
+            "|---|---:|---:|---:|---:|---:|---:|---|",
+        ]
+    )
+    for name, metrics in summary.get("by_table_reasoning_type", {}).items():
+        lines.append(
+            "| {name} | {queries} | {gain} | {answer} | {fallback_success} | {table_rule} | {table_llm} | {breakdown} |".format(
+                name=name,
+                queries=metrics.get("query_count", 0),
+                gain=format_metric(metrics.get("success_gain_vs_standard")),
+                answer=format_metric(metrics.get("answer_match_gain_vs_standard")),
+                fallback_success=format_metric(metrics.get("fallback_success_rate")),
+                table_rule=metrics.get("table_rule_resolved_count", 0),
+                table_llm=metrics.get("table_llm_resolved_count", 0),
+                breakdown=json.dumps(metrics.get("table_resolution_breakdown") or {}, ensure_ascii=False),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## By Benchmark Family",
+            "",
+            "| Family | Queries | Success Gain | Answer Gain | Fallback Success | LLM Resolved |",
+            "|---|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for name, metrics in summary.get("by_benchmark_family", {}).items():
+        lines.append(
+            "| {name} | {queries} | {gain} | {answer} | {fallback_success} | {table_llm} |".format(
+                name=name,
+                queries=metrics.get("query_count", 0),
+                gain=format_metric(metrics.get("success_gain_vs_standard")),
+                answer=format_metric(metrics.get("answer_match_gain_vs_standard")),
+                fallback_success=format_metric(metrics.get("fallback_success_rate")),
+                table_llm=metrics.get("table_llm_resolved_count", 0),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## By Reasoning Mode",
+            "",
+            "| Reasoning mode | Queries | Success Gain | Answer Gain | Grounded | Hallucination Delta | Used Rate | Table LLM Resolved |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
     for name, metrics in summary.get("by_reasoning_mode", {}).items():
         lines.append(
             "| {name} | {queries} | {gain} | {answer} | {grounded} | {hallucination} | {used} | {table_llm} |".format(
@@ -669,6 +797,8 @@ def main() -> None:
         "by_query_type": grouped_summary(comparison_rows, "query_type"),
         "by_expected_modality": grouped_summary(comparison_rows, "expected_modality"),
         "by_category": grouped_summary(comparison_rows, "fallback_category"),
+        "by_table_reasoning_type": grouped_summary(comparison_rows, "table_reasoning_type"),
+        "by_benchmark_family": grouped_summary(comparison_rows, "benchmark_family"),
         "requires_fallback": {
             "true": summarize_comparison([row for row in comparison_rows if row["should_require_fallback"]]),
             "false": summarize_comparison([row for row in comparison_rows if not row["should_require_fallback"]]),
