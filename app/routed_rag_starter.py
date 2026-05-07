@@ -21,6 +21,7 @@ from app.ingest.pipeline import ingest_pdf
 from app.loaders.pdf_loader import PDFLoader
 from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
 from app.qa.llm_fallback import make_llm_fallback_from_env
+from app.qa.llm_explainer import make_llm_explainer_from_env
 from app.qa.pipeline import GroundedQAPipeline
 from app.retrieval.reranker import make_reranker
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner
@@ -72,6 +73,8 @@ class AskResponse(BaseModel):
     standard_answer: Optional[str] = None
     final_answer_source: str = "standard"
     fallback_trace: Dict[str, Any] = Field(default_factory=dict)
+    explanation: Optional[str] = None
+    explanation_trace: Dict[str, Any] = Field(default_factory=dict)
     route_attempts: List[Dict[str, Any]] = Field(default_factory=list)
     selected_route_attempt: int = 0
     latency_ms: float = 0.0
@@ -140,17 +143,37 @@ class QueryRouter:
         "how", "procedure", "process", "steps", "apply", "submit"
     }
     COMPARISON_TERMS = {
-        "so sánh", "khác nhau", "giữa", "compare", "difference", "versus", "vs"
+        "so sánh", "khác nhau", "giữa", "compare", "difference", "different", "differ", "versus", "vs", "than"
     }
     DEFINITION_TERMS = {
         "là gì", "định nghĩa", "what is", "meaning", "khái niệm", "mô tả"
     }
+    FACTOID_PREFIXES = (
+        "how many ",
+        "how much ",
+        "how long ",
+        "where ",
+        "what score ",
+        "what bleu ",
+        "what f1 ",
+        "what value ",
+        "what label ",
+        "what does ",
+        "what did ",
+        "what two ",
+        "what three ",
+        "what new ",
+    )
 
     def route(self, question: str) -> QueryType:
         q = question.lower().strip()
 
         if any(term in q for term in self.COMPARISON_TERMS):
             return QueryType.COMPARISON
+        if q.startswith(self.FACTOID_PREFIXES):
+            return QueryType.FACTOID
+        if q.startswith("why "):
+            return QueryType.DEFINITION
         if any(term in q for term in self.PROCEDURAL_TERMS):
             return QueryType.PROCEDURAL
         if any(term in q for term in self.POLICY_TERMS):
@@ -405,6 +428,7 @@ class RoutedRAGService:
             self._load_pdf_data(pdf_path)
             self.retrieval_service = self._build_retrieval_service()
         llm_fallback = make_llm_fallback_from_env()
+        llm_explainer = make_llm_explainer_from_env()
         if _qa_pipeline_mode() == "adaptive_route_retry":
             enable_final_route_llm_fallback = _bool_env("BOXTALK_ENABLE_LLM_FALLBACK_ON_FINAL_ROUTE_ONLY", False)
             self.qa_pipeline = AdaptiveRouteRetryQAPipeline(
@@ -420,6 +444,7 @@ class RoutedRAGService:
                 router=self.router,
                 retrieval_planner=self.retrieval_planner,
                 llm_fallback=llm_fallback,
+                llm_explainer=llm_explainer,
             )
         self.evidence_checker = EvidenceChecker()
         self.answer_generator = AnswerGenerator()
@@ -439,6 +464,7 @@ class RoutedRAGService:
                 "grounded": qa_result.grounded,
                 "final_answer_source": qa_result.final_answer_source,
                 "fallback_trace": qa_result.fallback_trace,
+                "explanation_trace": qa_result.explanation_trace,
             }
         )
 
@@ -451,6 +477,8 @@ class RoutedRAGService:
             standard_answer=qa_result.standard_answer,
             final_answer_source=qa_result.final_answer_source,
             fallback_trace=qa_result.fallback_trace,
+            explanation=qa_result.explanation,
+            explanation_trace=qa_result.explanation_trace,
             route_attempts=qa_result.route_attempts,
             selected_route_attempt=qa_result.selected_route_attempt,
             latency_ms=round(qa_result.total_latency_ms, 3),

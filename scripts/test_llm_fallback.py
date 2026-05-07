@@ -20,6 +20,12 @@ from app.qa.llm_fallback import (
     provider_runtime_info,
     response_from_payload,
 )
+from app.qa.llm_explainer import (
+    DummyExplanationLLMClient,
+    GroundedLLMExplainer,
+    LLMExplanationConfig,
+    make_llm_explanation_client,
+)
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
 from app.qa.table_lookup_utils import lookup_table_answer, normalize_table_from_sources
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
@@ -263,6 +269,7 @@ class LLMFallbackTest(unittest.TestCase):
         with patch.dict(os.environ, {}, clear=True):
             info = provider_runtime_info("ollama")
             client = make_grounded_llm_client("ollama")
+            explanation_client = make_llm_explanation_client()
 
         self.assertTrue(info["ready"])
         self.assertEqual(info["provider"], "ollama")
@@ -272,6 +279,49 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertEqual(getattr(client, "provider_name"), "ollama")
         self.assertEqual(getattr(client, "base_url"), "http://localhost:11434/v1")
         self.assertEqual(getattr(client, "model"), "qwen2.5:7b-instruct")
+        self.assertEqual(getattr(explanation_client, "provider_name"), "ollama")
+        self.assertEqual(getattr(explanation_client, "base_url"), "http://localhost:11434/v1")
+        self.assertEqual(getattr(explanation_client, "model"), "qwen2.5:7b-instruct")
+
+    def test_llm_explainer_generates_explanation_without_changing_answer(self) -> None:
+        explainer = GroundedLLMExplainer(
+            config=LLMExplanationConfig(enable_llm_explanation=True),
+            client=DummyExplanationLLMClient(),
+        )
+        answer = "Sinh viên đạt B+ khi điểm nằm trong khoảng 8.0-8.4."
+        result = explainer.maybe_explain(
+            question="What score range gives B+?",
+            query_type="factoid",
+            answer=answer,
+            hits=[make_hit("h1", "B+ tương ứng khoảng điểm 8.0-8.4.", block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.90),
+            citations=[{"chunk_id": "h1", "page": 1}],
+            grounded=True,
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.used)
+        self.assertIn("evidence", result.explanation or "")
+        self.assertEqual(result.provider, "dummy")
+
+    def test_llm_explainer_skips_ungrounded_answer(self) -> None:
+        explainer = GroundedLLMExplainer(
+            config=LLMExplanationConfig(enable_llm_explanation=True),
+            client=DummyExplanationLLMClient(),
+        )
+        result = explainer.maybe_explain(
+            question="What score range gives B+?",
+            query_type="factoid",
+            answer="B+ là 8.0-8.4.",
+            hits=[make_hit("h1", "B+ tương ứng khoảng điểm 8.0-8.4.", block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.90),
+            citations=[],
+            grounded=False,
+        )
+
+        self.assertFalse(result.called)
+        self.assertFalse(result.used)
+        self.assertEqual(result.reason, "answer_is_not_grounded_or_has_no_citations")
 
     def test_llm_response_with_answer_and_evidence_ids_implies_answer_decision(self) -> None:
         response = response_from_payload(

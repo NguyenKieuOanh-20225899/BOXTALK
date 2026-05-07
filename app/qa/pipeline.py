@@ -6,6 +6,7 @@ from typing import Protocol
 from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.evidence_checker import EvidenceChecker
 from app.qa.llm_fallback import GroundedLLMFallback
+from app.qa.llm_explainer import GroundedLLMExplainer
 from app.qa.schemas import QAResult
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner
 from app.retrieval.service import RetrievalService
@@ -28,6 +29,7 @@ class GroundedQAPipeline:
         evidence_checker: EvidenceChecker | None = None,
         answer_generator: GroundedAnswerGenerator | None = None,
         llm_fallback: GroundedLLMFallback | None = None,
+        llm_explainer: GroundedLLMExplainer | None = None,
     ) -> None:
         self.retrieval_service = retrieval_service
         self.router = router
@@ -35,6 +37,7 @@ class GroundedQAPipeline:
         self.evidence_checker = evidence_checker or EvidenceChecker()
         self.answer_generator = answer_generator or GroundedAnswerGenerator()
         self.llm_fallback = llm_fallback
+        self.llm_explainer = llm_explainer
 
     def answer(self, question: str) -> QAResult:
         query_type_value = self.router.route(question)
@@ -75,6 +78,21 @@ class GroundedQAPipeline:
                 final_decision = "answer"
                 final_answer_source = fallback_result.final_answer_source
                 final_grounded = bool(final_citations)
+        explanation: str | None = None
+        explanation_trace: dict[str, object] = {}
+        if self.llm_explainer is not None:
+            explanation_result = self.llm_explainer.maybe_explain(
+                question=question,
+                query_type=query_type,
+                answer=final_answer,
+                hits=retrieval_result.hits,
+                evidence=evidence,
+                citations=final_citations,
+                grounded=final_grounded,
+            )
+            explanation_trace = explanation_result.to_trace()
+            if explanation_result.used and explanation_result.explanation:
+                explanation = explanation_result.explanation
         answer_latency_ms = (time.perf_counter() - start) * 1000.0
         top_hit = retrieval_result.hits[0] if retrieval_result.hits else None
 
@@ -112,6 +130,8 @@ class GroundedQAPipeline:
                     "fallback_used": bool(fallback_trace.get("used", False)),
                     "fallback_reason": fallback_trace.get("reason"),
                     "fallback_reasoning_mode": fallback_trace.get("reasoning_mode"),
+                    "explanation_called": bool(explanation_trace.get("called", False)),
+                    "explanation_used": bool(explanation_trace.get("used", False)),
                     "final_answer_source": final_answer_source,
                 }
             ],
@@ -120,4 +140,6 @@ class GroundedQAPipeline:
             standard_answer=grounded_answer.answer,
             final_answer_source=final_answer_source,
             fallback_trace=fallback_trace,
+            explanation=explanation,
+            explanation_trace=explanation_trace,
         )

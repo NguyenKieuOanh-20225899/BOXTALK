@@ -30,6 +30,7 @@ const els = {
   questionInput: document.getElementById("questionInput"),
   answerText: document.getElementById("answerText"),
   answerNote: document.getElementById("answerNote"),
+  answerExplanation: document.getElementById("answerExplanation"),
   answerBadges: document.getElementById("answerBadges"),
   citationCount: document.getElementById("citationCount"),
   citationList: document.getElementById("citationList"),
@@ -296,6 +297,10 @@ function renderAnswerBadges(result, citationCount) {
     badges.push(`<span class="badge info">Enhanced reasoning</span>`);
   }
 
+  if (result?.explanation) {
+    badges.push(`<span class="badge neutral">LLM explanation</span>`);
+  }
+
   return badges.join("");
 }
 
@@ -459,6 +464,7 @@ function renderDeveloperPanel(payload) {
 
   const evidence = result.evidence_report || {};
   const fallback = result.fallback_trace || evidence.fallback_trace || {};
+  const explanation = result.explanation_trace || evidence.explanation_trace || {};
   const summaryRows = [
     ["Route action", result.route_action],
     ["Query type", result.query_type],
@@ -470,6 +476,9 @@ function renderDeveloperPanel(payload) {
     ["Fallback used", String(Boolean(fallback.fallback_used ?? fallback.used))],
     ["Reasoning mode", fallback.reasoning_mode || "n/a"],
     ["Provider", fallback.provider_name || "n/a"],
+    ["Explanation called", String(Boolean(explanation.called))],
+    ["Explanation used", String(Boolean(explanation.used))],
+    ["Explanation provider", explanation.provider || "n/a"],
     ["Override confidence", fallback.override_confidence ?? fallback.confidence ?? "n/a"],
     ["Evidence sufficiency", evidence.sufficiency ?? "n/a"],
   ];
@@ -515,9 +524,11 @@ function renderDeveloperPanel(payload) {
   els.rawTrace.textContent = JSON.stringify(
     {
       fallback_trace: fallback,
+      explanation_trace: explanation,
       evidence_report: evidence,
       route_attempts: routeAttempts,
       standard_answer: result.standard_answer,
+      explanation: result.explanation,
     },
     null,
     2,
@@ -533,6 +544,8 @@ function resetQAView() {
   els.answerBadges.innerHTML = "";
   els.answerText.textContent = "Choose a ready document and ask a question.";
   els.answerNote.textContent = "The answer card highlights groundedness first. Developer traces stay behind the toggle.";
+  els.answerExplanation.hidden = true;
+  els.answerExplanation.textContent = "";
   els.citationCount.textContent = "0";
   els.citationList.innerHTML = `<div class="empty-state">No sources yet.</div>`;
   renderSourceViewer(null);
@@ -557,6 +570,16 @@ function renderAnswer(payload, options = {}) {
   els.answerText.textContent = result.answer || "No answer available.";
   els.answerBadges.innerHTML = renderAnswerBadges(result, rows.length);
   els.answerNote.textContent = buildAnswerNote(result, rows.length);
+  if (result.explanation) {
+    els.answerExplanation.hidden = false;
+    els.answerExplanation.innerHTML = `
+      <div class="explanation-title">Easy explanation</div>
+      <div class="explanation-copy">${escapeHtml(result.explanation)}</div>
+    `;
+  } else {
+    els.answerExplanation.hidden = true;
+    els.answerExplanation.textContent = "";
+  }
   renderCitationList(rows);
   renderSourceViewer(rows[state.activeCitationIndex] || null);
   renderDeveloperPanel(payload);
@@ -569,6 +592,8 @@ function renderErrorAnswer(message) {
   els.answerBadges.innerHTML = `<span class="badge danger">Request failed</span>`;
   els.answerText.textContent = `Error: ${message}`;
   els.answerNote.textContent = "The system could not complete the request. Check the API state and document status.";
+  els.answerExplanation.hidden = true;
+  els.answerExplanation.textContent = "";
   els.citationCount.textContent = "0";
   els.citationList.innerHTML = `<div class="empty-state">${escapeHtml(message)}</div>`;
   renderSourceViewer(null);
@@ -718,6 +743,8 @@ els.askForm.addEventListener("submit", async (event) => {
   els.answerBadges.innerHTML = `<span class="badge info">Retrieving evidence</span>`;
   els.answerText.textContent = "Retrieving evidence and building a grounded answer...";
   els.answerNote.textContent = "This can take a little longer when fallback reasoning is triggered.";
+  els.answerExplanation.hidden = true;
+  els.answerExplanation.textContent = "";
   els.citationCount.textContent = "0";
   els.citationList.innerHTML = `<div class="empty-state">Waiting for citations...</div>`;
   renderSourceViewer(null);

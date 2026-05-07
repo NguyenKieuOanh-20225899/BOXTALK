@@ -42,6 +42,7 @@ The repo now has:
 - `bm25_only` remains the strongest cheap lexical baseline.
 - `adaptive_route_retry` is still experimental because of latency and mixed aggregate benefit.
 - `grounded_llm_fallback` is experimental and currently useful mainly on focused table-style cases.
+- `llm_explanation` is an optional presentation layer for UI/demo: it explains the final grounded answer in simpler language, but it does not change the answer, citations, groundedness, or main benchmark gates.
 - Thesis-level positioning and remaining gaps are summarized in
   `docs/THESIS_READINESS_REPORT.md`.
 

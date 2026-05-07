@@ -66,6 +66,8 @@ class QAResult:
     standard_answer: str | None = None
     final_answer_source: str = "standard"
     fallback_trace: dict[str, Any] = field(default_factory=dict)
+    explanation: str | None = None
+    explanation_trace: dict[str, Any] = field(default_factory=dict)
 
     @property
     def total_latency_ms(self) -> float:
@@ -91,4 +93,6 @@ class QAResult:
             "selected_route_attempt": self.selected_route_attempt,
             "grounded": self.grounded,
             "fallback_trace": dict(self.fallback_trace),
+            "explanation": self.explanation,
+            "explanation_trace": dict(self.explanation_trace),
         }

@@ -499,8 +499,8 @@ def build_markdown(summary: dict[str, Any]) -> str:
             "",
             "## Claim Boundary",
             "",
-            "- Safe claim: the project implements and evaluates a grounded PDF QA prototype with lexical/dense/hybrid retrieval, routed QA, scientific/table-aware ingest evidence, and an experimental grounded LLM fallback.",
-            "- Unsafe claim right now: production-ready QA, fully solved table reasoning, or LLM fallback as the default main path.",
+            "- Safe claim: the project implements and evaluates a grounded PDF QA prototype with lexical/dense/hybrid retrieval, routed QA, scientific/table-aware ingest evidence, an experimental grounded LLM fallback, and an optional LLM explanation layer that does not change the final answer.",
+            "- Unsafe claim right now: production-ready QA, fully solved table reasoning, LLM fallback as the default main path, or LLM explanation as a source of new facts.",
         ]
     )
 
