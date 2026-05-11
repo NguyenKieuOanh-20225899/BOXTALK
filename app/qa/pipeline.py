@@ -8,6 +8,7 @@ from app.qa.evidence_checker import EvidenceChecker
 from app.qa.llm_fallback import GroundedLLMFallback
 from app.qa.llm_explainer import GroundedLLMExplainer
 from app.qa.schemas import QAResult
+from app.qa.table_query_utils import augment_table_lookup_query
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner
 from app.retrieval.service import RetrievalService
 
@@ -43,8 +44,9 @@ class GroundedQAPipeline:
         query_type_value = self.router.route(question)
         query_type = getattr(query_type_value, "value", str(query_type_value))
         retrieval_plan = self.retrieval_planner.plan(query_type, question)
+        retrieval_query = augment_retrieval_query(question)
         retrieval_result = self.retrieval_service.retrieve(
-            question,
+            retrieval_query,
             strategy=retrieval_plan.strategy,
             config=retrieval_plan.config,
         )
@@ -143,3 +145,7 @@ class GroundedQAPipeline:
             explanation=explanation,
             explanation_trace=explanation_trace,
         )
+
+
+def augment_retrieval_query(question: str) -> str:
+    return augment_table_lookup_query(question)

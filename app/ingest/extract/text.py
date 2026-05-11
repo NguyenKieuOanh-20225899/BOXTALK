@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import fitz
 
 from app.ingest.schemas import BlockNode, PageNode
+
+
+LIST_ITEM_RE = re.compile(r"^(?:[-*•]\s+|\d+[\.)]\s+|[A-Za-z][\.)]\s+|[IVXLCDMivxlcdm]+[\.)]\s+)\S+")
+NUMBERED_HEADING_RE = re.compile(r"^\d+(?:\.\d+)*\.?\s+\S+")
+LEGAL_HEADING_RE = re.compile(r"^(?:chương|phần|mục|điều|khoản)\s+[0-9A-Za-zIVXLCDMivxlcdm]+[\.:]?\s*\S*", re.I)
+CAPTION_RE = re.compile(r"^(?:figure|fig\.|hình|bảng|table)\s+\d+(?:[\.:]\s*|\s+-\s+).+", re.I)
+METADATA_RE = re.compile(r"^[^:\n]{1,80}:\s+\S+")
 
 
 def extract_with_text_backend(pdf_path: str | Path) -> tuple[list[PageNode], list[BlockNode]]:
@@ -146,16 +154,35 @@ def _guess_text_block_type(text: str) -> str:
     if not s:
         return "paragraph"
 
-    if s.startswith(("- ", "* ", "• ")):
-        return "list_item"
-
-    if len(s) < 120 and (s.isupper() or s.startswith(("1.", "2.", "3.", "4.", "5."))):
-        return "heading"
-
-    if "|" in s and "\n" in s:
+    if _looks_like_table_text(s):
         return "table"
 
+    if CAPTION_RE.match(s):
+        return "caption"
+
+    if METADATA_RE.match(s):
+        return "metadata"
+
+    if LIST_ITEM_RE.match(s):
+        return "list_item"
+
+    if len(s) < 140 and (
+        s.isupper()
+        or NUMBERED_HEADING_RE.match(s)
+        or LEGAL_HEADING_RE.match(s)
+    ):
+        return "heading"
+
     return "paragraph"
+
+
+def _looks_like_table_text(text: str) -> bool:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if len(lines) < 2:
+        return False
+    if sum(1 for line in lines if "|" in line) >= 2:
+        return True
+    return sum(1 for line in lines if len(re.split(r"\s{2,}|\t", line)) >= 3) >= 2
 
 
 def _resolve_text_block_type(text: str, block_type_hint: str | None) -> str:

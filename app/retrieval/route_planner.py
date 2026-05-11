@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+import unicodedata
 from dataclasses import dataclass
 
 from app.retrieval.schemas import RetrievalConfig
@@ -22,6 +24,19 @@ class QueryAwareRetrievalPlanner:
         question_lower = question.lower()
 
         if normalized_type == "factoid":
+            if _is_table_lookup_query(question):
+                return QueryRetrievalPlan(
+                    strategy="hybrid",
+                    config=RetrievalConfig(
+                        top_k=8,
+                        candidate_k=80,
+                        bm25_weight=0.85,
+                        dense_weight=0.15,
+                        combination="weighted_sum",
+                        context_window=2,
+                    ),
+                    reason="table lookup queries need wider lexical recall plus adjacent rows/columns",
+                )
             bm25_weight, dense_weight = self._weights(question, bm25_default=0.45, dense_default=0.55)
             scientific_like = self._is_scientific_like(question)
             return QueryRetrievalPlan(
@@ -175,3 +190,40 @@ class QueryAwareRetrievalPlanner:
                 "label smoothing",
             )
         )
+
+
+def _is_table_lookup_query(question: str) -> bool:
+    folded = _fold(question)
+    if not folded:
+        return False
+    lookup_cues = (
+        "correspond",
+        "mapped",
+        "belongs to",
+        "which range",
+        "what range",
+        "which level",
+        "what level",
+        "what score",
+        "what value",
+        "ung voi",
+        "tuong ung",
+        "quy doi",
+        "thuoc khoang",
+        "khoang nao",
+        "muc nao",
+        "bao nhieu diem",
+        "diem chu",
+        "diem so",
+        "thang diem",
+        "thang 4",
+    )
+    if not any(cue in folded for cue in lookup_cues):
+        return False
+    return bool(re.search(r"(?<![\w.])[-+]?\d+(?:[,.]\d+)?%?(?![\w.])", question) or re.search(r"(?<!\w)[A-Za-z][A-Za-z0-9]{0,5}[+-]?(?!\w)", question))
+
+
+def _fold(text: str) -> str:
+    normalized = unicodedata.normalize("NFKD", text or "")
+    ascii_text = normalized.encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"\s+", " ", ascii_text).strip().lower()

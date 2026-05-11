@@ -23,6 +23,7 @@ from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
 from app.qa.llm_fallback import make_llm_fallback_from_env
 from app.qa.llm_explainer import make_llm_explainer_from_env
 from app.qa.pipeline import GroundedQAPipeline
+from app.qa.table_query_utils import is_table_lookup_query
 from app.retrieval.reranker import make_reranker
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit, coerce_chunk_ref
@@ -143,7 +144,7 @@ class QueryRouter:
         "how", "procedure", "process", "steps", "apply", "submit"
     }
     COMPARISON_TERMS = {
-        "so sánh", "khác nhau", "giữa", "compare", "difference", "different", "differ", "versus", "vs", "than"
+        "so sánh", "khác nhau", "giữa", "compare", "difference", "different", "differ", "versus", "vs"
     }
     DEFINITION_TERMS = {
         "là gì", "định nghĩa", "what is", "meaning", "khái niệm", "mô tả"
@@ -164,13 +165,26 @@ class QueryRouter:
         "what three ",
         "what new ",
     )
+    FACTOID_TERMS = {
+        "bao nhiêu",
+        "bao nhieu",
+        "điểm chữ",
+        "diem chu",
+        "điểm số",
+        "diem so",
+    }
 
     def route(self, question: str) -> QueryType:
         q = question.lower().strip()
 
-        if any(term in q for term in self.COMPARISON_TERMS):
+        table_lookup = is_table_lookup_query(question)
+        if (any(term in q for term in self.COMPARISON_TERMS) or re.search(r"\bthan\b", q)) and not table_lookup:
             return QueryType.COMPARISON
+        if table_lookup:
+            return QueryType.FACTOID
         if q.startswith(self.FACTOID_PREFIXES):
+            return QueryType.FACTOID
+        if any(term in q for term in self.FACTOID_TERMS):
             return QueryType.FACTOID
         if q.startswith("why "):
             return QueryType.DEFINITION

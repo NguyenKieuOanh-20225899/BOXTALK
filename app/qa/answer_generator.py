@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
+from app.qa.table_lookup_utils import lookup_table_answer_from_text
+from app.qa.table_query_utils import is_table_lookup_query
 from app.qa.text_utils import contains_text, normalize_text, split_sentences, token_set
 from app.retrieval.schemas import RetrievedHit
 
@@ -133,6 +135,18 @@ class GroundedAnswerGenerator:
     ) -> GroundedAnswer:
         selected_hits = self._select_hits(question, query_type, hits, evidence)
         citations = [self._citation(hit) for hit in selected_hits] if self.emit_citations else []
+        if is_table_lookup_query(question):
+            table_lookup_answer = self._table_lookup_answer(question, selected_hits)
+            if table_lookup_answer:
+                support_hits = self._table_lookup_support_hits(table_lookup_answer, selected_hits)
+                answer_citations = [self._citation(hit) for hit in support_hits] if self.emit_citations else []
+                return GroundedAnswer(
+                    answer=table_lookup_answer,
+                    citations=answer_citations or citations,
+                    support_sentences=[table_lookup_answer],
+                    grounded=self._is_grounded(table_lookup_answer, selected_hits),
+                    answer_type="extractive",
+                )
 
         if evidence.decision != "answer":
             return GroundedAnswer(
@@ -166,6 +180,9 @@ class GroundedAnswerGenerator:
         hits: list[RetrievedHit],
         evidence: EvidenceAssessment,
     ) -> list[RetrievedHit]:
+        if is_table_lookup_query(question):
+            return self._select_table_lookup_hits(question, hits)
+        question_lower = question.lower()
         if evidence.selected_hit_ids:
             by_id = {hit.chunk_id: hit for hit in hits}
             selected = [by_id[chunk_id] for chunk_id in evidence.selected_hit_ids if chunk_id in by_id]
@@ -192,6 +209,88 @@ class GroundedAnswerGenerator:
         if query_type in {"definition", "factoid"} and self._is_scientific_question(question.lower()):
             return hits[:15]
         return hits[:2]
+
+    def _select_table_lookup_hits(self, question: str, hits: list[RetrievedHit]) -> list[RetrievedHit]:
+        selected: list[RetrievedHit] = []
+        seen: set[str] = set()
+
+        def add(hit: RetrievedHit) -> None:
+            if hit.chunk_id in seen:
+                return
+            selected.append(hit)
+            seen.add(hit.chunk_id)
+
+        for hit in hits[:10]:
+            add(hit)
+
+        query_values = self._query_lookup_values(question)
+        for hit in hits[:40]:
+            text = normalize_text(hit.chunk.text)
+            if query_values and any(value in text for value in query_values) and self._is_tableish_lookup_hit(hit):
+                add(hit)
+
+        selected_ids = {hit.chunk_id for hit in selected}
+        for hit in hits[:40]:
+            neighbor_of = str(hit.metadata.get("context_neighbor_of") or "")
+            if neighbor_of in selected_ids:
+                add(hit)
+
+        return selected[:30]
+
+    @staticmethod
+    def _query_lookup_values(question: str) -> list[str]:
+        values: list[str] = []
+        for match in re.finditer(r"(?<!\w)[A-Za-z][A-Za-z0-9]{0,5}[+-]?(?!\w)", question):
+            token = match.group(0)
+            if len(token) <= 1 and not token.isupper():
+                continue
+            values.append(token)
+        for match in re.finditer(r"(?<![\w.])[-+]?\d+(?:[,.]\d+)?%?(?![\w.])", question):
+            values.append(match.group(0))
+        return values
+
+    @staticmethod
+    def _is_tableish_lookup_hit(hit: RetrievedHit) -> bool:
+        block_type = str(hit.chunk.block_type or "").lower()
+        text = normalize_text(hit.chunk.text)
+        if "table" in block_type or block_type == "heading":
+            return True
+        return "|" in text or len(text.split()) <= 20
+
+    def _table_lookup_support_hits(self, answer: str, hits: list[RetrievedHit]) -> list[RetrievedHit]:
+        answer_values = self._answer_support_values(answer)
+        if not answer_values:
+            return []
+        support_hits: list[RetrievedHit] = []
+        seen: set[str] = set()
+        for hit in hits:
+            text = normalize_text(hit.chunk.text)
+            decimal_text = re.sub(r"(?<=\d),(?=\d)", ".", text)
+            if not any(self._support_value_in_text(value, text, decimal_text) for value in answer_values):
+                continue
+            if hit.chunk_id in seen:
+                continue
+            support_hits.append(hit)
+            seen.add(hit.chunk_id)
+        return support_hits[:6]
+
+    @staticmethod
+    def _support_value_in_text(value: str, text: str, decimal_text: str) -> bool:
+        if re.fullmatch(r"[-+]?\d+(?:[,.]\d+)?%?", value):
+            normalized_value = value.replace(",", ".")
+            return bool(re.search(rf"(?<![\w.]){re.escape(normalized_value)}(?![\w.])", decimal_text))
+        return bool(re.search(rf"(?<!\w){re.escape(value)}(?!\w)", text))
+
+    @staticmethod
+    def _answer_support_values(answer: str) -> list[str]:
+        values: list[str] = []
+        for match in re.finditer(r"(?<!\w)[A-Za-z][A-Za-z0-9]{0,5}[+-]?(?!\w)", answer):
+            token = match.group(0)
+            if "+" in token or "-" in token or token.isupper():
+                values.append(token)
+        for match in re.finditer(r"(?<!\w)[-+]?\d+(?:[,.]\d+)?%?", answer):
+            values.append(match.group(0))
+        return values
 
     def _rank_support_sentences(
         self,
@@ -634,6 +733,10 @@ class GroundedAnswerGenerator:
         if scientific_answer:
             return scientific_answer
 
+        table_lookup_answer = self._table_lookup_answer(question, hits)
+        if table_lookup_answer:
+            return table_lookup_answer
+
         table_answer = self._table_answer(question, hits)
         if table_answer:
             return table_answer
@@ -805,6 +908,20 @@ class GroundedAnswerGenerator:
                 "constituency parsing",
             )
         )
+
+    def _table_lookup_answer(self, question: str, hits: list[RetrievedHit]) -> str | None:
+        if not is_table_lookup_query(question):
+            return None
+        evidence_text = "\n".join(
+            normalize_text(part)
+            for hit in hits[:30]
+            for part in (hit.chunk.section or "", hit.chunk.text or "")
+            if part
+        )
+        if not evidence_text:
+            return None
+        result = lookup_table_answer_from_text(question, evidence_text)
+        return result.answer if result is not None else None
 
     def _table_answer(self, question: str, hits: list[RetrievedHit]) -> str | None:
         q_lower = question.lower()
@@ -980,6 +1097,7 @@ class GroundedAnswerGenerator:
 
     def _is_grounded(self, answer: str, hits: list[RetrievedHit]) -> bool:
         evidence_text = "\n".join(hit.chunk.text for hit in hits)
+        evidence_text_decimal_normalized = re.sub(r"(?<=\d),(?=\d)", ".", evidence_text)
         normalized_answer = normalize_text(answer)
         if contains_text(evidence_text, normalized_answer):
             return True
@@ -998,7 +1116,12 @@ class GroundedAnswerGenerator:
                 continue
             answer_numbers = set(NUMBER_PHRASE_RE.findall(sentence))
             answer_numbers |= set(EN_NUMBER_PHRASE_RE.findall(sentence))
-            if answer_numbers and all(number in normalize_text(evidence_text) for number in answer_numbers):
+            normalized_evidence = normalize_text(evidence_text)
+            normalized_decimal_evidence = normalize_text(evidence_text_decimal_normalized)
+            if answer_numbers and all(
+                number in normalized_evidence or number in normalized_decimal_evidence
+                for number in answer_numbers
+            ):
                 supported += 1
         return supported / len(sentences) >= 0.5
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from typing import Any, Iterable, Mapping
 
@@ -34,10 +35,50 @@ TRAILING_UPPER_BOUND_RE = re.compile(
 )
 
 HEADER_KEYWORDS: dict[str, tuple[str, ...]] = {
-    "grade": ("grade", "letter_grade", "letter", "diem_chu", "diem chu"),
-    "grade_point": ("grade_point", "grade point", "gpa", "point", "points", "diem_he", "diem he"),
-    "range": ("range", "score", "band", "rate", "completion", "percent", "percentage", "diem", "khoang", "muc"),
-    "classification": ("classification", "class", "xep_loai", "xep loai", "level", "action", "status"),
+    "grade": ("grade", "letter_grade", "letter grade", "letter", "diem_chu", "diem chu"),
+    "grade_point": (
+        "grade_point",
+        "grade point",
+        "gpa",
+        "point",
+        "points",
+        "numeric value",
+        "diem_so",
+        "diem so",
+        "diem_he",
+        "diem he",
+        "thang diem",
+    ),
+    "range": (
+        "range",
+        "score range",
+        "score band",
+        "band",
+        "interval",
+        "threshold",
+        "rate",
+        "completion",
+        "percent",
+        "percentage",
+        "khoang",
+        "nguong",
+        "diem",
+    ),
+    "classification": (
+        "classification",
+        "class",
+        "category",
+        "label",
+        "type",
+        "xep_loai",
+        "xep loai",
+        "level",
+        "muc",
+        "loai",
+        "nhom",
+        "action",
+        "status",
+    ),
     "model": ("model", "configuration", "config", "variant"),
     "heads": ("head", "heads"),
     "layers": ("layer", "layers"),
@@ -200,6 +241,9 @@ def normalize_table_from_sources(
         parsed = _table_from_text(table_text)
         if parsed is not None:
             return parsed
+        parallel = _parallel_sequence_table_from_text(table_text)
+        if parallel is not None:
+            return parallel
     return None
 
 
@@ -237,6 +281,19 @@ def lookup_table_answer(question: str, table: NormalizedTable) -> TableLookupRes
             "target_cells": [cell.to_prompt_dict() for cell in target_cells],
         },
     )
+
+
+def lookup_table_answer_from_text(question: str, text: str) -> TableLookupResult | None:
+    table = normalize_table_from_sources(table_text=text)
+    if table is not None:
+        result = lookup_table_answer(question, table)
+        if result is not None:
+            return result
+    for candidate in _parallel_sequence_table_candidates_from_text(text):
+        result = lookup_table_answer(question, candidate)
+        if result is not None:
+            return result
+    return None
 
 
 def table_rows_for_prompt(table: NormalizedTable | None) -> list[dict[str, Any]]:
@@ -305,6 +362,167 @@ def _table_from_text(text: str) -> NormalizedTable | None:
         header_rows=(tuple(column.label for column in columns),),
         original_text=text,
     )
+
+
+def _parallel_sequence_table_from_text(text: str) -> NormalizedTable | None:
+    candidates = _parallel_sequence_table_candidates_from_text(text)
+    if candidates:
+        return candidates[0]
+    return None
+
+
+def _parallel_sequence_table_candidates_from_text(text: str) -> list[NormalizedTable]:
+    candidates: list[NormalizedTable] = []
+    current: list[tuple[str, list[str]]] = []
+    for line in text.splitlines():
+        parsed = _split_labeled_sequence_line(line)
+        if parsed is None:
+            if current:
+                candidate = _parallel_sequence_table_from_sequences(current, original_text=text)
+                if candidate is not None:
+                    candidates.append(candidate)
+                current = []
+            continue
+        current.append(parsed)
+    if current:
+        candidate = _parallel_sequence_table_from_sequences(current, original_text=text)
+        if candidate is not None:
+            candidates.append(candidate)
+
+    sequences: list[tuple[str, list[str]]] = []
+    for line in text.splitlines():
+        parsed = _split_labeled_sequence_line(line)
+        if parsed is not None:
+            sequences.append(parsed)
+    global_candidate = _parallel_sequence_table_from_sequences(sequences, original_text=text)
+    if global_candidate is not None:
+        candidates.append(global_candidate)
+    return _dedupe_tables(candidates)
+
+
+def _parallel_sequence_table_from_sequences(
+    sequences: list[tuple[str, list[str]]],
+    *,
+    original_text: str,
+) -> NormalizedTable | None:
+    if len(sequences) < 2:
+        return None
+
+    width_counts = Counter(len(values) for _, values in sequences if len(values) >= 2)
+    if not width_counts:
+        return None
+    width, _ = max(width_counts.items(), key=lambda item: (item[1], item[0]))
+    selected = [(label, values) for label, values in sequences if len(values) >= width]
+    if len(selected) < 2:
+        return None
+    width = min(len(values) for _, values in selected)
+    if width < 2:
+        return None
+
+    rows: list[dict[str, str]] = []
+    for value_idx in range(width):
+        row: dict[str, str] = {}
+        for label, values in selected:
+            row[label] = values[value_idx]
+        rows.append(row)
+    return _table_from_mapping_rows(rows, original_text=original_text)
+
+
+def _split_labeled_sequence_line(line: str) -> tuple[str, list[str]] | None:
+    normalized = _normalize_table_text(line).strip().strip("|")
+    if not normalized or "|" in normalized or "\t" in normalized or len(normalized) > 500:
+        return None
+    tokens = _merge_range_tokens(normalized.split())
+    if len(tokens) < 3:
+        return None
+
+    best: tuple[float, int, list[str]] | None = None
+    max_label_tokens = min(5, len(tokens) - 2)
+    for split_idx in range(1, max_label_tokens + 1):
+        label_tokens = tokens[:split_idx]
+        value_tokens = tokens[split_idx:]
+        if not any(re.search(r"[^\W\d_]", token, flags=re.UNICODE) for token in label_tokens):
+            continue
+        first_scores = [_sequence_value_score(token) for token in value_tokens[:2]]
+        if not first_scores or max(first_scores) < 0.60:
+            continue
+        scores = [_sequence_value_score(token) for token in value_tokens]
+        strong_count = sum(1 for score in scores if score >= 0.60)
+        if strong_count < 2:
+            continue
+        ratio = sum(scores) / max(1, len(scores))
+        if ratio < 0.55:
+            continue
+        score = ratio + min(split_idx, 4) * 0.03
+        if best is None or score > best[0]:
+            best = (score, split_idx, value_tokens)
+
+    if best is None:
+        return None
+    _, split_idx, value_tokens = best
+    label = _header_label(" ".join(tokens[:split_idx]))
+    values = [_normalize_cell_text(token) for token in value_tokens]
+    return label, values
+
+
+def _merge_range_tokens(tokens: list[str]) -> list[str]:
+    merged: list[str] = []
+    idx = 0
+    while idx < len(tokens):
+        if (
+            idx + 2 < len(tokens)
+            and _is_number_token(tokens[idx])
+            and tokens[idx + 1].lower() in {"-", "to", "through", "den", "toi"}
+            and _is_number_token(tokens[idx + 2])
+        ):
+            merged.append(f"{tokens[idx]}-{tokens[idx + 2]}")
+            idx += 3
+            continue
+        merged.append(tokens[idx])
+        idx += 1
+    return merged
+
+
+def _sequence_value_score(token: str) -> float:
+    cleaned = token.strip(" ,;:()[]")
+    if not cleaned:
+        return 0.0
+    normalized = _normalize_cell_text(cleaned)
+    if _parse_interval(normalized) is not None:
+        return 1.0
+    if _is_number_token(normalized):
+        return 1.0
+    if GRADE_RE.fullmatch(normalized):
+        return 1.0
+    if re.fullmatch(r"[A-Z][A-Z0-9_+.-]{0,9}", cleaned):
+        return 0.85
+    if re.fullmatch(r"[A-Za-z][A-Za-z0-9_+.-]{1,24}", cleaned) and cleaned[:1].isupper():
+        return 0.65
+    folded = _fold(cleaned)
+    if folded and folded not in _SEQUENCE_STOPWORDS and len(folded) <= 24:
+        return 0.45
+    return 0.0
+
+
+def _is_number_token(token: str) -> bool:
+    return _to_float(token.strip("%")) is not None
+
+
+_SEQUENCE_STOPWORDS = {
+    "and",
+    "or",
+    "the",
+    "of",
+    "for",
+    "with",
+    "va",
+    "hoac",
+    "cua",
+    "cho",
+    "theo",
+    "quy",
+    "doi",
+}
 
 
 def _split_table_line(line: str) -> list[str]:
@@ -515,6 +733,15 @@ def _compose_lookup_answer(
     first_match = matched_cells[0]
     targets = _dedupe_cells(target_cells)
     target_text = _format_target_cells(targets)
+    if _looks_vietnamese(question):
+        if first_match.interval is not None:
+            number = _first_number(question)
+            if number is not None:
+                return f"{_format_number(number)} thuộc {first_match.text}, tương ứng {target_text}."
+            return f"{first_match.text} tương ứng {target_text}."
+        if first_match.grade is not None and reason == "grade_match":
+            return f"{first_match.grade} tương ứng {target_text}."
+        return f"{first_match.text} tương ứng {target_text}."
     if first_match.interval is not None:
         number = _first_number(question)
         if number is not None:
@@ -541,8 +768,12 @@ def _target_groups(folded_question: str) -> list[str]:
             groups.append(group)
     if "which" in folded_question and "model" in folded_question:
         groups.insert(0, "model")
-    if any(term in folded_question for term in ("bao nhieu diem", "score band", "score range", "khoang diem")):
+    if any(term in folded_question for term in ("bao nhieu diem", "score band", "score range", "what range", "which range", "khoang diem", "khoang nao")):
         groups.insert(0, "range")
+    if any(term in folded_question for term in ("what point", "what value", "bao nhieu gia tri", "diem so", "gpa", "thang diem", "thang 4")):
+        groups.insert(0, "grade_point")
+    if any(term in folded_question for term in ("which level", "what level", "which category", "what category", "muc nao", "loai nao", "nhom nao")):
+        groups.insert(0, "classification")
     if any(term in folded_question for term in ("letter grade", "diem chu", "grade")) and "grade_point" not in groups:
         groups.insert(0, "grade")
     return _dedupe_strings(groups)
@@ -644,6 +875,11 @@ def _format_number(value: float) -> str:
     return f"{value:.6f}".rstrip("0").rstrip(".")
 
 
+def _looks_vietnamese(text: str) -> bool:
+    folded = _fold(text)
+    return any(term in folded for term in ("bao nhieu", "ung voi", "tuong ung", "diem", "muc", "khoang", "thuoc", "thang"))
+
+
 def _fold(text: str) -> str:
     normalized = unicodedata.normalize("NFKD", normalize_text(text or ""))
     ascii_text = normalized.encode("ascii", "ignore").decode("ascii")
@@ -670,6 +906,18 @@ def _dedupe_columns(columns: Iterable[TableColumn]) -> list[TableColumn]:
             continue
         seen.add(column.index)
         result.append(column)
+    return result
+
+
+def _dedupe_tables(tables: Iterable[NormalizedTable]) -> list[NormalizedTable]:
+    seen: set[str] = set()
+    result: list[NormalizedTable] = []
+    for table in tables:
+        key = table.rendered_text
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(table)
     return result
 
 

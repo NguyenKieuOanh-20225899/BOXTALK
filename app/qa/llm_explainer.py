@@ -310,13 +310,18 @@ def explanation_response_from_payload(payload: dict[str, Any]) -> LLMExplanation
         used_ids = [used_raw]
     else:
         used_ids = [str(item) for item in used_raw if str(item).strip()]
+    explanation_raw = payload.get("explanation") or ""
+    if isinstance(explanation_raw, list):
+        explanation = "\n".join(str(item).strip() for item in explanation_raw if str(item).strip())
+    else:
+        explanation = str(explanation_raw).strip()
     try:
         confidence = float(payload.get("confidence", 0.0))
     except (TypeError, ValueError):
         confidence = 0.0
     confidence = max(0.0, min(1.0, confidence))
     return LLMExplanationResponse(
-        explanation=str(payload.get("explanation") or "").strip(),
+        explanation=explanation,
         used_evidence_ids=used_ids,
         confidence=confidence,
         raw_response=dict(payload),

@@ -20,14 +20,17 @@ from app.qa.llm_fallback import (
     provider_runtime_info,
     response_from_payload,
 )
+from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.llm_explainer import (
     DummyExplanationLLMClient,
     GroundedLLMExplainer,
     LLMExplanationConfig,
     make_llm_explanation_client,
 )
+from app.qa.router import QueryRouter
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
-from app.qa.table_lookup_utils import lookup_table_answer, normalize_table_from_sources
+from app.qa.table_lookup_utils import lookup_table_answer, lookup_table_answer_from_text, normalize_table_from_sources
+from app.qa.table_query_utils import is_table_lookup_query
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
 from scripts.benchmark_llm_fallback import summarize_comparison
 
@@ -322,6 +325,88 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertFalse(result.called)
         self.assertFalse(result.used)
         self.assertEqual(result.reason, "answer_is_not_grounded_or_has_no_citations")
+
+    def test_table_factoid_router_does_not_match_than_inside_vietnamese_thang(self) -> None:
+        question = "Điểm chữ B+ ứng với khoảng bao nhiêu điểm trên thang 4?"
+        router = QueryRouter()
+
+        self.assertTrue(is_table_lookup_query(question))
+        self.assertEqual(router.route(question), "factoid")
+
+    def test_parallel_sequence_reverse_lookup_label_to_numeric(self) -> None:
+        question = "B+ corresponds to how many points?"
+        table_text = "Grade A B+ C+\nPoints 4.0 3.5 2.5"
+
+        result = lookup_table_answer_from_text(question, table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("B+", result.answer if result else "")
+        self.assertIn("3.5", result.answer if result else "")
+
+    def test_parallel_sequence_reverse_lookup_numeric_to_label(self) -> None:
+        table_text = "Category Low Medium High\nThreshold 0-49 50-79 80-100"
+
+        result = lookup_table_answer_from_text("50 belongs to which category?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("Medium", result.answer if result else "")
+
+    def test_parallel_sequence_label_to_interval(self) -> None:
+        table_text = "Category Low Medium High\nThreshold 0-49 50-79 80-100"
+
+        result = lookup_table_answer_from_text("Medium corresponds to which range?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("50 - 79", result.answer if result else "")
+
+    def test_parallel_sequence_mixed_decimal_and_plus_label(self) -> None:
+        table_text = "Label C C+ B\nValue 2,0 2,5 3,0"
+
+        result = lookup_table_answer_from_text("C+ corresponds to what value?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("2.5", result.answer if result else "")
+
+    def test_answer_generator_uses_generic_parallel_sequence_lookup(self) -> None:
+        question = "Điểm chữ B+ ứng với khoảng bao nhiêu điểm trên thang 4?"
+        generator = GroundedAnswerGenerator()
+        hits = [
+            make_hit("h1", "Điểm chữ quy đổi F D D+ C C+ B B+ A A+", block_type="table", score=0.95),
+            make_hit("h2", "Điểm số quy đổi 0 1 1,5 2,0 2,5 3,0 3,5 4,0 4,0", block_type="table", score=0.94),
+        ]
+        evidence = make_evidence("answer", sufficiency=0.90)
+
+        answer = generator.generate(
+            question=question,
+            query_type="factoid",
+            hits=hits,
+            evidence=evidence,
+        )
+
+        self.assertIn("B+", answer.answer)
+        self.assertIn("3.5", answer.answer)
+        self.assertTrue(answer.grounded)
+
+    def test_answer_generator_table_lookup_resolves_before_partial_evidence(self) -> None:
+        generator = GroundedAnswerGenerator()
+        hits = [
+            make_hit("h1", "The document introduces a conversion table.", block_type="paragraph", score=0.95),
+            make_hit("h2", "Grade A B+ C+", block_type="table", score=0.90),
+            make_hit("h3", "Points 4.0 3.5 2.5", block_type="table", score=0.89),
+        ]
+        evidence = make_evidence("expand_retrieval", sufficiency=0.50)
+
+        answer = generator.generate(
+            question="B+ corresponds to how many points?",
+            query_type="factoid",
+            hits=hits,
+            evidence=evidence,
+        )
+
+        self.assertIn("B+", answer.answer)
+        self.assertIn("3.5", answer.answer)
+        self.assertNotIn("partial evidence", answer.answer.lower())
+        self.assertEqual([citation["chunk_id"] for citation in answer.citations], ["h2", "h3"])
 
     def test_llm_response_with_answer_and_evidence_ids_implies_answer_decision(self) -> None:
         response = response_from_payload(

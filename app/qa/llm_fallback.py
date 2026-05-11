@@ -13,10 +13,12 @@ from typing import Any, Literal, Protocol
 from app.qa.schemas import EvidenceAssessment
 from app.qa.table_lookup_utils import (
     lookup_table_answer,
+    lookup_table_answer_from_text,
     normalize_table_from_sources,
     table_metadata_for_prompt,
     table_rows_for_prompt,
 )
+from app.qa.table_query_utils import is_table_lookup_query
 from app.qa.text_utils import normalize_text, split_sentences, token_set
 from app.retrieval.schemas import RetrievedHit
 
@@ -345,19 +347,18 @@ class GroundedLLMFallback:
         ):
             table_answer = try_rule_based_table_lookup(question, request_packets)
             if table_answer is not None:
-                packet, answer = table_answer
-                citation = citation_from_packet(packet)
+                answer_packets, answer = table_answer
                 return LLMFallbackResult(
                     called=True,
                     used=True,
                     decision="answer",
                     reason="rule_based_table_lookup",
                     answer=answer,
-                    citations=[citation],
+                    citations=[citation_from_packet(packet) for packet in answer_packets],
                     support_sentences=[answer],
                     reasoning_mode="table",
                     confidence=0.70,
-                    used_evidence_ids=[packet.evidence_id],
+                    used_evidence_ids=[packet.evidence_id for packet in answer_packets],
                     provider="rule_based_table_lookup",
                     latency_ms=0.0,
                     llm_called=False,
@@ -744,10 +745,12 @@ def focus_evidence_packets(reasoning_mode: ReasoningMode, packets: list[Evidence
     return packets
 
 
-def try_rule_based_table_lookup(question: str, packets: list[EvidencePacket]) -> tuple[EvidencePacket, str] | None:
+def try_rule_based_table_lookup(question: str, packets: list[EvidencePacket]) -> tuple[list[EvidencePacket], str] | None:
+    table_packets: list[EvidencePacket] = []
     for packet in packets:
         if packet.modality != "table":
             continue
+        table_packets.append(packet)
         table = normalize_table_from_sources(table_text=packet.table_text or packet.text)
         if table is None:
             table = normalize_table_from_sources(
@@ -758,7 +761,17 @@ def try_rule_based_table_lookup(question: str, packets: list[EvidencePacket]) ->
             continue
         result = lookup_table_answer(question, table)
         if result is not None:
-            return packet, result.answer
+            return [packet], result.answer
+
+    if len(table_packets) >= 2:
+        combined_text = "\n".join(
+            normalize_text(packet.table_text or packet.text)
+            for packet in table_packets[:6]
+            if (packet.table_text or packet.text)
+        )
+        result = lookup_table_answer_from_text(question, combined_text)
+        if result is not None:
+            return table_packets[:6], result.answer
     return None
 
 
@@ -933,6 +946,8 @@ def _looks_like_table(text: str) -> bool:
         return True
     if sum(1 for line in lines if len(re.split(r"\s{2,}|\t", line)) >= 3) >= 2:
         return True
+    if normalize_table_from_sources(table_text=text) is not None:
+        return True
     return False
 
 
@@ -992,7 +1007,30 @@ def _is_numeric_question(q_folded: str) -> bool:
 
 
 def _is_table_question(q_folded: str) -> bool:
-    return any(term in q_folded for term in ("table", "bang", "row", "column", "cell", "muc nao", "tuong ung"))
+    return any(
+        term in q_folded
+        for term in (
+            "table",
+            "bang",
+            "row",
+            "column",
+            "cell",
+            "lookup",
+            "mapping",
+            "range",
+            "interval",
+            "threshold",
+            "category",
+            "label",
+            "muc nao",
+            "loai nao",
+            "khoang nao",
+            "thuoc khoang",
+            "tuong ung",
+            "ung voi",
+            "quy doi",
+        )
+    )
 
 
 def _needs_table_llm_reasoning(q_folded: str, query_type: str) -> bool:
@@ -1027,6 +1065,8 @@ def _needs_table_llm_reasoning(q_folded: str, query_type: str) -> bool:
 
 
 def _should_try_rule_based_table_lookup(question: str, query_type: str) -> bool:
+    if is_table_lookup_query(question):
+        return True
     return not _needs_table_llm_reasoning(_fold_text(question), query_type)
 
 
