@@ -422,6 +422,23 @@ Nhận xét:
 - Các nhóm yếu nhất là fact verification, numerical reasoning và table + text reasoning.
 - Đây là bằng chứng quan trọng để không claim table QA đã hoàn chỉnh.
 
+### 4.10. Kết Quả Đánh Giá Ingest PDF Theo Benchmark Ngoài
+
+Ngoài benchmark hỏi đáp cuối cùng, đồ án bổ sung đánh giá riêng cho tầng ingest PDF. Mục tiêu của nhóm benchmark này là kiểm tra từng thành phần trước khi nội dung đi vào chunking, indexing và QA. Cách đánh giá này giúp phân biệt lỗi do trích xuất tài liệu với lỗi do retrieval hoặc answer generation.
+
+| Thành phần ingest | Benchmark / dataset | Số mẫu | Metric chính | Kết quả | Ghi chú |
+|---|---|---:|---|---:|---|
+| Table extraction | PubTables-1M detection subset | 25 | Table F1@IoU 0.50 / 0.75 | 0.987 / 0.887 | Đánh giá phát hiện vùng bảng; ground truth hiện có là bbox bảng. |
+| General layout detection | DocLayNet subset | 25 | Layout micro F1@IoU 0.50 / 0.75 | 0.815 / 0.772 | Đánh giá các vùng heading, paragraph, table, figure, caption và metadata-like. |
+| Scientific PDF layout | PubLayNet subset | 25 | Layout micro F1@IoU 0.50 / 0.75 | 0.771 / 0.743 | Đánh giá các nhãn title, text, list, table và figure trong bài báo khoa học. |
+| OCR / scan PDF | FUNSD OCR subset | 25 | OCR token F1 | 0.749 | FUNSD dùng annotation mức từ, không hoàn toàn tương đương transcript OCR theo dòng. |
+| OCR / scan PDF | OCR-D PAGE-XML subset | 19 | OCR token F1 | 0.657 | Tài liệu lịch sử/Fraktur khó hơn scan hiện đại. |
+| Academic PDF text extraction proxy | Nougat/arXiv subset | 25 | Token F1 | 0.628 | Đánh giá proxy cho trích xuất văn bản học thuật, chưa phải full PDF-to-markup kiểu Nougat. |
+
+Các kết quả này cho thấy hướng xử lý theo vùng tài liệu có hiệu quả rõ trên bảng và layout. PubTables đạt F1@IoU 0.50 là `0.987`, trong khi DocLayNet và PubLayNet đạt micro F1@IoU 0.50 lần lượt là `0.815` và `0.771`. Với OCR, kết quả thấp hơn trên FUNSD và OCR-D do đặc thù ground truth và độ khó của dữ liệu scan, nhưng pipeline đã chạy ổn định bằng GPU trên dữ liệu ngoài. Với Nougat/arXiv, kết quả được dùng như benchmark proxy cho PDF học thuật vì hệ thống hiện chưa triển khai đầy đủ mô hình sinh markup như Nougat.
+
+Chi tiết lệnh chạy, môi trường GPU và giải thích hạn chế được lưu trong `docs/INGEST_REAL_BENCHMARK_RUN_2026-05-12.md` và `docs/INGEST_PR_REVIEW_AND_THESIS_TABLE_2026-05-12.md`.
+
 ## Chương 5. Thảo Luận
 
 ### 5.1. Điểm Mạnh
