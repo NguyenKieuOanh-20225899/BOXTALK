@@ -12,7 +12,10 @@ Muc tieu cua lan cai tien nay la xu ly diem yeu tiep theo cua ingest PDF sau khi
 | Text/layout/region/OCR | Dung chung reading-order sorter trong text extraction, region routing, model layout va OCR. | `app/ingest/extract/text.py`, `app/ingest/extract/region_routed.py`, `app/ingest/extract/ocr.py` |
 | Table QA metadata | QA fallback uu tien `table_records` khi normalize bang, giup lookup theo header on dinh hon. | `app/qa/llm_fallback.py` |
 | OCR bbox | Chuyen bbox OCR tu toa do anh render ve toa do trang PDF truoc khi sort. | `app/ingest/extract/ocr.py` |
+| OCR table structure | Gom cac OCR text box thanh bang va xuat `table_cells` co bbox cho scan/table image. | `app/ingest/extract/ocr.py`, `app/ingest/extract/table.py` |
 | OCR preprocessing | Them preprocessing anh opt-in qua `BOXBIIBOO_OCR_PREPROCESS=auto|contrast|binarize`; default la `none` vi khong cai thien deu tren FUNSD/OCR-D. | `app/ingest/extract/ocr.py` |
+| PubTables structure benchmark | Them script chuan bi PubTables-1M OTSL subset co cell/html ground truth that. | `scripts/prepare_pubtables_structure_subset.py` |
+| OCR-D historical metrics | Them metric `ocr_historical_*` de danh gia noi dung sau khi chuan hoa long-s/ligature/kieu chu co. Raw OCR metrics van duoc giu nguyen. | `app/eval/ingest_metrics.py`, `scripts/benchmark_ingest_suite.py` |
 
 ## Validation
 
@@ -49,9 +52,40 @@ Ket qua:
 | FUNSD OCR | `funsd_ocr_gpu_25_after_ocr_sort` | 25 | 1.00 | OCR token F1 = 0.734, CER = 0.714, WER = 0.961 | 0.938s / 0.719s |
 | OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_after_ocr_sort` | 19 | 1.00 | OCR token F1 = 0.657, CER = 0.612, WER = 0.885 | 4.321s / 4.457s |
 
+## Structure and Historical OCR Add-on
+
+Commands:
+
+```powershell
+.\.venv-ocr-gpu\Scripts\python.exe scripts\prepare_pubtables_structure_subset.py --limit 5 --out data\benchmarks\pubtables_structure_smoke
+
+$env:BOXBIIBOO_ENABLE_REGION_ROUTING='0'
+$env:BOXBIIBOO_LAYOUT_MODEL_NAME='0'
+$env:BOXBIIBOO_OCR_LANG='en'
+$env:BOXBIIBOO_OCR_DEVICE='gpu:0'
+$env:BOXBIIBOO_OCR_PAGE_SCALE='2.0'
+$env:BOXBIIBOO_ENABLE_OCR_TABLE_CLUSTER='1'
+.\.venv-ocr-gpu\Scripts\python.exe scripts\benchmark_ingest_suite.py --dataset pubtables_structure --data-dir data\benchmarks\pubtables_structure_smoke --limit 5 --out results\ingest\pubtables_structure_otsl_5_ocr --mode table --save-predictions
+
+$env:BOXBIIBOO_OCR_LANG='german'
+$env:BOXBIIBOO_OCR_PAGE_SCALE='1.5'
+.\.venv-ocr-gpu\Scripts\python.exe scripts\benchmark_ingest_suite.py --dataset ocr --data-dir data\benchmarks\ocrd_pagexml\ocr --limit 19 --out results\ingest\ocrd_pagexml_gpu_19_historical_metrics --mode ocr --save-predictions
+```
+
+Results:
+
+| Dataset | Run | Samples | Metric | Result |
+|---|---|---:|---|---:|
+| PubTables-1M OTSL | `pubtables_structure_otsl_5_ocr` | 5 | table cell IoU@0.50 F1 | 0.435 |
+| PubTables-1M OTSL | `pubtables_structure_otsl_5_ocr` | 5 | table text cell structure F1 | 0.208 |
+| PubTables-1M OTSL | `pubtables_structure_otsl_5_ocr` | 5 | table detection F1@0.50 | 0.900 |
+| OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_historical_metrics` | 19 | raw OCR token F1 | 0.657 |
+| OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_historical_metrics` | 19 | historical-normalized OCR token F1 | 0.689 |
+| OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_historical_metrics` | 19 | historical-normalized CER | 0.606 |
+
 ## Interpretation
 
-PubTables trong local subset hien tai van la detection-only vi ground truth dang co la bbox XML, chua co cell/row/column ground truth. Phan table structure moi duoc validate bang synthetic benchmark va test PDF tao tai runtime, dong thoi da duoc noi vao pipeline ingest that de phuc vu QA ve sau.
+PubTables detection subset local van la bbox-only, nhung da bo sung PubTables-1M OTSL subset de danh gia cell/html structure bang ground truth that. Ket qua structure hien tai con thap hon detection, phan anh dung do kho cua OCR + structure recognition tren table image crop.
 
 DocLayNet-small chi co 49 anh hop le sau khi prepare, nen run 100 mau thuc te dung 49 mau. PubLayNet da duoc mo rong len 100 mau.
 
@@ -64,7 +98,7 @@ Bang trong bao cao nen ghi ro hai lop ket qua:
 | Thanh phan | Ket qua nen bao cao | Luu y |
 |---|---|---|
 | Table detection | PubTables-1M 100 mau: F1@0.50 = 0.960, F1@0.75 = 0.870 | Detection-only theo bbox. |
-| Table structure | Synthetic structure benchmark: table cell coverage = 1.000 | Framework da xuat CSV/HTML/cell bbox, nhung can PubTables structure GT de danh gia chuan hon. |
+| Table structure | PubTables-1M OTSL 5 mau: cell IoU@0.50 F1 = 0.435, text cell F1 = 0.208 | Da co benchmark structure that; day la diem can tiep tuc cai thien. |
 | General layout | DocLayNet-small 49 mau: micro F1@0.50 = 0.849 | Local subset chi co 49 mau hop le. |
 | Scientific layout | PubLayNet 100 mau: micro F1@0.50 = 0.739 | Danh gia title/text/list/table/figure. |
-| OCR scan | FUNSD token F1 = 0.734; OCR-D token F1 = 0.657 | OCR-D CER/WER cai thien sau khi sua bbox/sort; FUNSD token F1 giam nhe so voi run cu. |
+| OCR scan | FUNSD token F1 = 0.734; OCR-D raw token F1 = 0.657; OCR-D historical-normalized token F1 = 0.689 | Historical metric giup danh gia noi dung sau khi chuan hoa ky tu co, khong thay the raw OCR metric. |

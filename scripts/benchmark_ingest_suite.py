@@ -25,9 +25,13 @@ from app.eval.ingest_metrics import (
     char_accuracy,
     confusion_summary,
     detection_metrics,
+    historical_ocr_cer,
+    historical_ocr_token_f1,
+    historical_ocr_wer,
     normalized_text_similarity,
     reading_order_score,
     summarize_numeric,
+    table_cell_bbox_metrics,
     table_exact_match,
     table_structure_score,
     token_f1,
@@ -39,7 +43,7 @@ from scripts.benchmark_ingest_standard import git_commit
 
 RESULTS_ROOT = Path("results/benchmark_suite")
 UNIFIED_RESULTS_ROOT = Path("results/ingest")
-UNIFIED_DATASETS = {"mock", "bastkorzen", "doclaynet", "publaynet", "pubtables", "ocr", "nougat"}
+UNIFIED_DATASETS = {"mock", "bastkorzen", "doclaynet", "publaynet", "pubtables", "pubtables_structure", "ocr", "nougat"}
 LAYOUT_LABELS = ["heading", "paragraph", "list_item", "table", "figure", "caption", "metadata"]
 SCIENTIFIC_LABELS = ["title", "text", "list", "table", "figure"]
 
@@ -364,6 +368,11 @@ class TextJsonlAdapter(DatasetAdapter):
                         ground_truth=IngestGroundTruth(
                             text=gt.get("text"),
                             ordered_text=list(gt.get("ordered_text", []) or []),
+                            layout_regions=_parse_jsonl_regions(gt.get("layout_regions", [])),
+                            table_regions=_parse_jsonl_regions(gt.get("table_regions", [])),
+                            table_cells=list(gt.get("table_cells", []) or []),
+                            table_html=gt.get("table_html"),
+                            table_csv=gt.get("table_csv"),
                             form_fields=dict(gt.get("form_fields", {}) or {}),
                         ),
                         metadata=dict(row.get("metadata", {}) or {}),
@@ -385,6 +394,32 @@ class NougatTextAdapter(TextJsonlAdapter):
 class OCRDatasetAdapter(TextJsonlAdapter):
     dataset_name = "ocr"
     default_filename = "ocr_samples.jsonl"
+
+
+class PubTablesStructureAdapter(TextJsonlAdapter):
+    dataset_name = "pubtables_structure"
+    default_filename = "pubtables_structure_samples.jsonl"
+
+
+def _parse_jsonl_regions(value: Any) -> list[LayoutRegion]:
+    regions: list[LayoutRegion] = []
+    if not isinstance(value, list):
+        return regions
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        bbox = item.get("bbox")
+        if not bbox or len(bbox) < 4:
+            continue
+        regions.append(
+            LayoutRegion(
+                str(item.get("label") or item.get("block_type") or "table"),
+                tuple(float(v) for v in bbox[:4]),
+                str(item.get("text") or ""),
+                dict(item.get("metadata", {}) or {}),
+            )
+        )
+    return regions
 
 
 def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
@@ -445,6 +480,7 @@ def make_adapter(dataset: str, data_dir: Path | None, *, limit: int, seed: int, 
         "doclaynet": DocLayNetAdapter,
         "publaynet": PubLayNetAdapter,
         "pubtables": PubTablesAdapter,
+        "pubtables_structure": PubTablesStructureAdapter,
         "ocr": OCRDatasetAdapter,
         "nougat": NougatTextAdapter,
     }[dataset]
@@ -645,12 +681,18 @@ def score_sample(sample: IngestBenchmarkSample, prediction: IngestPrediction, *,
             record["table_detection_iou50"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.50)
             record["table_detection_iou75"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.75)
         record["table_structure"] = table_structure_score(prediction.table_cells, gt.table_cells)
+        record["table_cell_iou50"] = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
+        record["table_cell_iou75"] = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.75)
         record["table_exact_csv"] = table_exact_match(prediction.table_csv or _cells_to_csv(prediction.table_cells), gt.table_csv)
         record["table_exact_html"] = table_exact_match(prediction.table_html, gt.table_html)
     if mode in {"ocr", "all"}:
+        historical_f1 = historical_ocr_token_f1(prediction.text, gt.text)
         record["ocr_cer"] = record["cer"]
         record["ocr_wer"] = record["wer"]
         record["ocr_token_f1"] = record["token_f1"]
+        record["ocr_historical_cer"] = historical_ocr_cer(prediction.text, gt.text)
+        record["ocr_historical_wer"] = historical_ocr_wer(prediction.text, gt.text)
+        record["ocr_historical_token_f1"] = historical_f1["f1"] if historical_f1 else None
         if gt.form_fields:
             record["form_field_f1"] = _form_field_f1({}, gt.form_fields)
     return record
@@ -676,13 +718,16 @@ def summarize_unified_records(
         "ocr_cer",
         "ocr_wer",
         "ocr_token_f1",
+        "ocr_historical_cer",
+        "ocr_historical_wer",
+        "ocr_historical_token_f1",
         "form_field_f1",
         "table_exact_csv",
     ):
         values = [float(record[key]) for record in success_records if record.get(key) is not None]
         if values:
             metric_summary[key] = summarize_numeric(values)
-    for key in ("layout_iou50", "layout_iou75", "table_detection_iou50", "table_detection_iou75", "table_structure"):
+    for key in ("layout_iou50", "layout_iou75", "table_detection_iou50", "table_detection_iou75", "table_structure", "table_cell_iou50", "table_cell_iou75"):
         metric_summary[key] = _summarize_nested_metric(success_records, key)
 
     latencies = [float(record.get("latency_sec", 0.0) or 0.0) for record in records if record.get("success")]

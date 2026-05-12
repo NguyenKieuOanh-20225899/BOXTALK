@@ -239,3 +239,20 @@ Nếu sample là image, runner tạm chuyển image thành một PDF một trang
 - Có thể chạy sample nhỏ bằng `--limit`.
 - Nếu dataset thiếu, runner ghi rõ `issues` trong `summary.json` và `README.md`.
 - Các benchmark retrieval/QA hiện có không bị thay đổi.
+
+## PubTables Structure / OTSL Add-on
+
+PubTables detection XML chi danh gia bbox bang. De danh gia row/column/cell structure, dung subset PubTables-1M OTSL co cell bbox va HTML ground truth:
+
+```powershell
+python scripts/prepare_pubtables_structure_subset.py --limit 25 --out data/benchmarks/pubtables_structure
+python scripts/benchmark_ingest_suite.py --dataset pubtables_structure --data-dir data/benchmarks/pubtables_structure --limit 25 --out results/ingest/pubtables_structure_25 --mode table --save-predictions
+```
+
+Metric bo sung:
+
+- `table_cell_iou50` va `table_cell_iou75`: do cell bbox detection.
+- `table_structure`: do khop row/col/text cua cell.
+- `table_exact_csv` va `table_exact_html`: do khop output co cau truc neu ground truth co san.
+
+OCR-D hoac tai lieu lich su co them cac metric `ocr_historical_*`. Cac metric nay chuan hoa long-s, ligature va mot so ky tu co de do noi dung doc duoc; raw `ocr_*` metrics van duoc giu nguyen.

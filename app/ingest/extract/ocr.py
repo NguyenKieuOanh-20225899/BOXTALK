@@ -369,6 +369,12 @@ def _build_synthetic_table_block(
     if not table_text:
         return None
 
+    from app.ingest.extract.table import table_structure_from_positioned_cells
+
+    structure = table_structure_from_positioned_cells(
+        [{"text": info["text"], "bbox": info["bbox"]} for info in cluster],
+        backend="paddleocr_positioned_table",
+    )
     scores = [info["score"] for info in cluster if info.get("score") is not None]
     return BlockNode(
         block_id=f"p{page.number:04d}_b{block_index:04d}",
@@ -384,6 +390,7 @@ def _build_synthetic_table_block(
             "synthetic_table_cluster": True,
             "ocr_confidence": (sum(scores) / len(scores)) if scores else None,
             "ocr_line_count": len(cluster),
+            **structure,
         },
     )
 

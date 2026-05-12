@@ -113,6 +113,63 @@ def _extract_table_grid_from_words(page: fitz.Page, rect: fitz.Rect) -> dict[str
     row_groups = _group_words_into_rows(words)
     cell_rows = [_split_row_into_cell_infos(row["words"]) for row in row_groups]
     cell_rows = [row for row in cell_rows if row]
+    return _table_grid_from_cell_rows(cell_rows)
+
+
+def table_structure_from_positioned_cells(
+    cells: list[dict[str, Any]],
+    *,
+    backend: str,
+) -> dict[str, Any]:
+    normalized_cells: list[dict[str, Any]] = []
+    for cell in cells:
+        text = str(cell.get("text") or "").strip()
+        bbox = cell.get("bbox")
+        if not text or not bbox or len(bbox) < 4:
+            continue
+        x0, y0, x1, y1 = [float(value) for value in bbox[:4]]
+        if x1 <= x0 or y1 <= y0:
+            continue
+        normalized_cells.append(
+            {
+                "text": text,
+                "bbox": (x0, y0, x1, y1),
+                "x0": x0,
+                "y0": y0,
+                "x1": x1,
+                "y1": y1,
+            }
+        )
+
+    if len(normalized_cells) < 4:
+        return {}
+
+    row_groups = _group_words_into_rows(normalized_cells)
+    cell_rows = [
+        [
+            {
+                "text": item["text"],
+                "bbox": (item["x0"], item["y0"], item["x1"], item["y1"]),
+                "x0": item["x0"],
+                "x1": item["x1"],
+            }
+            for item in sorted(row["words"], key=lambda value: value["x0"])
+        ]
+        for row in row_groups
+    ]
+    grid = _table_grid_from_cell_rows(cell_rows)
+    if not grid:
+        return {}
+    return table_structure_from_rows(
+        grid["rows"],
+        backend=backend,
+        cell_bboxes=grid.get("cell_bboxes"),
+        column_bounds=grid.get("column_bounds"),
+        row_bboxes=grid.get("row_bboxes"),
+    )
+
+
+def _table_grid_from_cell_rows(cell_rows: list[list[dict]]) -> dict[str, Any] | None:
     if len(cell_rows) < 2:
         return None
     if sum(1 for row in cell_rows if len(row) >= 2) < 2:

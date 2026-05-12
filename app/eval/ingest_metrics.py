@@ -4,6 +4,7 @@ import difflib
 import math
 import os
 import re
+import unicodedata
 from collections import Counter, defaultdict
 from statistics import mean
 from typing import Any
@@ -18,6 +19,72 @@ MAX_TOKEN_EDIT_LENGTH = int(os.getenv("BOXBIIBOO_BENCHMARK_MAX_TOKEN_EDIT_LENGTH
 
 def normalize_text(text: str | None) -> str:
     return " ".join((text or "").casefold().split())
+
+
+def normalize_historical_ocr_text(text: str | None) -> str:
+    value = (text or "").casefold()
+    replacements = {
+        "ſ": "s",
+        "å¿": "s",
+        "ꝛ": "r",
+        "ê›": "r",
+        "ꝑ": "p",
+        "ê‘": "p",
+        "æ": "ae",
+        "ã¦": "ae",
+        "Ã¦": "ae",
+        "ß": "ss",
+        "ÃŸ": "ss",
+        "î¢¿": "",
+        "ê°": "",
+        "âŠ": " et ",
+        "â¸—": "-",
+        "ȣ": "u",
+    }
+    for source, target in replacements.items():
+        value = value.replace(source, target)
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(char for char in value if not unicodedata.combining(char))
+    return " ".join(value.split())
+
+
+def historical_ocr_token_f1(prediction: str, ground_truth: str | None) -> dict[str, float] | None:
+    if ground_truth is None:
+        return None
+    pred_tokens = TOKEN_RE.findall(normalize_historical_ocr_text(prediction))
+    gt_tokens = TOKEN_RE.findall(normalize_historical_ocr_text(ground_truth))
+    if not pred_tokens and not gt_tokens:
+        return {"precision": 1.0, "recall": 1.0, "f1": 1.0}
+    if not pred_tokens or not gt_tokens:
+        return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+    pred_counts = Counter(pred_tokens)
+    gt_counts = Counter(gt_tokens)
+    overlap = sum((pred_counts & gt_counts).values())
+    precision = overlap / len(pred_tokens) if pred_tokens else 0.0
+    recall = overlap / len(gt_tokens) if gt_tokens else 0.0
+    return {"precision": precision, "recall": recall, "f1": f1_from_pr(precision, recall)}
+
+
+def historical_ocr_cer(prediction: str, ground_truth: str | None) -> float | None:
+    if ground_truth is None:
+        return None
+    expected = normalize_historical_ocr_text(ground_truth)
+    actual = normalize_historical_ocr_text(prediction)
+    if not expected:
+        return 0.0 if not actual else 1.0
+    actual, expected = _bounded_pair(actual, expected, MAX_CHAR_EDIT_LENGTH)
+    return levenshtein_distance(actual, expected) / max(len(expected), 1)
+
+
+def historical_ocr_wer(prediction: str, ground_truth: str | None) -> float | None:
+    if ground_truth is None:
+        return None
+    expected = TOKEN_RE.findall(normalize_historical_ocr_text(ground_truth))
+    actual = TOKEN_RE.findall(normalize_historical_ocr_text(prediction))
+    if not expected:
+        return 0.0 if not actual else 1.0
+    actual, expected = _bounded_pair(actual, expected, MAX_TOKEN_EDIT_LENGTH)
+    return levenshtein_distance(actual, expected) / max(len(expected), 1)
 
 
 def char_accuracy(prediction: str, ground_truth: str | None) -> float | None:
@@ -217,6 +284,32 @@ def table_structure_score(predicted_cells: list[dict[str, Any]], gt_cells: list[
     precision = overlap / len(pred_keys) if pred_keys else 0.0
     recall = overlap / len(gt_keys) if gt_keys else 0.0
     return {"precision": precision, "recall": recall, "f1": f1_from_pr(precision, recall)}
+
+
+def table_cell_bbox_metrics(
+    predicted_cells: list[dict[str, Any]],
+    gt_cells: list[dict[str, Any]],
+    *,
+    iou_threshold: float = 0.5,
+) -> dict[str, float] | None:
+    pred_regions = [
+        LayoutRegion("cell", tuple(float(value) for value in cell["bbox"][:4]))
+        for cell in predicted_cells
+        if isinstance(cell.get("bbox"), (list, tuple)) and len(cell["bbox"]) >= 4
+    ]
+    gt_regions = [
+        LayoutRegion("cell", tuple(float(value) for value in cell["bbox"][:4]))
+        for cell in gt_cells
+        if isinstance(cell.get("bbox"), (list, tuple)) and len(cell["bbox"]) >= 4
+    ]
+    if not gt_regions:
+        return None
+    metrics = detection_metrics(pred_regions, gt_regions, labels=["cell"], iou_threshold=iou_threshold)
+    return {
+        "precision": metrics["micro_precision"],
+        "recall": metrics["micro_recall"],
+        "f1": metrics["micro_f1"],
+    }
 
 
 def table_exact_match(prediction: str | None, ground_truth: str | None) -> float | None:
