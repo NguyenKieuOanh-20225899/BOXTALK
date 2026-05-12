@@ -12,7 +12,7 @@ from app.ingest.schemas import BlockNode
 
 NUMBERED_HEADING_RE = re.compile(r"^\d+(?:\.\d+)*\.?\s+\S+")
 LEGAL_HEADING_RE = re.compile(
-    r"^(chương|phần|mục|điều|khoản|điểm)\s+[0-9ivxlcdmA-Za-z]+[\.\:\-]?\s*",
+    r"^(chương|chuong|phần|phan|mục|muc|điều|dieu|khoản|khoan|điểm|diem)\s+[0-9ivxlcdmA-Za-z]+[\.\:\-]?\s*",
     re.IGNORECASE,
 )
 LIST_ITEM_RE = re.compile(
@@ -28,6 +28,7 @@ METADATA_LINE_RE = re.compile(
     r"^[^:\n]{1,80}:\s+\S+"
 )
 PAGE_ONLY_RE = re.compile(r"^\s*\d{1,3}\s*$")
+CAPTION_RE = re.compile(r"^(figure|fig\.|hình|bảng|table)\s+\d+(?:[\.:]\s*|\s+-\s+).+", re.IGNORECASE)
 
 
 def clean_blocks(
@@ -57,6 +58,7 @@ def clean_blocks(
     working = remove_repeated_blocks(working, repeated_texts)
     working = [normalize_block(b) for b in working]
     working = remove_obvious_noise(working)
+    working = merge_table_like_row_blocks(working)
 
     if merge_paragraph_lines:
         working = merge_adjacent_blocks(working)
@@ -154,17 +156,20 @@ def infer_block_type(block: BlockNode) -> str:
         return "paragraph"
 
     # giữ table/image nếu extractor sau này có set sẵn
-    if block.block_type in {"table", "image", "figure"}:
+    if block.block_type in {"table", "image", "figure", "caption"}:
         return block.block_type
+
+    if looks_like_caption(text):
+        return "caption"
+
+    if looks_like_metadata_line(text):
+        return "metadata"
 
     if looks_like_heading(text, block):
         return "heading"
 
     if looks_like_list_item(text):
         return "list_item"
-
-    if looks_like_metadata_line(text):
-        return "metadata"
 
     return "paragraph"
 
@@ -173,6 +178,12 @@ def looks_like_heading(text: str, block: BlockNode | None = None) -> bool:
     t = text.strip()
 
     if len(t) > 180:
+        return False
+
+    if re.match(r"^[-*•●▪■]\s+", t):
+        return False
+
+    if re.match(r"^[a-zA-Z][\.\)]\s+\S+", t):
         return False
 
     if LEGAL_HEADING_RE.match(t):
@@ -230,6 +241,10 @@ def looks_like_list_item(text: str) -> bool:
         return True
 
     return False
+
+
+def looks_like_caption(text: str) -> bool:
+    return bool(CAPTION_RE.match(text.strip()))
 
 
 def looks_like_metadata_line(text: str) -> bool:
@@ -298,6 +313,11 @@ def to_markdown_from_type(text: str, block_type: str) -> str:
         stripped = strip_list_marker_keep_content(t)
         return f"- {stripped}"
 
+    if block_type == "table":
+        from app.ingest.extract.table import table_text_to_markdown
+
+        return table_text_to_markdown(t)
+
     return t
 
 
@@ -340,6 +360,98 @@ def remove_obvious_noise(blocks: list[BlockNode]) -> list[BlockNode]:
         out.append(b)
 
     return out
+
+
+def merge_table_like_row_blocks(blocks: list[BlockNode]) -> list[BlockNode]:
+    if not blocks:
+        return []
+
+    grouped: dict[int, list[BlockNode]] = defaultdict(list)
+    for block in blocks:
+        grouped[block.page_index].append(block)
+
+    merged_all: list[BlockNode] = []
+    for page_index in sorted(grouped):
+        page_blocks = sorted(grouped[page_index], key=lambda b: b.reading_order)
+        i = 0
+        while i < len(page_blocks):
+            if not is_table_like_row(page_blocks[i]):
+                merged_all.append(page_blocks[i])
+                i += 1
+                continue
+
+            group = [page_blocks[i]]
+            i += 1
+            while i < len(page_blocks) and is_continuation_table_row(group[-1], page_blocks[i]):
+                group.append(page_blocks[i])
+                i += 1
+
+            if len(group) >= 3:
+                merged_all.append(merge_table_rows(group))
+            else:
+                merged_all.extend(group)
+
+    return reindex_reading_order_per_page(merged_all)
+
+
+def is_table_like_row(block: BlockNode) -> bool:
+    if block.block_type in {"list_item", "metadata", "caption", "figure"}:
+        return False
+    text = normalize_inline_text(block.text)
+    if not text or len(text) > 120:
+        return False
+    tokens = text.split()
+    if len(tokens) < 3 or len(tokens) > 8:
+        return False
+    if looks_like_list_item(text) or looks_like_metadata_line(text) or looks_like_caption(text):
+        return False
+    if block.item_number:
+        return False
+    return True
+
+
+def is_continuation_table_row(left: BlockNode, right: BlockNode) -> bool:
+    if left.page_index != right.page_index or not is_table_like_row(right):
+        return False
+    if left.bbox and right.bbox:
+        left_x0, _, _, left_y1 = left.bbox
+        right_x0, right_y0, _, _ = right.bbox
+        if abs(left_x0 - right_x0) > 12:
+            return False
+        if right_y0 - left_y1 > 36:
+            return False
+    return True
+
+
+def merge_table_rows(rows: list[BlockNode]) -> BlockNode:
+    text = "\n".join(normalize_inline_text(row.text) for row in rows)
+    from app.ingest.extract.table import table_structure_from_text, table_text_to_markdown
+
+    meta = dict(rows[0].meta or {})
+    meta["merged_table_row_block_ids"] = [row.block_id for row in rows]
+    meta.update(table_structure_from_text(text, backend="text_row_cluster"))
+    return replace(
+        rows[0],
+        block_type="table",
+        text=text,
+        markdown=table_text_to_markdown(text),
+        bbox=_merge_many_bboxes(row.bbox for row in rows),
+        meta=meta,
+    )
+
+
+def _merge_many_bboxes(
+    boxes: Iterable[tuple[float, float, float, float] | None],
+) -> tuple[float, float, float, float] | None:
+    present = [box for box in boxes if box is not None]
+    if not present:
+        return None
+    return (
+        min(box[0] for box in present),
+        min(box[1] for box in present),
+        max(box[2] for box in present),
+        max(box[3] for box in present),
+    )
 
 
 def is_short_uppercase_noise(text: str) -> bool:

@@ -5,6 +5,7 @@
 	benchmark-validate-pubtables-test \
 	benchmark-reclaim-pubtables-raw \
 	benchmark-production \
+	benchmark-ingest-layout-quality \
 	benchmark-scientific-all \
 	benchmark-scientific-pubtables-test \
 	benchmark-suite-all \
@@ -92,6 +93,7 @@ help:
 		'benchmark-validate-pubtables-test inspect PubTables test layout and write manifests' \
 		'benchmark-reclaim-pubtables-raw remove PubTables raw tar.gz after extraction to save disk' \
 		'benchmark-production            run production ingest benchmark on data/test_probe' \
+		'benchmark-ingest-layout-quality create/run synthetic layout quality ingest benchmark' \
 		'benchmark-scientific-all        run scientific benchmark on DocLayNet + PubTables' \
 		'benchmark-scientific-pubtables-test run scientific benchmark on PubTables test only' \
 		'benchmark-suite-all             run production + scientific suite' \
@@ -137,6 +139,9 @@ benchmark-reclaim-pubtables-raw:
 
 benchmark-production:
 	$(PYTHON) scripts/benchmark_ingest_standard.py --profiles $(PRODUCTION_PROFILES) --repeats $(PRODUCTION_REPEATS) --warmup-per-label $(PRODUCTION_WARMUP_PER_LABEL) --max-per-label $(PRODUCTION_MAX_PER_LABEL)
+
+benchmark-ingest-layout-quality:
+	$(PYTHON) scripts/benchmark_ingest_layout_quality.py --create-dataset
 
 benchmark-scientific-all:
 	$(PYTHON) scripts/benchmark_ingest_scientific.py --doclaynet-root $(DOCLAYNET_ROOT) --doclaynet-split $(DOCLAYNET_SPLIT) --doclaynet-limit $(DOCLAYNET_LIMIT) --pubtables-root $(PUBTABLES_ROOT) --pubtables-split $(PUBTABLES_SPLIT) --pubtables-limit $(PUBTABLES_LIMIT) --profiles $(SCIENTIFIC_PROFILES)

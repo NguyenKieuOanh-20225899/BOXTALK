@@ -10,7 +10,10 @@ from app.ingest.schemas import BlockNode, PageNode
 
 LIST_ITEM_RE = re.compile(r"^(?:[-*•]\s+|\d+[\.)]\s+|[A-Za-z][\.)]\s+|[IVXLCDMivxlcdm]+[\.)]\s+)\S+")
 NUMBERED_HEADING_RE = re.compile(r"^\d+(?:\.\d+)*\.?\s+\S+")
-LEGAL_HEADING_RE = re.compile(r"^(?:chương|phần|mục|điều|khoản)\s+[0-9A-Za-zIVXLCDMivxlcdm]+[\.:]?\s*\S*", re.I)
+LEGAL_HEADING_RE = re.compile(
+    r"^(?:chương|chuong|phần|phan|mục|muc|điều|dieu|khoản|khoan)\s+[0-9A-Za-zIVXLCDMivxlcdm]+[\.:]?\s*\S*",
+    re.I,
+)
 CAPTION_RE = re.compile(r"^(?:figure|fig\.|hình|bảng|table)\s+\d+(?:[\.:]\s*|\s+-\s+).+", re.I)
 METADATA_RE = re.compile(r"^[^:\n]{1,80}:\s+\S+")
 
@@ -197,4 +200,8 @@ def _to_markdown(text: str, block_type: str) -> str:
         return f"## {text}"
     if block_type == "list_item":
         return text if text.startswith(("- ", "* ", "• ")) else f"- {text}"
+    if block_type == "table":
+        from app.ingest.extract.table import table_text_to_markdown
+
+        return table_text_to_markdown(text)
     return text

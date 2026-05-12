@@ -16,22 +16,30 @@ _OCR = None
 def _get_ocr():
     global _OCR
     if _OCR is None:
+        os.environ.setdefault("PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK", "True")
         try:
             from paddleocr import PaddleOCR
             import paddle
         except Exception as e:
             raise RuntimeError(f"PaddleOCR is not installed: {e}") from e
 
-        os.environ.setdefault("PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK", "True")
         lang = os.getenv("BOXBIIBOO_OCR_LANG", "vi")
-        use_textline_orientation = os.getenv("BOXBIIBOO_OCR_USE_TEXTLINE_ORIENTATION", "1")
+        use_textline_orientation = os.getenv("BOXBIIBOO_OCR_USE_TEXTLINE_ORIENTATION", "0")
         orientation_enabled = use_textline_orientation.strip().lower() not in {"0", "false", "no"}
+        doc_orientation_enabled = _env_bool("BOXBIIBOO_OCR_USE_DOC_ORIENTATION", default=False)
+        doc_unwarping_enabled = _env_bool("BOXBIIBOO_OCR_USE_DOC_UNWARPING", default=False)
+        device = os.getenv("BOXBIIBOO_OCR_DEVICE")
 
         try:
-            _OCR = PaddleOCR(
-                use_textline_orientation=orientation_enabled,
-                lang=lang,
-            )
+            kwargs = {
+                "use_textline_orientation": orientation_enabled,
+                "use_doc_orientation_classify": doc_orientation_enabled,
+                "use_doc_unwarping": doc_unwarping_enabled,
+                "lang": lang,
+            }
+            if device:
+                kwargs["device"] = device
+            _OCR = PaddleOCR(**kwargs)
         except TypeError:
             _OCR = PaddleOCR(use_angle_cls=orientation_enabled, lang=lang)
         except Exception as e:
@@ -50,7 +58,7 @@ def extract_with_ocr_backend(pdf_path: str | Path) -> tuple[list[PageNode], list
     pdf_path = Path(pdf_path)
     doc = fitz.open(str(pdf_path))
     ocr = _get_ocr()
-    page_scale = float(os.getenv("BOXBIIBOO_OCR_PAGE_SCALE", "2.0"))
+    page_scale = float(os.getenv("BOXBIIBOO_OCR_PAGE_SCALE", "1.5"))
 
     pages: list[PageNode] = []
     blocks: list[BlockNode] = []
@@ -144,6 +152,13 @@ def extract_with_ocr_backend(pdf_path: str | Path) -> tuple[list[PageNode], list
 
     doc.close()
     return pages, blocks
+
+
+def _env_bool(name: str, *, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() not in {"0", "false", "no", "off"}
 
 
 def extract_ocr_region(
