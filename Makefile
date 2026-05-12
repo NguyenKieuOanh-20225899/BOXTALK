@@ -5,6 +5,7 @@
 	benchmark-validate-pubtables-test \
 	benchmark-reclaim-pubtables-raw \
 	benchmark-production \
+	benchmark-ingest-layout-quality \
 	benchmark-scientific-all \
 	benchmark-scientific-pubtables-test \
 	benchmark-suite-all \
@@ -19,8 +20,19 @@
 	qa-index \
 	qa-benchmark \
 	qa-benchmark-all \
+	llm-fallback-dataset \
+	llm-fallback-index \
+	llm-fallback-smoke \
+	llm-fallback-benchmark \
+	table-reasoning-dataset \
+	table-reasoning-index \
+	table-reasoning-benchmark \
+	thesis-report \
+	ui-dev \
 	user-pdf-suite \
-	baseline-gate
+	baseline-gate \
+	fallback-gate \
+	experimental-gate
 
 PYTHON ?= .venv/bin/python
 BENCHMARKS_ROOT ?= data/benchmarks
@@ -49,10 +61,29 @@ QA_CONFIGS ?= routed_grounded
 USER_PDF_SUITE_MANIFEST ?= data/user_pdf_benchmark_suite.json
 USER_PDF_SUITE_DIR ?= results/user_pdf_benchmark_suite/current
 USER_PDF_SUITE_ARGS ?=
+LLM_FALLBACK_DATASET_DIR ?= data/llm_fallback_benchmark
+LLM_FALLBACK_MANIFEST ?= $(LLM_FALLBACK_DATASET_DIR)/manifest.json
+LLM_FALLBACK_INDEX_DIR ?= results/retrieval_index/llm_fallback_reference
+LLM_FALLBACK_BENCHMARK_DIR ?= results/llm_fallback_benchmark/current
+LLM_FALLBACK_PROVIDER ?= dummy
+LLM_FALLBACK_ARGS ?=
+TABLE_REASONING_DATASET_DIR ?= data/table_reasoning_benchmark
+TABLE_REASONING_MANIFEST ?= $(TABLE_REASONING_DATASET_DIR)/manifest.json
+TABLE_REASONING_INDEX_DIR ?= results/retrieval_index/table_reasoning_reference
+TABLE_REASONING_BENCHMARK_DIR ?= results/llm_fallback_benchmark/table_reasoning_current
+TABLE_REASONING_PROVIDER ?= dummy
+TABLE_REASONING_ARGS ?=
+THESIS_REPORT_MD ?= docs/THESIS_READINESS_REPORT.md
+THESIS_REPORT_JSON ?= results/thesis_readiness_report/summary.json
+THESIS_REPORT_ARGS ?=
 BASELINE_GATE_ARGS ?=
+FALLBACK_GATE_SUMMARY ?= results/llm_fallback_benchmark/table_patch_ollama_repeats_gpu/repeat_summary.json
+FALLBACK_GATE_ARGS ?=
 BEIR_DATASET ?= scifact
 BEIR_QUERY_LIMIT ?= 50
 BEIR_CORPUS_LIMIT ?= 2000
+UI_HOST ?= 127.0.0.1
+UI_PORT ?= 8000
 
 help:
 	@printf '%s\n' \
@@ -62,6 +93,7 @@ help:
 		'benchmark-validate-pubtables-test inspect PubTables test layout and write manifests' \
 		'benchmark-reclaim-pubtables-raw remove PubTables raw tar.gz after extraction to save disk' \
 		'benchmark-production            run production ingest benchmark on data/test_probe' \
+		'benchmark-ingest-layout-quality create/run synthetic layout quality ingest benchmark' \
 		'benchmark-scientific-all        run scientific benchmark on DocLayNet + PubTables' \
 		'benchmark-scientific-pubtables-test run scientific benchmark on PubTables test only' \
 		'benchmark-suite-all             run production + scientific suite' \
@@ -76,8 +108,18 @@ help:
 		'qa-index                       build retrieval index for QA_PDF' \
 		'qa-benchmark                   benchmark grounded QA over QA_INDEX_DIR' \
 		'qa-benchmark-all               create QA dataset, build index, run baseline + ablation' \
+		'llm-fallback-dataset           create the focused fallback benchmark chunks + queries' \
+		'llm-fallback-index             build retrieval index for the focused fallback benchmark' \
+		'llm-fallback-smoke             run the fallback benchmark with the dummy provider' \
+		'llm-fallback-benchmark         run the fallback benchmark with the configured provider' \
+		'table-reasoning-dataset        create the extended internal table reasoning benchmark' \
+		'table-reasoning-index          build retrieval index for the extended table benchmark' \
+		'table-reasoning-benchmark      run extended table benchmark through fallback comparison' \
+		'thesis-report                  summarize benchmark artifacts into thesis-readiness report' \
+		'ui-dev                         run the FastAPI backend plus static MVP UI' \
 		'user-pdf-suite                 run aggregate QA benchmark over user PDF suite manifest' \
-		'baseline-gate                  fail if locked benchmark baselines regress'
+		'baseline-gate                  fail if locked benchmark baselines regress' \
+		'fallback-gate                  run optional experimental grounded_llm_fallback gate'
 
 benchmark-setup-all:
 	$(PYTHON) scripts/setup_benchmark_datasets.py --dataset all --benchmarks-root $(BENCHMARKS_ROOT) --pubtables-splits $(PUBTABLES_SPLITS)
@@ -97,6 +139,9 @@ benchmark-reclaim-pubtables-raw:
 
 benchmark-production:
 	$(PYTHON) scripts/benchmark_ingest_standard.py --profiles $(PRODUCTION_PROFILES) --repeats $(PRODUCTION_REPEATS) --warmup-per-label $(PRODUCTION_WARMUP_PER_LABEL) --max-per-label $(PRODUCTION_MAX_PER_LABEL)
+
+benchmark-ingest-layout-quality:
+	$(PYTHON) scripts/benchmark_ingest_layout_quality.py --create-dataset
 
 benchmark-scientific-all:
 	$(PYTHON) scripts/benchmark_ingest_scientific.py --doclaynet-root $(DOCLAYNET_ROOT) --doclaynet-split $(DOCLAYNET_SPLIT) --doclaynet-limit $(DOCLAYNET_LIMIT) --pubtables-root $(PUBTABLES_ROOT) --pubtables-split $(PUBTABLES_SPLIT) --pubtables-limit $(PUBTABLES_LIMIT) --profiles $(SCIENTIFIC_PROFILES)
@@ -148,8 +193,42 @@ qa-benchmark-all:
 	$(MAKE) qa-index
 	$(MAKE) qa-benchmark QA_BENCHMARK_DIR=results/qa_benchmark/qa_operations_minilm_all QA_CONFIGS=all
 
+llm-fallback-dataset:
+	$(PYTHON) scripts/create_llm_fallback_benchmark.py --output-dir $(LLM_FALLBACK_DATASET_DIR)
+
+llm-fallback-index:
+	$(MAKE) llm-fallback-dataset
+	$(PYTHON) scripts/build_retrieval_index.py --chunks-jsonl $(LLM_FALLBACK_DATASET_DIR)/llm_fallback_reference_chunks.jsonl --output-dir $(LLM_FALLBACK_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+llm-fallback-smoke:
+	$(MAKE) llm-fallback-benchmark LLM_FALLBACK_PROVIDER=dummy
+
+llm-fallback-benchmark:
+	$(MAKE) llm-fallback-dataset
+	$(PYTHON) scripts/benchmark_llm_fallback.py --manifest $(LLM_FALLBACK_MANIFEST) --output-dir $(LLM_FALLBACK_BENCHMARK_DIR) --llm-fallback-provider $(LLM_FALLBACK_PROVIDER) $(LLM_FALLBACK_ARGS)
+
+table-reasoning-dataset:
+	$(PYTHON) scripts/create_extended_table_benchmark.py --output-dir $(TABLE_REASONING_DATASET_DIR)
+
+table-reasoning-index: table-reasoning-dataset
+	$(PYTHON) scripts/build_retrieval_index.py --chunks-jsonl $(TABLE_REASONING_DATASET_DIR)/table_reasoning_reference_chunks.jsonl --output-dir $(TABLE_REASONING_INDEX_DIR) --dense-preset $(RETRIEVAL_DENSE_PRESET)
+
+table-reasoning-benchmark: table-reasoning-index
+	$(PYTHON) scripts/benchmark_llm_fallback.py --manifest $(TABLE_REASONING_MANIFEST) --output-dir $(TABLE_REASONING_BENCHMARK_DIR) --llm-fallback-provider $(TABLE_REASONING_PROVIDER) $(TABLE_REASONING_ARGS)
+
+thesis-report:
+	$(PYTHON) scripts/generate_thesis_readiness_report.py --output-md $(THESIS_REPORT_MD) --output-json $(THESIS_REPORT_JSON) $(THESIS_REPORT_ARGS)
+
+ui-dev:
+	$(PYTHON) -m uvicorn app.routed_rag_starter:app --host $(UI_HOST) --port $(UI_PORT) --reload
+
 user-pdf-suite:
 	$(PYTHON) scripts/benchmark_user_pdf_suite.py --manifest $(USER_PDF_SUITE_MANIFEST) --output-dir $(USER_PDF_SUITE_DIR) $(USER_PDF_SUITE_ARGS)
 
 baseline-gate:
 	$(PYTHON) scripts/check_regression_gates.py $(BASELINE_GATE_ARGS)
+
+fallback-gate:
+	$(PYTHON) scripts/check_regression_gates.py --skip-user-suite --skip-readiness --fallback-summary $(FALLBACK_GATE_SUMMARY) $(FALLBACK_GATE_ARGS)
+
+experimental-gate: fallback-gate

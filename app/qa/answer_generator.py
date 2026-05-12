@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from typing import Any
 
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
+from app.qa.table_lookup_utils import lookup_table_answer_from_text
+from app.qa.table_query_utils import is_table_lookup_query
 from app.qa.text_utils import contains_text, normalize_text, split_sentences, token_set
 from app.retrieval.schemas import RetrievedHit
 
@@ -12,7 +15,8 @@ EMAIL_RE = re.compile(r"[\w.\-+]+@[\w.\-]+\.\w+")
 NUMBER_PHRASE_RE = re.compile(
     r"(?:>=|≤|≥|tối đa|tối thiểu|ít nhất|không quá|vượt quá|từ|trên|dưới)?\s*"
     r"\b\d+(?:[,.]\d+)?\s*"
-    r"(?:%|TC|tín chỉ|năm|tháng|tuần|ngày|giờ|học kỳ(?:\s+chính)?|điểm|bài báo|lần)?\b",
+    r"(?:%|TC|tín chỉ|tin chi|năm|nam|tháng|thang|tuần|tuan|ngày|ngay|giờ|gio|"
+    r"học kỳ(?:\s+chính)?|hoc ky(?:\s+chinh)?|điểm|diem|bài báo|bai bao|lần|lan)?\b",
     re.I,
 )
 LETTER_GRADE_RE = re.compile(r"\b(?:điểm\s+)?[A-F]\b", re.I)
@@ -20,7 +24,27 @@ LIST_MARKER_RE = re.compile(r"(?=(?:^|\s)[a-dđ]\)\s+)")
 EN_NUMBER_PHRASE_RE = re.compile(
     r"\b\d+(?:[,.]\d+)?\s*"
     r"(?:BLEU|F1|PPL|FLOPs?|days?|hours?|GPUs?|steps?|layers?|heads?|tokens?|sentences?|"
-    r"dimensions?|parameters?|params|K|M|million|%)?\b",
+    r"dimensions?|parameters?|params|years?|months?|weeks?|credits?|points?|scores?|GPA|K|M|million|%)?\b",
+    re.I,
+)
+DURATION_PHRASE_RE = re.compile(
+    r"\b\d+(?:[,.]\d+)?\s*"
+    r"(?:năm|nam|tháng|thang|tuần|tuan|ngày|ngay|giờ|gio|học kỳ(?:\s+chính)?|hoc ky(?:\s+chinh)?|"
+    r"years?|months?|weeks?|days?|hours?|semesters?)\b",
+    re.I,
+)
+CREDIT_PHRASE_RE = re.compile(r"\b\d+(?:[,.]\d+)?\s*(?:TC|tín chỉ|tin chi|credits?)\b", re.I)
+PERCENT_PHRASE_RE = re.compile(r"\b\d+(?:[,.]\d+)?\s*(?:%|phần trăm|phan tram|percent(?:age)?)\b", re.I)
+SCORE_PHRASE_RE = re.compile(
+    r"(?:\b\d+(?:[,.]\d+)?\s*(?:điểm|diem|points?|scores?|GPA|CPA|BLEU|F1)\b|\b[A-F][+-]?\b)",
+    re.I,
+)
+DATE_PHRASE_RE = re.compile(
+    r"(?:học kỳ\s+\d+\s+năm học\s+\d{4}\s*[-–]\s*\d{4}|"
+    r"hoc ky\s+\d+\s+nam hoc\s+\d{4}\s*[-–]\s*\d{4}|"
+    r"ngày\s+\d{1,2}\s+tháng\s+\d{1,2}\s+năm\s+\d{4}|"
+    r"ngay\s+\d{1,2}\s+thang\s+\d{1,2}\s+nam\s+\d{4}|"
+    r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b\d{4}\s*[-–]\s*\d{4}\b)",
     re.I,
 )
 FORMULA_RE = re.compile(r"FFN\(x\)\s*=\s*max\(0,\s*xW1\s*\+\s*b1\)W2\s*\+\s*b2", re.I)
@@ -30,6 +54,69 @@ TABLE_PROGRAM_RE = re.compile(
     r"(?P<credits>\d+\s*tín chỉ)",
     re.I,
 )
+GENERIC_PREAMBLE_RE = re.compile(
+    r"\b(?:ban hành theo|căn cứ|quyết định|thông tư|nghị định|issued under|pursuant to|"
+    r"promulgated|published|copyright|references?|appendix|table of contents)\b",
+    re.I,
+)
+DURATION_CUE_RE = re.compile(
+    r"\b(?:thời gian|thoi gian|thời hạn|thoi han|kéo dài|keo dai|thiết kế|thiet ke|"
+    r"duration|period|lasts?|length|training time)\b",
+    re.I,
+)
+DEFINITION_CUE_RE = re.compile(
+    r"\b(?:là|được hiểu là|được gọi là|gồm|bao gồm|is|are|means|refers to|defined as|consists of|includes?)\b",
+    re.I,
+)
+PROCEDURE_CUE_RE = re.compile(r"\b(?:bước|giai đoạn|quy trình|procedure|process|steps?|phase)\b", re.I)
+COMPARISON_CUE_RE = re.compile(
+    r"\b(?:khác|khác nhau|so với|trong khi|whereas|while|compared with|versus|difference)\b",
+    re.I,
+)
+CONDITION_CUE_RE = re.compile(
+    r"\b(?:điều kiện|khi|nếu|phải|từ|trở lên|không quá|eligible|condition|if|when|must|required)\b",
+    re.I,
+)
+DATE_CUE_RE = re.compile(r"\b(?:hiệu lực|hieu luc|áp dụng từ|ap dung tu|effective|from|starting)\b", re.I)
+BROAD_QUERY_TERMS = {
+    "quy",
+    "chế",
+    "quyết",
+    "định",
+    "chương",
+    "trình",
+    "đào",
+    "tạo",
+    "văn",
+    "bản",
+    "policy",
+    "regulation",
+    "rule",
+    "document",
+    "program",
+    "programme",
+    "training",
+    "education",
+    "student",
+    "learner",
+    "need",
+    "needs",
+    "cần",
+}
+
+
+@dataclass(frozen=True)
+class AnswerIntent:
+    numeric: bool = False
+    duration: bool = False
+    credit: bool = False
+    percentage: bool = False
+    score: bool = False
+    date: bool = False
+    definition: bool = False
+    procedural: bool = False
+    comparison: bool = False
+    condition: bool = False
 
 
 class GroundedAnswerGenerator:
@@ -48,6 +135,18 @@ class GroundedAnswerGenerator:
     ) -> GroundedAnswer:
         selected_hits = self._select_hits(question, query_type, hits, evidence)
         citations = [self._citation(hit) for hit in selected_hits] if self.emit_citations else []
+        if is_table_lookup_query(question):
+            table_lookup_answer = self._table_lookup_answer(question, selected_hits)
+            if table_lookup_answer:
+                support_hits = self._table_lookup_support_hits(table_lookup_answer, selected_hits)
+                answer_citations = [self._citation(hit) for hit in support_hits] if self.emit_citations else []
+                return GroundedAnswer(
+                    answer=table_lookup_answer,
+                    citations=answer_citations or citations,
+                    support_sentences=[table_lookup_answer],
+                    grounded=self._is_grounded(table_lookup_answer, selected_hits),
+                    answer_type="extractive",
+                )
 
         if evidence.decision != "answer":
             return GroundedAnswer(
@@ -58,7 +157,7 @@ class GroundedAnswerGenerator:
                 answer_type=evidence.decision,
             )
 
-        support_sentences = self._rank_support_sentences(question, selected_hits)
+        support_sentences = self._rank_support_sentences(question, selected_hits, query_type=query_type)
         answer = self._compose_answer(
             question=question,
             query_type=query_type,
@@ -81,6 +180,9 @@ class GroundedAnswerGenerator:
         hits: list[RetrievedHit],
         evidence: EvidenceAssessment,
     ) -> list[RetrievedHit]:
+        if is_table_lookup_query(question):
+            return self._select_table_lookup_hits(question, hits)
+        question_lower = question.lower()
         if evidence.selected_hit_ids:
             by_id = {hit.chunk_id: hit for hit in hits}
             selected = [by_id[chunk_id] for chunk_id in evidence.selected_hit_ids if chunk_id in by_id]
@@ -108,20 +210,117 @@ class GroundedAnswerGenerator:
             return hits[:15]
         return hits[:2]
 
-    def _rank_support_sentences(self, question: str, hits: list[RetrievedHit]) -> list[str]:
+    def _select_table_lookup_hits(self, question: str, hits: list[RetrievedHit]) -> list[RetrievedHit]:
+        selected: list[RetrievedHit] = []
+        seen: set[str] = set()
+
+        def add(hit: RetrievedHit) -> None:
+            if hit.chunk_id in seen:
+                return
+            selected.append(hit)
+            seen.add(hit.chunk_id)
+
+        for hit in hits[:10]:
+            add(hit)
+
+        query_values = self._query_lookup_values(question)
+        for hit in hits[:40]:
+            text = normalize_text(hit.chunk.text)
+            if query_values and any(value in text for value in query_values) and self._is_tableish_lookup_hit(hit):
+                add(hit)
+
+        selected_ids = {hit.chunk_id for hit in selected}
+        for hit in hits[:40]:
+            neighbor_of = str(hit.metadata.get("context_neighbor_of") or "")
+            if neighbor_of in selected_ids:
+                add(hit)
+
+        return selected[:30]
+
+    @staticmethod
+    def _query_lookup_values(question: str) -> list[str]:
+        values: list[str] = []
+        for match in re.finditer(r"(?<!\w)[A-Za-z][A-Za-z0-9]{0,5}[+-]?(?!\w)", question):
+            token = match.group(0)
+            if len(token) <= 1 and not token.isupper():
+                continue
+            values.append(token)
+        for match in re.finditer(r"(?<![\w.])[-+]?\d+(?:[,.]\d+)?%?(?![\w.])", question):
+            values.append(match.group(0))
+        return values
+
+    @staticmethod
+    def _is_tableish_lookup_hit(hit: RetrievedHit) -> bool:
+        block_type = str(hit.chunk.block_type or "").lower()
+        text = normalize_text(hit.chunk.text)
+        if "table" in block_type or block_type == "heading":
+            return True
+        return "|" in text or len(text.split()) <= 20
+
+    def _table_lookup_support_hits(self, answer: str, hits: list[RetrievedHit]) -> list[RetrievedHit]:
+        answer_values = self._answer_support_values(answer)
+        if not answer_values:
+            return []
+        support_hits: list[RetrievedHit] = []
+        seen: set[str] = set()
+        for hit in hits:
+            text = normalize_text(hit.chunk.text)
+            decimal_text = re.sub(r"(?<=\d),(?=\d)", ".", text)
+            if not any(self._support_value_in_text(value, text, decimal_text) for value in answer_values):
+                continue
+            if hit.chunk_id in seen:
+                continue
+            support_hits.append(hit)
+            seen.add(hit.chunk_id)
+        return support_hits[:6]
+
+    @staticmethod
+    def _support_value_in_text(value: str, text: str, decimal_text: str) -> bool:
+        if re.fullmatch(r"[-+]?\d+(?:[,.]\d+)?%?", value):
+            normalized_value = value.replace(",", ".")
+            return bool(re.search(rf"(?<![\w.]){re.escape(normalized_value)}(?![\w.])", decimal_text))
+        return bool(re.search(rf"(?<!\w){re.escape(value)}(?!\w)", text))
+
+    @staticmethod
+    def _answer_support_values(answer: str) -> list[str]:
+        values: list[str] = []
+        for match in re.finditer(r"(?<!\w)[A-Za-z][A-Za-z0-9]{0,5}[+-]?(?!\w)", answer):
+            token = match.group(0)
+            if "+" in token or "-" in token or token.isupper():
+                values.append(token)
+        for match in re.finditer(r"(?<!\w)[-+]?\d+(?:[,.]\d+)?%?", answer):
+            values.append(match.group(0))
+        return values
+
+    def _rank_support_sentences(
+        self,
+        question: str,
+        hits: list[RetrievedHit],
+        *,
+        query_type: str = "",
+    ) -> list[str]:
         q_terms = token_set(question)
         q_lower = question.lower()
+        intent = self._detect_answer_intent(question, query_type)
+        use_intent_scoring = intent.numeric
         candidates: list[tuple[float, str]] = []
         for hit_idx, hit in enumerate(hits):
-            for sentence in self._candidate_spans(hit.chunk.text):
-                s_terms = token_set(sentence)
-                overlap = len(q_terms & s_terms)
-                score = overlap + max(0.0, 1.0 - hit_idx * 0.15)
+            for sentence in self._candidate_spans(hit.chunk.text, include_payload_subspans=use_intent_scoring):
+                if use_intent_scoring:
+                    score = self._score_answer_span(
+                        question_lower=q_lower,
+                        question_terms=q_terms,
+                        intent=intent,
+                        sentence=sentence,
+                        hit_idx=hit_idx,
+                    )
+                else:
+                    s_terms = token_set(sentence)
+                    overlap = len(q_terms & s_terms)
+                    score = overlap + max(0.0, 1.0 - hit_idx * 0.15)
                 sentence_lower = sentence.lower()
                 if "email" in q_lower and EMAIL_RE.search(sentence):
                     score += 3.0
-                if self._needs_numeric_answer(q_lower) and self._has_numeric_phrase(sentence):
-                    score += 4.0
                 if "điểm chữ" in q_lower and LETTER_GRADE_RE.search(sentence):
                     score += 3.0
                 if any(term in q_lower for term in ("hậu quả", "không nộp", "đúng hạn")) and any(
@@ -137,40 +336,95 @@ class GroundedAnswerGenerator:
                 if "who" in q_lower and len(sentence.split()) >= 3:
                     score += 0.75
                 score += self._scientific_span_score(q_lower, sentence)
-                if overlap > 0 or score >= 2.0:
+                if (q_terms & token_set(sentence)) or score >= 2.0:
                     candidates.append((score, sentence))
 
-        candidates.sort(key=lambda item: item[0], reverse=True)
+        if use_intent_scoring:
+            candidates.sort(key=lambda item: (item[0], -len(item[1])), reverse=True)
+        else:
+            candidates.sort(key=lambda item: item[0], reverse=True)
         selected: list[str] = []
         seen: set[str] = set()
         for _, sentence in candidates:
-            normalized = sentence.casefold()
+            normalized = normalize_text(sentence).casefold()
             if normalized in seen:
                 continue
             seen.add(normalized)
-            selected.append(sentence)
+            selected.append(normalize_text(sentence))
             if len(selected) >= 3:
                 break
         if selected:
             return selected
         return [hit.chunk.text.strip() for hit in hits[:1] if hit.chunk.text.strip()]
 
-    def _candidate_spans(self, text: str) -> list[str]:
+    def _candidate_spans(self, text: str, *, include_payload_subspans: bool = True) -> list[str]:
         spans: list[str] = []
         for sentence in split_sentences(text):
             spans.append(sentence)
+            if include_payload_subspans:
+                spans.extend(self._payload_subspans(sentence))
             if any(marker in sentence for marker in ("a)", "b)", "c)", "d)", "đ)")):
                 parts = [part.strip() for part in LIST_MARKER_RE.split(sentence) if part.strip()]
                 spans.extend(parts)
+                if include_payload_subspans:
+                    for part in parts:
+                        spans.extend(self._payload_subspans(part))
         deduped: list[str] = []
         seen: set[str] = set()
         for span in spans:
+            span = normalize_text(span)
+            if not span:
+                continue
             normalized = span.casefold()
             if normalized in seen:
                 continue
             seen.add(normalized)
             deduped.append(span)
         return deduped
+
+    def _payload_subspans(self, sentence: str) -> list[str]:
+        """Extract concise answer-shaped spans from long evidence sentences."""
+
+        normalized = normalize_text(sentence)
+        if not normalized:
+            return []
+
+        spans: list[str] = []
+        for match in re.finditer(r"\([^)]{0,240}\d[^)]{0,240}\)", normalized):
+            prefix = normalized[: match.start()].rstrip()
+            lead = re.split(r"[.;:]", prefix)[-1]
+            lead = re.split(r"\)\s*(?:và|hoặc|and|or)\s+", lead, flags=re.I)[-1]
+            lead = self._last_words(lead, 8)
+            span = normalize_text(f"{lead} {match.group(0)}")
+            if len(span.split()) >= 3:
+                spans.append(span)
+
+        for pattern in (DURATION_PHRASE_RE, CREDIT_PHRASE_RE, PERCENT_PHRASE_RE, SCORE_PHRASE_RE, DATE_PHRASE_RE):
+            for match in pattern.finditer(normalized):
+                span = self._clause_window(normalized, match.start(), match.end())
+                if span:
+                    spans.append(span)
+
+        return spans
+
+    def _clause_window(self, sentence: str, start: int, end: int, *, max_words: int = 36) -> str:
+        left_candidates = [sentence.rfind(sep, 0, start) for sep in (".", ";", "\n")]
+        left = max(left_candidates) + 1
+        right_candidates = [idx for idx in (sentence.find(sep, end) for sep in (".", ";", "\n")) if idx != -1]
+        right = min(right_candidates) if right_candidates else len(sentence)
+        fragment = normalize_text(sentence[left:right].strip(" ,:-"))
+        if len(fragment.split()) <= max_words:
+            return fragment
+
+        words = fragment.split()
+        prefix_len = len(normalize_text(sentence[left:start]).split())
+        window_left = max(0, prefix_len - max_words // 2)
+        window_right = min(len(words), prefix_len + max_words // 2)
+        return normalize_text(" ".join(words[window_left:window_right]).strip(" ,:-"))
+
+    def _last_words(self, text: str, limit: int) -> str:
+        words = normalize_text(text).split()
+        return " ".join(words[-limit:])
 
     def _needs_numeric_answer(self, question_lower: str) -> bool:
         if any(
@@ -199,18 +453,262 @@ class GroundedAnswerGenerator:
             term in question_lower
             for term in (
                 "bao nhiêu",
+                "bao nhieu",
                 "bao lâu",
+                "bao lau",
                 "mấy",
+                "may",
                 "tối đa",
+                "toi da",
                 "tối thiểu",
-                "khi nào",
+                "toi thieu",
                 "thời hạn",
+                "thoi han",
                 "bao nhiêu phần trăm",
+                "bao nhieu phan tram",
                 "bao nhiêu giờ",
+                "bao nhieu gio",
                 "bao nhiêu tín chỉ",
+                "bao nhieu tin chi",
                 "điểm chữ",
+                "diem chu",
             )
         )
+
+    def _detect_answer_intent(self, question: str, query_type: str = "") -> AnswerIntent:
+        q_lower = question.lower()
+        duration = any(
+            term in q_lower
+            for term in (
+                "bao lâu",
+                "bao lau",
+                "bao nhiêu năm",
+                "bao nhieu nam",
+                "bao nhiêu tháng",
+                "bao nhieu thang",
+                "bao nhiêu ngày",
+                "bao nhieu ngay",
+                "bao nhiêu giờ",
+                "bao nhieu gio",
+                "mấy năm",
+                "may nam",
+                "thời gian",
+                "thoi gian",
+                "thời hạn",
+                "thoi han",
+                "how long",
+                "how many years",
+                "how many months",
+                "duration",
+                "period",
+            )
+        )
+        credit = any(term in q_lower for term in ("tín chỉ", "tin chi", "tc", "credit", "credits"))
+        percentage = any(term in q_lower for term in ("phần trăm", "phan tram", "%", "percent", "percentage", "rate"))
+        score = self._is_score_question(q_lower)
+        date = any(
+            term in q_lower
+            for term in (
+                "từ khi nào",
+                "tu khi nao",
+                "hiệu lực",
+                "hieu luc",
+                "ngày nào",
+                "ngay nao",
+                "thời điểm",
+                "thoi diem",
+                "effective",
+                "effective date",
+                "from what date",
+                "starting when",
+            )
+        )
+        numeric = self._needs_numeric_answer(q_lower) or duration or credit or percentage or score or date
+        definition = query_type == "definition" or any(
+            term in q_lower for term in ("là gì", "được hiểu là", "definition", "what is", "meaning")
+        )
+        procedural = query_type == "procedural" or any(
+            term in q_lower for term in ("các bước", "quy trình", "thủ tục", "giai đoạn", "steps", "procedure")
+        )
+        comparison = query_type == "comparison" or any(
+            term in q_lower for term in ("khác nhau", "so sánh", "khác biệt", "compare", "difference", "versus")
+        )
+        condition = query_type == "policy" or any(
+            term in q_lower for term in ("điều kiện", "khi nào", "có được", "phải", "if", "when", "eligible")
+        )
+        return AnswerIntent(
+            numeric=numeric,
+            duration=duration,
+            credit=credit,
+            percentage=percentage,
+            score=score,
+            date=date,
+            definition=definition,
+            procedural=procedural,
+            comparison=comparison,
+            condition=condition,
+        )
+
+    def _is_score_question(self, question_lower: str) -> bool:
+        if "đặc điểm" in question_lower or "dac diem" in question_lower:
+            return any(term in question_lower for term in ("score", "grade", "gpa", "cpa", "bleu", "f1", "ppl"))
+        return bool(
+            re.search(
+                r"\b(?:điểm\s+(?:số|chữ|đạt|trung bình)|diem\s+(?:so|chu|dat|trung binh)|"
+                r"bao nhiêu điểm|bao nhieu diem|what score|score|grade|gpa|cpa|bleu|f1|ppl|length penalty)\b",
+                question_lower,
+                flags=re.I,
+            )
+        )
+
+    def _score_answer_span(
+        self,
+        *,
+        question_lower: str,
+        question_terms: set[str],
+        intent: AnswerIntent,
+        sentence: str,
+        hit_idx: int,
+    ) -> float:
+        normalized = normalize_text(sentence)
+        sentence_lower = normalized.lower()
+        sentence_terms = token_set(normalized)
+        score = max(0.0, 1.0 - hit_idx * 0.15)
+        score += self._lexical_overlap_score(question_terms, sentence_terms)
+        score += self._semantic_keyword_score(question_lower, sentence_lower, intent)
+        score += self._answer_shape_score(normalized, intent)
+        score += self._conciseness_score(normalized, intent)
+        score -= self._generic_sentence_penalty(normalized, intent)
+        return score
+
+    def _lexical_overlap_score(self, question_terms: set[str], sentence_terms: set[str]) -> float:
+        if not question_terms:
+            return 0.0
+        overlap_weight = 0.0
+        total_weight = 0.0
+        for term in question_terms:
+            weight = 0.35 if term in BROAD_QUERY_TERMS else 1.0
+            total_weight += weight
+            if term in sentence_terms:
+                overlap_weight += weight
+        recall = overlap_weight / max(1e-6, total_weight)
+        return overlap_weight + 1.25 * recall
+
+    def _semantic_keyword_score(self, question_lower: str, sentence_lower: str, intent: AnswerIntent) -> float:
+        score = 0.0
+        if intent.duration:
+            if DURATION_CUE_RE.search(sentence_lower):
+                score += 1.75
+            if self._query_and_sentence_share_unit(question_lower, sentence_lower, ("năm", "nam", "year", "years")):
+                score += 1.5
+            if self._query_and_sentence_share_unit(question_lower, sentence_lower, ("tháng", "thang", "month", "months")):
+                score += 1.25
+            if self._query_and_sentence_share_unit(question_lower, sentence_lower, ("ngày", "ngay", "day", "days")):
+                score += 1.25
+        if intent.credit and any(term in sentence_lower for term in ("tín chỉ", "tin chi", "tc", "credit")):
+            score += 2.0
+        if intent.percentage and any(term in sentence_lower for term in ("%", "phần trăm", "phan tram", "percent")):
+            score += 2.0
+        if intent.score and any(term in sentence_lower for term in ("điểm", "diem", "score", "grade", "gpa", "cpa", "bleu", "f1")):
+            score += 2.0
+        if intent.date and DATE_CUE_RE.search(sentence_lower):
+            score += 2.0
+        if intent.definition and DEFINITION_CUE_RE.search(sentence_lower):
+            score += 2.25
+        if intent.procedural and PROCEDURE_CUE_RE.search(sentence_lower):
+            score += 2.0
+        if intent.comparison and COMPARISON_CUE_RE.search(sentence_lower):
+            score += 2.0
+        if intent.condition and CONDITION_CUE_RE.search(sentence_lower):
+            score += 1.75
+        return score
+
+    def _query_and_sentence_share_unit(self, question_lower: str, sentence_lower: str, unit_terms: tuple[str, ...]) -> bool:
+        return any(term in question_lower for term in unit_terms) and any(term in sentence_lower for term in unit_terms)
+
+    def _answer_shape_score(self, sentence: str, intent: AnswerIntent) -> float:
+        score = 0.0
+        if intent.duration and DURATION_PHRASE_RE.search(sentence):
+            score += 5.0
+        if intent.credit and CREDIT_PHRASE_RE.search(sentence):
+            score += 5.0
+        if intent.percentage and PERCENT_PHRASE_RE.search(sentence):
+            score += 5.0
+        if intent.score and SCORE_PHRASE_RE.search(sentence):
+            score += 4.5
+        if intent.date and DATE_PHRASE_RE.search(sentence):
+            score += 5.0
+        if intent.numeric and not any((intent.duration, intent.credit, intent.percentage, intent.score, intent.date)):
+            if self._has_numeric_phrase(sentence):
+                score += 3.0
+        if intent.definition and DEFINITION_CUE_RE.search(sentence):
+            score += 2.0
+        if intent.procedural and (LIST_MARKER_RE.search(sentence) or re.search(r"\b(?:step|bước)\s*\d+\b", sentence, re.I)):
+            score += 2.5
+        if intent.comparison and len(re.split(r"\b(?:và|hoặc|whereas|while|versus|vs)\b", sentence, flags=re.I)) >= 2:
+            score += 1.5
+        if intent.condition and re.search(r"\b(?:nếu|khi|phải|must|if|when|required)\b", sentence, re.I):
+            score += 1.5
+        return score
+
+    def _conciseness_score(self, sentence: str, intent: AnswerIntent) -> float:
+        word_count = len(sentence.split())
+        if intent.numeric:
+            if 3 <= word_count <= 28:
+                return 2.0
+            if word_count <= 45:
+                return 1.0
+            if word_count > 90:
+                return -1.5
+        if intent.definition and 6 <= word_count <= 45:
+            return 0.75
+        return 0.0
+
+    def _generic_sentence_penalty(self, sentence: str, intent: AnswerIntent) -> float:
+        sentence_lower = sentence.lower()
+        word_count = len(sentence.split())
+        penalty = 0.0
+        has_payload = self._has_answer_payload_for_intent(sentence, intent)
+        if intent.numeric and not has_payload:
+            penalty += 4.0
+        if GENERIC_PREAMBLE_RE.search(sentence_lower):
+            penalty += 2.0
+            if intent.numeric:
+                penalty += 2.0
+        if word_count <= 3 and not has_payload:
+            penalty += 2.0
+        if self._looks_like_heading(sentence) and not has_payload:
+            penalty += 2.0
+        if intent.numeric and word_count > 110:
+            penalty += 1.5
+        return penalty
+
+    def _has_answer_payload_for_intent(self, sentence: str, intent: AnswerIntent) -> bool:
+        if intent.duration:
+            return bool(DURATION_PHRASE_RE.search(sentence))
+        if intent.credit:
+            return bool(CREDIT_PHRASE_RE.search(sentence))
+        if intent.percentage:
+            return bool(PERCENT_PHRASE_RE.search(sentence))
+        if intent.score:
+            return bool(SCORE_PHRASE_RE.search(sentence) or LETTER_GRADE_RE.search(sentence))
+        if intent.date:
+            return bool(DATE_PHRASE_RE.search(sentence))
+        if intent.numeric:
+            return self._has_numeric_phrase(sentence) or bool(LETTER_GRADE_RE.search(sentence))
+        if intent.definition:
+            return bool(DEFINITION_CUE_RE.search(sentence))
+        return True
+
+    def _looks_like_heading(self, sentence: str) -> bool:
+        text = normalize_text(sentence)
+        if len(text) > 120:
+            return False
+        if text.isupper():
+            return True
+        if re.fullmatch(r"[\w\s./-]+", text, flags=re.UNICODE) and not re.search(r"[.,;:()]", text):
+            return len(text.split()) <= 8
+        return False
 
     def _compose_answer(
         self,
@@ -235,6 +733,10 @@ class GroundedAnswerGenerator:
         if scientific_answer:
             return scientific_answer
 
+        table_lookup_answer = self._table_lookup_answer(question, hits)
+        if table_lookup_answer:
+            return table_lookup_answer
+
         table_answer = self._table_answer(question, hits)
         if table_answer:
             return table_answer
@@ -244,7 +746,7 @@ class GroundedAnswerGenerator:
             return concise_answer
 
         if self._needs_numeric_answer(q_lower):
-            numeric_sentence = self._best_numeric_sentence(question, support_sentences)
+            numeric_sentence = self._best_numeric_sentence(question, support_sentences, hits)
             if numeric_sentence:
                 return numeric_sentence
 
@@ -407,6 +909,20 @@ class GroundedAnswerGenerator:
             )
         )
 
+    def _table_lookup_answer(self, question: str, hits: list[RetrievedHit]) -> str | None:
+        if not is_table_lookup_query(question):
+            return None
+        evidence_text = "\n".join(
+            normalize_text(part)
+            for hit in hits[:30]
+            for part in (hit.chunk.section or "", hit.chunk.text or "")
+            if part
+        )
+        if not evidence_text:
+            return None
+        result = lookup_table_answer_from_text(question, evidence_text)
+        return result.answer if result is not None else None
+
     def _table_answer(self, question: str, hits: list[RetrievedHit]) -> str | None:
         q_lower = question.lower()
         text = " ".join(hit.chunk.text for hit in hits[:3])
@@ -430,6 +946,16 @@ class GroundedAnswerGenerator:
         evidence_text = " ".join(normalize_text(hit.chunk.text) for hit in hits[:3])
 
         if "chương trình tích hợp" in q_lower and "thiết kế" in q_lower:
+            exact = re.search(
+                r"thời gian thiết kế là\s+(\d+(?:[,.]\d+)?\s+năm)\s+và\s+khối lượng học tập\s+(\d+\s+tín chỉ)",
+                evidence_text,
+                flags=re.I,
+            )
+            if exact:
+                return (
+                    "Chương trình tích hợp có thời gian thiết kế là "
+                    f"{exact.group(1).strip()} và khối lượng học tập {exact.group(2).strip()}."
+                )
             match = re.search(r"thời gian thiết kế là ([^.]+?)(?:\.|$)", joined, flags=re.I)
             if match:
                 return f"Chương trình tích hợp có thời gian thiết kế là {match.group(1).strip()}."
@@ -513,22 +1039,40 @@ class GroundedAnswerGenerator:
 
         return None
 
-    def _best_numeric_sentence(self, question: str, support_sentences: list[str]) -> str | None:
+    def _best_numeric_sentence(
+        self,
+        question: str,
+        support_sentences: list[str],
+        hits: list[RetrievedHit],
+    ) -> str | None:
         q_terms = token_set(question)
+        q_lower = question.lower()
+        intent = self._detect_answer_intent(question, "factoid")
+        spans: list[tuple[int, str]] = [(0, sentence) for sentence in support_sentences]
+        for hit_idx, hit in enumerate(hits[:8]):
+            spans.extend((hit_idx, sentence) for sentence in self._candidate_spans(hit.chunk.text))
+
         scored: list[tuple[float, str]] = []
-        for sentence in support_sentences:
-            if not (self._has_numeric_phrase(sentence) or LETTER_GRADE_RE.search(sentence)):
+        seen: set[str] = set()
+        for hit_idx, sentence in spans:
+            normalized = normalize_text(sentence)
+            dedupe_key = normalized.casefold()
+            if not normalized or dedupe_key in seen:
                 continue
-            score = len(q_terms & token_set(sentence))
-            score += 2.0 * (
-                len(NUMBER_PHRASE_RE.findall(sentence)) + len(EN_NUMBER_PHRASE_RE.findall(sentence))
+            seen.add(dedupe_key)
+            if not self._has_answer_payload_for_intent(normalized, intent):
+                continue
+            score = self._score_answer_span(
+                question_lower=q_lower,
+                question_terms=q_terms,
+                intent=intent,
+                sentence=normalized,
+                hit_idx=hit_idx,
             )
-            if len(sentence) <= 220:
-                score += 1.0
-            scored.append((score, normalize_text(sentence)))
+            scored.append((score, normalized))
         if not scored:
             return None
-        scored.sort(key=lambda item: item[0], reverse=True)
+        scored.sort(key=lambda item: (item[0], -len(item[1])), reverse=True)
         return scored[0][1]
 
     def _non_answer_text(self, decision: str, support_sentences: list[str]) -> str:
@@ -553,6 +1097,7 @@ class GroundedAnswerGenerator:
 
     def _is_grounded(self, answer: str, hits: list[RetrievedHit]) -> bool:
         evidence_text = "\n".join(hit.chunk.text for hit in hits)
+        evidence_text_decimal_normalized = re.sub(r"(?<=\d),(?=\d)", ".", evidence_text)
         normalized_answer = normalize_text(answer)
         if contains_text(evidence_text, normalized_answer):
             return True
@@ -571,7 +1116,12 @@ class GroundedAnswerGenerator:
                 continue
             answer_numbers = set(NUMBER_PHRASE_RE.findall(sentence))
             answer_numbers |= set(EN_NUMBER_PHRASE_RE.findall(sentence))
-            if answer_numbers and all(number in normalize_text(evidence_text) for number in answer_numbers):
+            normalized_evidence = normalize_text(evidence_text)
+            normalized_decimal_evidence = normalize_text(evidence_text_decimal_normalized)
+            if answer_numbers and all(
+                number in normalized_evidence or number in normalized_decimal_evidence
+                for number in answer_numbers
+            ):
                 supported += 1
         return supported / len(sentences) >= 0.5
 

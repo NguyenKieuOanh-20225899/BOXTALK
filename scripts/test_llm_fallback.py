@@ -1,0 +1,533 @@
+from __future__ import annotations
+
+import json
+import os
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.qa.llm_fallback import (
+    DummyGroundedLLMClient,
+    GroundedLLMFallback,
+    LLMFallbackConfig,
+    make_grounded_llm_client,
+    provider_runtime_info,
+    response_from_payload,
+)
+from app.qa.answer_generator import GroundedAnswerGenerator
+from app.qa.llm_explainer import (
+    DummyExplanationLLMClient,
+    GroundedLLMExplainer,
+    LLMExplanationConfig,
+    make_llm_explanation_client,
+)
+from app.qa.router import QueryRouter
+from app.qa.schemas import EvidenceAssessment, GroundedAnswer
+from app.qa.table_lookup_utils import lookup_table_answer, lookup_table_answer_from_text, normalize_table_from_sources
+from app.qa.table_query_utils import is_table_lookup_query
+from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
+from scripts.benchmark_llm_fallback import summarize_comparison
+
+
+def make_hit(chunk_id: str, text: str, *, block_type: str = "paragraph", score: float = 0.8) -> RetrievedHit:
+    return RetrievedHit(
+        chunk=DocumentChunkRef(
+            chunk_id=chunk_id,
+            text=text,
+            doc_id="doc",
+            source_name="doc.pdf",
+            page=1,
+            block_type=block_type,
+        ),
+        score=score,
+        final_score=score,
+        source="bm25",
+        rank=1,
+        bm25_score=score,
+    )
+
+
+def make_evidence(decision: str, *, relevance: float = 0.7, sufficiency: float = 0.45) -> EvidenceAssessment:
+    return EvidenceAssessment(
+        relevance=relevance,
+        coverage=0.5,
+        consistency=1.0,
+        citation_support=1.0,
+        grounding=0.5,
+        sufficiency=sufficiency,
+        decision=decision,  # type: ignore[arg-type]
+        reason="test",
+        selected_hit_ids=["h1"],
+        support_sentences=[],
+    )
+
+
+def standard_answer(text: str) -> GroundedAnswer:
+    return GroundedAnswer(answer=text, citations=[], support_sentences=[], grounded=False)
+
+
+class LLMFallbackTest(unittest.TestCase):
+    def test_numeric_fallback_uses_grounded_evidence_span(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, min_llm_confidence=0.10),
+            client=DummyGroundedLLMClient(),
+        )
+        result = fallback.maybe_generate(
+            question="How many attention heads does the model use?",
+            query_type="factoid",
+            hits=[make_hit("h1", "The model uses h = 8 parallel attention heads in the attention layer.")],
+            evidence=make_evidence("answer"),
+            standard_answer=standard_answer("The paper describes the model architecture."),
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.used)
+        self.assertIn("8", result.answer or "")
+        self.assertEqual(result.used_evidence_ids, ["E1"])
+
+    def test_fallback_does_not_call_without_grounded_evidence(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True),
+            client=DummyGroundedLLMClient(),
+        )
+        result = fallback.maybe_generate(
+            question="What is the answer?",
+            query_type="factoid",
+            hits=[],
+            evidence=make_evidence("switch_strategy", relevance=0.0, sufficiency=0.0),
+            standard_answer=standard_answer("I do not have enough grounded evidence to answer."),
+        )
+
+        self.assertFalse(result.called)
+        self.assertFalse(result.used)
+
+    def test_table_rule_based_lookup_runs_before_llm(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Score range | Grade\n8.5 - 10 | A\n7.0 - 8.4 | B\n6.0 - 6.9 | C"
+        result = fallback.maybe_generate(
+            question="6.5 corresponds to which grade?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table lists score ranges and grades."),
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.used)
+        self.assertFalse(result.llm_called)
+        self.assertEqual(result.final_answer_source, "table_rule_fallback")
+        self.assertIn("C", result.answer or "")
+
+    def test_table_rule_based_lookup_keeps_plus_grade(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Score range | Grade\n8.0 - 8.9 | B+\n6.5 - 6.9 | C+\n5.5 - 6.4 | C"
+        result = fallback.maybe_generate(
+            question="6.5 la C hay C+?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table maps score ranges to grades."),
+        )
+
+        self.assertTrue(result.used)
+        self.assertIn("C+", result.answer or "")
+        self.assertNotIn("maps to C.", result.answer or "")
+
+    def test_table_rule_based_reverse_lookup_returns_interval_and_grade_point(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Score Range | Letter Grade | Grade Point\n8.0 - 8.9 | B+ | 3.5\n6.5 - 6.9 | C+ | 2.5"
+        result = fallback.maybe_generate(
+            question="What score band corresponds to B+ and what grade point does it carry?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table maps score ranges to grades."),
+        )
+
+        self.assertTrue(result.used)
+        self.assertFalse(result.llm_called)
+        self.assertIn("8.0 - 8.9", result.answer or "")
+        self.assertIn("3.5", result.answer or "")
+
+    def test_table_rule_based_boundary_and_below_are_not_confused(self) -> None:
+        table = normalize_table_from_sources(
+            table_text=(
+                "Score Range | Grade\n"
+                "4.0 - 5.4 | D\n"
+                "Below 4.0 | F"
+            )
+        )
+        self.assertIsNotNone(table)
+        boundary = lookup_table_answer("4.0 belongs to which range?", table)  # type: ignore[arg-type]
+        below = lookup_table_answer("3.9 belongs to which grade?", table)  # type: ignore[arg-type]
+
+        self.assertIsNotNone(boundary)
+        self.assertIn("D", boundary.answer if boundary else "")
+        self.assertIsNotNone(below)
+        self.assertIn("F", below.answer if below else "")
+
+    def test_table_normalizes_mixed_decimal_separators(self) -> None:
+        table = normalize_table_from_sources(
+            table_text=(
+                "Khoang diem | Diem chu\n"
+                "6,5 - 6,9 | C+\n"
+                "5.5 - 6.4 | C"
+            )
+        )
+        self.assertIsNotNone(table)
+        result = lookup_table_answer("6.5 la C hay C+?", table)  # type: ignore[arg-type]
+
+        self.assertIsNotNone(result)
+        self.assertIn("C+", result.answer if result else "")
+
+    def test_table_rule_based_multiple_column_lookup(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Model | Heads | Layers | BLEU\nBase | 8 | 6 | 27.3\nLarge | 16 | 12 | 29.8"
+        result = fallback.maybe_generate(
+            question="Which configuration uses 12 layers and what BLEU does it reach?",
+            query_type="factoid",
+            hits=[make_hit("h1", table_text, block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.85),
+            standard_answer=standard_answer("The table compares model configurations."),
+        )
+
+        self.assertTrue(result.used)
+        self.assertIn("Large", result.answer or "")
+        self.assertIn("29.8", result.answer or "")
+
+    def test_complex_table_reasoning_bypasses_rule_lookup_for_llm(self) -> None:
+        fallback = GroundedLLMFallback(
+            config=LLMFallbackConfig(
+                enable_llm_fallback=True,
+                enable_table_llm_reasoning=True,
+                min_llm_confidence=0.10,
+            ),
+            client=DummyGroundedLLMClient(),
+        )
+        table_text = "Program | Budget | Actual | Variance\nAlpha | 120 | 132 | 12\nBeta | 80 | 72 | -8"
+        policy_text = "For program finance reviews, an absolute variance greater than 10 requires CFO review."
+        result = fallback.maybe_generate(
+            question="Alpha has variance 12. According to the policy text, who reviews it?",
+            query_type="comparison",
+            hits=[
+                make_hit("h1", table_text, block_type="table"),
+                make_hit("h2", policy_text, block_type="paragraph"),
+            ],
+            evidence=make_evidence("answer", sufficiency=0.45),
+            standard_answer=standard_answer("The table lists Alpha variance."),
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.llm_called)
+        self.assertNotEqual(result.final_answer_source, "table_rule_fallback")
+
+    def test_openai_compatible_provider_reports_missing_envs(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            info = provider_runtime_info("openai-compatible")
+
+        self.assertFalse(info["ready"])
+        self.assertEqual(
+            set(info["missing_envs"]),
+            {"BOXTALK_LLM_BASE_URL", "BOXTALK_LLM_API_KEY", "BOXTALK_LLM_MODEL"},
+        )
+
+    def test_openai_compatible_provider_does_not_expose_api_key(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "BOXTALK_LLM_BASE_URL": "https://example.test/v1",
+                "BOXTALK_LLM_API_KEY": "secret-test-key",
+                "BOXTALK_LLM_MODEL": "test-model",
+            },
+            clear=True,
+        ):
+            info = provider_runtime_info("openai-compatible")
+
+        self.assertTrue(info["ready"])
+        self.assertTrue(info["api_key_present"])
+        self.assertEqual(info["base_url"], "https://example.test/v1")
+        self.assertEqual(info["model"], "test-model")
+        self.assertNotIn("BOXTALK_LLM_API_KEY", info["env"])
+        self.assertNotIn("secret-test-key", json.dumps(info))
+
+    def test_ollama_provider_uses_local_openai_compatible_defaults(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            info = provider_runtime_info("ollama")
+            client = make_grounded_llm_client("ollama")
+            explanation_client = make_llm_explanation_client()
+
+        self.assertTrue(info["ready"])
+        self.assertEqual(info["provider"], "ollama")
+        self.assertEqual(info["base_url"], "http://localhost:11434/v1")
+        self.assertEqual(info["model"], "qwen2.5:7b-instruct")
+        self.assertTrue(info["api_key_present"])
+        self.assertEqual(getattr(client, "provider_name"), "ollama")
+        self.assertEqual(getattr(client, "base_url"), "http://localhost:11434/v1")
+        self.assertEqual(getattr(client, "model"), "qwen2.5:7b-instruct")
+        self.assertEqual(getattr(explanation_client, "provider_name"), "ollama")
+        self.assertEqual(getattr(explanation_client, "base_url"), "http://localhost:11434/v1")
+        self.assertEqual(getattr(explanation_client, "model"), "qwen2.5:7b-instruct")
+
+    def test_llm_explainer_generates_explanation_without_changing_answer(self) -> None:
+        explainer = GroundedLLMExplainer(
+            config=LLMExplanationConfig(enable_llm_explanation=True),
+            client=DummyExplanationLLMClient(),
+        )
+        answer = "Sinh viên đạt B+ khi điểm nằm trong khoảng 8.0-8.4."
+        result = explainer.maybe_explain(
+            question="What score range gives B+?",
+            query_type="factoid",
+            answer=answer,
+            hits=[make_hit("h1", "B+ tương ứng khoảng điểm 8.0-8.4.", block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.90),
+            citations=[{"chunk_id": "h1", "page": 1}],
+            grounded=True,
+        )
+
+        self.assertTrue(result.called)
+        self.assertTrue(result.used)
+        self.assertIn("evidence", result.explanation or "")
+        self.assertEqual(result.provider, "dummy")
+
+    def test_llm_explainer_skips_ungrounded_answer(self) -> None:
+        explainer = GroundedLLMExplainer(
+            config=LLMExplanationConfig(enable_llm_explanation=True),
+            client=DummyExplanationLLMClient(),
+        )
+        result = explainer.maybe_explain(
+            question="What score range gives B+?",
+            query_type="factoid",
+            answer="B+ là 8.0-8.4.",
+            hits=[make_hit("h1", "B+ tương ứng khoảng điểm 8.0-8.4.", block_type="table")],
+            evidence=make_evidence("answer", sufficiency=0.90),
+            citations=[],
+            grounded=False,
+        )
+
+        self.assertFalse(result.called)
+        self.assertFalse(result.used)
+        self.assertEqual(result.reason, "answer_is_not_grounded_or_has_no_citations")
+
+    def test_table_factoid_router_does_not_match_than_inside_vietnamese_thang(self) -> None:
+        question = "Điểm chữ B+ ứng với khoảng bao nhiêu điểm trên thang 4?"
+        router = QueryRouter()
+
+        self.assertTrue(is_table_lookup_query(question))
+        self.assertEqual(router.route(question), "factoid")
+
+    def test_parallel_sequence_reverse_lookup_label_to_numeric(self) -> None:
+        question = "B+ corresponds to how many points?"
+        table_text = "Grade A B+ C+\nPoints 4.0 3.5 2.5"
+
+        result = lookup_table_answer_from_text(question, table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("B+", result.answer if result else "")
+        self.assertIn("3.5", result.answer if result else "")
+
+    def test_parallel_sequence_reverse_lookup_numeric_to_label(self) -> None:
+        table_text = "Category Low Medium High\nThreshold 0-49 50-79 80-100"
+
+        result = lookup_table_answer_from_text("50 belongs to which category?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("Medium", result.answer if result else "")
+
+    def test_parallel_sequence_label_to_interval(self) -> None:
+        table_text = "Category Low Medium High\nThreshold 0-49 50-79 80-100"
+
+        result = lookup_table_answer_from_text("Medium corresponds to which range?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("50 - 79", result.answer if result else "")
+
+    def test_parallel_sequence_mixed_decimal_and_plus_label(self) -> None:
+        table_text = "Label C C+ B\nValue 2,0 2,5 3,0"
+
+        result = lookup_table_answer_from_text("C+ corresponds to what value?", table_text)
+
+        self.assertIsNotNone(result)
+        self.assertIn("2.5", result.answer if result else "")
+
+    def test_answer_generator_uses_generic_parallel_sequence_lookup(self) -> None:
+        question = "Điểm chữ B+ ứng với khoảng bao nhiêu điểm trên thang 4?"
+        generator = GroundedAnswerGenerator()
+        hits = [
+            make_hit("h1", "Điểm chữ quy đổi F D D+ C C+ B B+ A A+", block_type="table", score=0.95),
+            make_hit("h2", "Điểm số quy đổi 0 1 1,5 2,0 2,5 3,0 3,5 4,0 4,0", block_type="table", score=0.94),
+        ]
+        evidence = make_evidence("answer", sufficiency=0.90)
+
+        answer = generator.generate(
+            question=question,
+            query_type="factoid",
+            hits=hits,
+            evidence=evidence,
+        )
+
+        self.assertIn("B+", answer.answer)
+        self.assertIn("3.5", answer.answer)
+        self.assertTrue(answer.grounded)
+
+    def test_answer_generator_table_lookup_resolves_before_partial_evidence(self) -> None:
+        generator = GroundedAnswerGenerator()
+        hits = [
+            make_hit("h1", "The document introduces a conversion table.", block_type="paragraph", score=0.95),
+            make_hit("h2", "Grade A B+ C+", block_type="table", score=0.90),
+            make_hit("h3", "Points 4.0 3.5 2.5", block_type="table", score=0.89),
+        ]
+        evidence = make_evidence("expand_retrieval", sufficiency=0.50)
+
+        answer = generator.generate(
+            question="B+ corresponds to how many points?",
+            query_type="factoid",
+            hits=hits,
+            evidence=evidence,
+        )
+
+        self.assertIn("B+", answer.answer)
+        self.assertIn("3.5", answer.answer)
+        self.assertNotIn("partial evidence", answer.answer.lower())
+        self.assertEqual([citation["chunk_id"] for citation in answer.citations], ["h2", "h3"])
+
+    def test_llm_response_with_answer_and_evidence_ids_implies_answer_decision(self) -> None:
+        response = response_from_payload(
+            {
+                "answer": "B+ has a higher grade point than C+.",
+                "used_evidence_ids": ["E1"],
+                "reasoning_mode": "table",
+                "confidence": 0.95,
+            },
+            "table",
+        )
+
+        self.assertEqual(response.decision, "answer")
+        self.assertEqual(response.used_evidence_ids, ["E1"])
+        self.assertEqual(response.reasoning_mode, "table")
+
+    def test_table_reasoning_summary_breaks_down_resolution_paths(self) -> None:
+        rows = [
+            {
+                "query_id": "q1",
+                "query_type": "factoid",
+                "table_reasoning_type": "reverse_lookup",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": True,
+                "standard_answer_match": False,
+                "fallback_answer_match": True,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": True,
+                "fallback_llm_called": False,
+                "reasoning_mode": "table",
+                "final_answer_source": "table_rule_fallback",
+                "latency_delta_ms": 1.0,
+                "fallback_helped": True,
+                "fallback_overrode_standard": True,
+                "fallback_override_success": True,
+                "fallback_override_grounded": True,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": True,
+                "table_llm_resolved": False,
+            },
+            {
+                "query_id": "q2",
+                "query_type": "comparison",
+                "table_reasoning_type": "numerical_reasoning",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": True,
+                "standard_answer_match": False,
+                "fallback_answer_match": True,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": True,
+                "fallback_llm_called": True,
+                "reasoning_mode": "table",
+                "final_answer_source": "llm_fallback",
+                "latency_delta_ms": 2.0,
+                "fallback_helped": True,
+                "fallback_overrode_standard": True,
+                "fallback_override_success": True,
+                "fallback_override_grounded": True,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": False,
+                "table_llm_resolved": True,
+            },
+            {
+                "query_id": "q3",
+                "query_type": "factoid",
+                "table_reasoning_type": "boundary_case",
+                "expected_modality": "table",
+                "expected_fallback_mode": "table",
+                "weak_standard_answer_case": True,
+                "should_require_fallback": True,
+                "standard_end_to_end_success": False,
+                "fallback_end_to_end_success": False,
+                "standard_answer_match": False,
+                "fallback_answer_match": False,
+                "standard_grounded": True,
+                "fallback_grounded": True,
+                "standard_hallucinated": False,
+                "fallback_hallucinated": False,
+                "fallback_called": True,
+                "fallback_used": False,
+                "fallback_llm_called": False,
+                "reasoning_mode": "table",
+                "final_answer_source": "standard",
+                "latency_delta_ms": 3.0,
+                "fallback_helped": False,
+                "fallback_overrode_standard": False,
+                "fallback_override_success": False,
+                "fallback_override_grounded": False,
+                "fallback_override_hallucinated": False,
+                "table_rule_resolved": False,
+                "table_llm_resolved": False,
+            },
+        ]
+
+        summary = summarize_comparison(rows)
+
+        self.assertEqual(summary["table_rule_resolved_count"], 1)
+        self.assertEqual(summary["table_llm_resolved_count"], 1)
+        self.assertEqual(summary["reverse_lookup_success"], 1.0)
+        self.assertEqual(summary["numerical_reasoning_success"], 1.0)
+        self.assertEqual(summary["boundary_case_success"], 0.0)
+        self.assertEqual(summary["table_resolution_breakdown"]["solved_by_rule_based"], 1)
+        self.assertEqual(summary["table_resolution_breakdown"]["solved_by_llm_fallback"], 1)
+        self.assertEqual(summary["table_resolution_breakdown"]["wrong_due_to_interval_boundary"], 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

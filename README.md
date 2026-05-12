@@ -205,6 +205,71 @@ $env:BOXTALK_ROUTED_RAG_BUILD_DENSE="1"
 .\.venv\Scripts\uvicorn.exe app.routed_rag_starter:app --reload
 ```
 
+## UI MVP and Grounded Fallback
+
+The repo now includes a static MVP UI served by the FastAPI app. It focuses on:
+
+- PDF upload and indexing
+- document library management
+- grounded QA with citations
+- a source viewer for page-level inspection
+- a developer-details toggle for route and fallback trace
+
+Run the backend plus UI:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.routed_rag_starter:app --reload
+```
+
+Or via Make:
+
+```bash
+make ui-dev PYTHON=.venv/Scripts/python.exe
+```
+
+Open `http://127.0.0.1:8000/`.
+
+Useful UI/runtime env flags:
+
+```powershell
+# default main path
+$env:BOXTALK_UI_QA_PIPELINE="routed_grounded"
+
+# enable grounded LLM fallback on the standard routed pipeline
+$env:BOXTALK_ENABLE_LLM_FALLBACK="1"
+
+# experimental: adaptive retry, but only allow fallback on the final selected route
+$env:BOXTALK_UI_QA_PIPELINE="adaptive_route_retry"
+$env:BOXTALK_ENABLE_LLM_FALLBACK_ON_FINAL_ROUTE_ONLY="1"
+```
+
+Fallback benchmarking stays separate from the main regression gates.
+
+Dummy smoke check:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\benchmark_llm_fallback.py `
+  --manifest data\llm_fallback_benchmark\manifest.json `
+  --output-dir results\llm_fallback_benchmark\dummy_smoke `
+  --llm-fallback-provider dummy `
+  --no-warmup
+```
+
+OpenAI-compatible provider benchmark:
+
+```powershell
+$env:BOXTALK_LLM_BASE_URL="https://your-endpoint/v1"
+$env:BOXTALK_LLM_API_KEY="your-key"
+$env:BOXTALK_LLM_MODEL="your-model"
+
+.\.venv\Scripts\python.exe scripts\benchmark_llm_fallback.py `
+  --manifest data\llm_fallback_benchmark\manifest.json `
+  --output-dir results\llm_fallback_benchmark\openai_run `
+  --llm-fallback-provider openai-compatible `
+  --skip-build `
+  --no-warmup
+```
+
 Useful debug endpoint:
 
 ```text

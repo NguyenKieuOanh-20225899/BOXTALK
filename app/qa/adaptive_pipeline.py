@@ -6,6 +6,7 @@ from typing import Protocol
 
 from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.evidence_checker import EvidenceChecker
+from app.qa.llm_fallback import GroundedLLMFallback
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer, QAResult
 from app.retrieval.route_planner import QueryAwareRetrievalPlanner, QueryRetrievalPlan
 from app.retrieval.schemas import RetrievalResult
@@ -63,18 +64,22 @@ class AdaptiveRouteRetryQAPipeline:
         retrieval_planner: QueryAwareRetrievalPlanner | None = None,
         evidence_checker: EvidenceChecker | None = None,
         answer_generator: GroundedAnswerGenerator | None = None,
+        llm_fallback: GroundedLLMFallback | None = None,
         max_attempts: int = 3,
         retry_quality_threshold: float = 0.82,
         min_answer_quality: float = 0.40,
+        enable_final_route_llm_fallback: bool = False,
     ) -> None:
         self.retrieval_service = retrieval_service
         self.router = router
         self.retrieval_planner = retrieval_planner or QueryAwareRetrievalPlanner()
         self.evidence_checker = evidence_checker or EvidenceChecker()
         self.answer_generator = answer_generator or GroundedAnswerGenerator()
+        self.llm_fallback = llm_fallback
         self.max_attempts = max(1, max_attempts)
         self.retry_quality_threshold = retry_quality_threshold
         self.min_answer_quality = min_answer_quality
+        self.enable_final_route_llm_fallback = enable_final_route_llm_fallback
 
     def answer(self, question: str) -> QAResult:
         initial_query_type = self._normalize_query_type(self.router.route(question))
@@ -102,18 +107,50 @@ class AdaptiveRouteRetryQAPipeline:
                 evidence=evidence,
             )
 
+        final_answer = answer.answer
+        final_citations = answer.citations
+        final_decision = evidence.decision
+        final_answer_source = answer.source
+        final_grounded = answer.grounded
+        fallback_trace: dict[str, object] = {}
+        if self.enable_final_route_llm_fallback and self.llm_fallback is not None:
+            fallback_result = self.llm_fallback.maybe_generate(
+                question=question,
+                query_type=best.query_type,
+                hits=best.retrieval_result.hits,
+                evidence=evidence,
+                standard_answer=answer,
+            )
+            fallback_trace = fallback_result.to_trace()
+            if fallback_result.used and fallback_result.answer:
+                final_answer = fallback_result.answer
+                final_citations = fallback_result.citations or answer.citations
+                final_decision = "answer"
+                final_answer_source = fallback_result.final_answer_source
+                final_grounded = bool(final_citations)
+
         route_attempts = [
             self._attempt_trace(attempt, selected=(idx == best_idx))
             for idx, attempt in enumerate(attempts)
         ]
+        if route_attempts:
+            route_attempts[best_idx].update(
+                {
+                    "fallback_called": bool(fallback_trace.get("called", False)),
+                    "fallback_used": bool(fallback_trace.get("used", False)),
+                    "fallback_reason": fallback_trace.get("reason"),
+                    "fallback_reasoning_mode": fallback_trace.get("reasoning_mode"),
+                    "final_answer_source": final_answer_source,
+                }
+            )
 
         return QAResult(
             question=question,
             query_type=best.query_type,
-            answer=answer.answer,
-            decision=evidence.decision,
+            answer=final_answer,
+            decision=final_decision,
             evidence=evidence,
-            citations=answer.citations,
+            citations=final_citations,
             retrieved_hits=best.retrieval_result.hits,
             retrieval_strategy=best.retrieval_result.strategy,
             retrieval_config=best.retrieval_result.config,
@@ -121,6 +158,10 @@ class AdaptiveRouteRetryQAPipeline:
             answer_latency_ms=sum(attempt.answer_latency_ms for attempt in attempts),
             route_attempts=route_attempts,
             selected_route_attempt=best_idx,
+            grounded=final_grounded,
+            standard_answer=answer.answer,
+            final_answer_source=final_answer_source,
+            fallback_trace=fallback_trace,
         )
 
     def _run_attempt(

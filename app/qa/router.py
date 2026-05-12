@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 
+from app.qa.table_query_utils import is_table_lookup_query
+
 
 class QueryRouter:
     """Small deterministic query-type router for routed PDF QA."""
@@ -64,7 +66,6 @@ class QueryRouter:
         "differ",
         "versus",
         "vs",
-        "than",
         "so sánh",
         "khác nhau",
         "khác biệt",
@@ -107,8 +108,11 @@ class QueryRouter:
 
     def route(self, question: str) -> str:
         q = question.lower().strip()
-        if any(term in q for term in self.COMPARISON_TERMS):
+        table_lookup = is_table_lookup_query(question)
+        if (any(term in q for term in self.COMPARISON_TERMS) or re.search(r"\bthan\b", q)) and not table_lookup:
             return "comparison"
+        if table_lookup:
+            return "factoid"
         if q.startswith(("how many ", "how much ", "how long ", "where ")):
             return "factoid"
         if q.startswith("how "):

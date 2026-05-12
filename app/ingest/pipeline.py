@@ -18,6 +18,10 @@ from app.ingest.extract.routed_model import (
     extract_with_model_routed_backend,
     is_model_routing_enabled,
 )
+from app.ingest.extract.region_routed import (
+    extract_with_region_routed_backend,
+    is_region_routing_enabled,
+)
 from app.ingest.extract.text import extract_with_text_backend
 from app.ingest.extract.layout import extract_with_layout_backend
 from app.ingest.extract.ocr import extract_with_ocr_backend
@@ -94,10 +98,12 @@ def ingest_pdf(pdf_path: str | Path) -> dict:
 def _build_extractor_plan(probe) -> list[tuple[str, ExtractorFn]]:
     mode = probe.probe_detected_mode
     layout_backends = _layout_extractors(probe)
+    region_backends = _region_extractors()
     prefer_layout_for_scan = _should_prefer_layout_for_scan(probe, layout_backends)
 
     if mode == "text":
         return [
+            *region_backends,
             ("text", extract_with_text_backend),
             *layout_backends,
             ("ocr", extract_with_ocr_backend),
@@ -105,6 +111,7 @@ def _build_extractor_plan(probe) -> list[tuple[str, ExtractorFn]]:
 
     if mode == "layout":
         return [
+            *region_backends,
             *layout_backends,
             ("text", extract_with_text_backend),
             ("ocr", extract_with_ocr_backend),
@@ -114,10 +121,12 @@ def _build_extractor_plan(probe) -> list[tuple[str, ExtractorFn]]:
         if prefer_layout_for_scan:
             return [
                 *layout_backends,
+                *region_backends,
                 ("ocr", extract_with_ocr_backend),
                 ("text", extract_with_text_backend),
             ]
         return [
+            *region_backends,
             ("ocr", extract_with_ocr_backend),
             ("text", extract_with_text_backend),
             *layout_backends,
@@ -129,20 +138,29 @@ def _build_extractor_plan(probe) -> list[tuple[str, ExtractorFn]]:
         if prefer_layout_for_scan:
             return [
                 *layout_backends,
+                *region_backends,
                 ("text", extract_with_text_backend),
                 ("ocr", extract_with_ocr_backend),
             ]
         return [
+            *region_backends,
             ("text", extract_with_text_backend),
             *layout_backends,
             ("ocr", extract_with_ocr_backend),
         ]
 
     return [
+        *region_backends,
         ("text", extract_with_text_backend),
         *layout_backends,
         ("ocr", extract_with_ocr_backend),
     ]
+
+
+def _region_extractors() -> list[tuple[str, ExtractorFn]]:
+    if not is_region_routing_enabled():
+        return []
+    return [("region_routed", extract_with_region_routed_backend)]
 
 
 def _layout_extractors(probe) -> list[tuple[str, ExtractorFn]]:
@@ -198,7 +216,7 @@ def _looks_valid_result(
     if not pages or not blocks:
         return False
 
-    if backend_name in {"layout", "model_layout", "model_routed"}:
+    if backend_name in {"layout", "model_layout", "model_routed", "region_routed"}:
         # layout mà chỉ có 1 block/page thì thường là fallback kiểu "full doc"
         if len(blocks) <= len(pages):
             return False
@@ -209,13 +227,22 @@ def _looks_valid_result(
             return False
 
         with_bbox = sum(1 for b in blocks if b.bbox is not None)
-        if backend_name in {"model_layout", "model_routed"} and with_bbox == 0:
+        if backend_name in {"model_layout", "model_routed", "region_routed"} and with_bbox == 0:
             return False
 
-        if backend_name == "model_routed":
+        if backend_name in {"model_routed", "region_routed"}:
             route_backends = {b.meta.get("route_backend") for b in blocks if b.meta}
             if not route_backends:
                 return False
+
+    if backend_name == "region_routed":
+        substantive_chars = sum(
+            len((b.text or "").strip())
+            for b in blocks
+            if (b.meta or {}).get("route_backend") != "placeholder"
+        )
+        if substantive_chars < 50:
+            return False
 
     if backend_name == "text":
         total_chars = sum(len(b.text or "") for b in blocks)

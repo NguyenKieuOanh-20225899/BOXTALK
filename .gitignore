@@ -1,6 +1,7 @@
 # Python virtual environment
 .venv/
 .venv-gpu/
+.venv-ocr-gpu/
 venv/
 ENV/
 env/
