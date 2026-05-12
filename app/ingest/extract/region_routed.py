@@ -7,6 +7,7 @@ import fitz
 
 from app.ingest.extract.ocr import extract_ocr_region
 from app.ingest.extract.text import extract_text_region
+from app.ingest.reading_order import sort_in_reading_order
 from app.ingest.schemas import BlockNode, PageNode
 
 
@@ -121,8 +122,12 @@ def _detect_page_regions(page: fitz.Page) -> list[dict]:
                 }
             )
 
-    regions.sort(key=lambda item: (item["bbox"][1], item["bbox"][0], item["kind"]))
-    return regions
+    return sort_in_reading_order(
+        regions,
+        bbox_getter=lambda item: tuple(item["bbox"]),
+        page_width=float(page.rect.width),
+        page_height=float(page.rect.height),
+    )
 
 
 def _extract_region(

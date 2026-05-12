@@ -5,6 +5,8 @@ from pathlib import Path
 
 import fitz
 
+from app.ingest.extract.table import extract_table_region
+from app.ingest.reading_order import sort_in_reading_order
 from app.ingest.schemas import BlockNode, PageNode
 
 _MODEL_BUNDLE = None
@@ -40,7 +42,7 @@ def extract_with_model_layout_backend(
 
     for page in doc:
         page_regions = detect_model_layout_regions_for_page(page)
-        page_blocks = _regions_to_blocks(page_regions)
+        page_blocks = _regions_to_blocks(page, page_regions)
 
         pages.append(
             PageNode(
@@ -129,11 +131,16 @@ def detect_model_layout_regions_for_page(page: fitz.Page) -> list[dict]:
         )
 
     regions = _dedupe_regions(regions)
-    regions.sort(key=lambda item: (item["bbox"][1], item["bbox"][0], -item["score"]))
+    regions = sort_in_reading_order(
+        regions,
+        bbox_getter=lambda item: tuple(item["bbox"]),
+        page_width=float(page.rect.width),
+        page_height=float(page.rect.height),
+    )
     return regions
 
 
-def _regions_to_blocks(regions: list[dict]) -> list[BlockNode]:
+def _regions_to_blocks(page: fitz.Page, regions: list[dict]) -> list[BlockNode]:
     if not regions:
         return []
 
@@ -142,6 +149,24 @@ def _regions_to_blocks(regions: list[dict]) -> list[BlockNode]:
     for reading_order, region in enumerate(regions):
         text = str(region.get("direct_text") or "").strip()
         block_type = str(region.get("block_type") or "paragraph")
+        if block_type == "table":
+            table_block = extract_table_region(
+                page,
+                tuple(region["bbox"]),
+                block_index=reading_order,
+                reading_order=reading_order,
+                region_meta={
+                    "backend": "transformers_object_detection",
+                    "model_score": region["score"],
+                    "model_label": region.get("label_name"),
+                    "region_id": region.get("region_id"),
+                    "route_backend": "table",
+                },
+            )
+            if table_block is not None:
+                page_blocks.append(table_block)
+                continue
+
         if not text and block_type not in {"table", "figure", "caption", "metadata"}:
             continue
 

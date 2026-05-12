@@ -483,16 +483,15 @@ def predict_ingest(sample: IngestBenchmarkSample, *, work_dir: Path, mode: str =
             if getattr(block, "bbox", None) is not None
         ]
         table_regions = [region for region in layout_regions if region.label == "table"]
-        table_cells: list[dict[str, Any]] = []
-        for block in blocks:
-            if getattr(block, "block_type", "") == "table":
-                table_cells.extend(list((getattr(block, "meta", {}) or {}).get("table_cells", []) or []))
+        table_payload = _collect_table_payload(blocks)
         return IngestPrediction(
             text=text,
             ordered_text=[str(getattr(block, "text", "") or "") for block in blocks],
             layout_regions=layout_regions,
             table_regions=table_regions,
-            table_cells=table_cells,
+            table_cells=table_payload["cells"],
+            table_csv=table_payload["csv"],
+            table_html=table_payload["html"],
             backend=str(report.get("used_backend") or "unknown"),
             latency_sec=latency,
             success=True,
@@ -525,11 +524,15 @@ def predict_text_extraction_direct(pdf_path: Path, *, started: float) -> IngestP
         if getattr(block, "bbox", None) is not None
     ]
     ordered_text = [str(getattr(block, "text", "") or "") for block in blocks]
+    table_payload = _collect_table_payload(blocks)
     return IngestPrediction(
         text="\n".join(ordered_text),
         ordered_text=ordered_text,
         layout_regions=layout_regions,
         table_regions=[region for region in layout_regions if region.label == "table"],
+        table_cells=table_payload["cells"],
+        table_csv=table_payload["csv"],
+        table_html=table_payload["html"],
         backend="text_direct",
         latency_sec=time.perf_counter() - started,
         success=True,
@@ -539,6 +542,26 @@ def predict_text_extraction_direct(pdf_path: Path, *, started: float) -> IngestP
             "direct_component_benchmark": True,
         },
     )
+
+
+def _collect_table_payload(blocks: list[Any]) -> dict[str, Any]:
+    table_cells: list[dict[str, Any]] = []
+    csv_parts: list[str] = []
+    html_parts: list[str] = []
+    for block in blocks:
+        if getattr(block, "block_type", "") != "table":
+            continue
+        meta = getattr(block, "meta", {}) or {}
+        table_cells.extend(list(meta.get("table_cells", []) or []))
+        if meta.get("table_csv"):
+            csv_parts.append(str(meta["table_csv"]))
+        if meta.get("table_html"):
+            html_parts.append(str(meta["table_html"]))
+    return {
+        "cells": table_cells,
+        "csv": "\n\n".join(csv_parts) if csv_parts else None,
+        "html": "\n".join(html_parts) if html_parts else None,
+    }
 
 
 def predict_model_layout_direct(
@@ -622,8 +645,8 @@ def score_sample(sample: IngestBenchmarkSample, prediction: IngestPrediction, *,
             record["table_detection_iou50"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.50)
             record["table_detection_iou75"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.75)
         record["table_structure"] = table_structure_score(prediction.table_cells, gt.table_cells)
-        record["table_exact_csv"] = table_exact_match(_cells_to_csv(prediction.table_cells), gt.table_csv)
-        record["table_exact_html"] = table_exact_match(None, gt.table_html)
+        record["table_exact_csv"] = table_exact_match(prediction.table_csv or _cells_to_csv(prediction.table_cells), gt.table_csv)
+        record["table_exact_html"] = table_exact_match(prediction.table_html, gt.table_html)
     if mode in {"ocr", "all"}:
         record["ocr_cer"] = record["cer"]
         record["ocr_wer"] = record["wer"]

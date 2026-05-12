@@ -632,10 +632,12 @@ def build_evidence_packets(
         modality = detect_modality(hit)
         raw_text = str(hit.chunk.text or "")
         normalized_table = None
+        table_rows_source = None
         if modality == "table":
+            table_rows_source = metadata.get("table_records") or metadata.get("table_rows") or metadata.get("rows")
             normalized_table = normalize_table_from_sources(
                 table_text=raw_text,
-                table_rows=metadata.get("table_rows") or metadata.get("rows"),
+                table_rows=table_rows_source,
                 table_json=metadata.get("table_json") or metadata.get("table"),
             )
             metadata = {**metadata, **table_metadata_for_prompt(normalized_table)}
@@ -658,7 +660,7 @@ def build_evidence_packets(
                 score=round(float(hit.final_score or hit.score), 4),
                 table_text=table_text,
                 table_rows=table_rows_for_prompt(normalized_table)
-                or _coerce_list(metadata.get("table_rows") or metadata.get("rows")),
+                or _coerce_list(table_rows_source),
                 table_json=metadata.get("table_json") or metadata.get("table"),
                 formula_text=_extract_formula_text(text) if modality == "formula" else None,
                 caption=_extract_caption(text, metadata) if modality == "figure" else None,
@@ -679,6 +681,7 @@ def detect_modality(hit: RetrievedHit) -> ReasoningMode:
         or metadata.get("is_table_chunk")
         or metadata.get("table_json") is not None
         or metadata.get("table_rows") is not None
+        or metadata.get("table_records") is not None
         or _looks_like_table(text)
     ):
         return "table"

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import replace
+from html import escape
 from statistics import median
-from typing import Any
+from typing import Any, Iterable
 
 import fitz
 
@@ -22,12 +24,18 @@ def extract_table_region(
     if rect.is_empty or rect.width < 2 or rect.height < 2:
         return None
 
-    rows = _extract_rows_from_words(page, rect)
-    if rows:
-        normalized_rows = normalize_table_rows(rows)
+    grid = _extract_table_grid_from_words(page, rect)
+    if grid:
+        normalized_rows = grid["rows"]
         text = "\n".join(" | ".join(row) for row in normalized_rows).strip()
         markdown = _rows_to_markdown(normalized_rows)
-        structure = table_structure_from_rows(normalized_rows, backend="table_words")
+        structure = table_structure_from_rows(
+            normalized_rows,
+            backend="table_words_grid",
+            cell_bboxes=grid.get("cell_bboxes"),
+            column_bounds=grid.get("column_bounds"),
+            row_bboxes=grid.get("row_bboxes"),
+        )
         return BlockNode(
             block_id=f"p{page.number:04d}_b{block_index:04d}",
             page_index=page.number,
@@ -39,7 +47,7 @@ def extract_table_region(
             source_mode="layout",
             meta={
                 **dict(region_meta or {}),
-                "backend": "table_words",
+                "backend": "table_words_grid",
                 **structure,
             },
         )
@@ -74,17 +82,19 @@ def extract_table_region(
     if ocr_block is None:
         return None
 
+    structure = table_structure_from_text(ocr_block.text, backend="ocr_table_text")
     return replace(
         ocr_block,
         block_type="table",
         markdown=table_text_to_markdown(ocr_block.text),
+        meta={**dict(ocr_block.meta or {}), **structure},
     )
 
 
-def _extract_rows_from_words(page: fitz.Page, rect: fitz.Rect) -> list[list[str]]:
+def _extract_table_grid_from_words(page: fitz.Page, rect: fitz.Rect) -> dict[str, Any] | None:
     raw_words = page.get_text("words", clip=rect, sort=True) or []
     if len(raw_words) < 4:
-        return []
+        return None
 
     words = [
         {
@@ -98,8 +108,61 @@ def _extract_rows_from_words(page: fitz.Page, rect: fitz.Rect) -> list[list[str]
         if str(word[4]).strip()
     ]
     if len(words) < 4:
-        return []
+        return None
 
+    row_groups = _group_words_into_rows(words)
+    cell_rows = [_split_row_into_cell_infos(row["words"]) for row in row_groups]
+    cell_rows = [row for row in cell_rows if row]
+    if len(cell_rows) < 2:
+        return None
+    if sum(1 for row in cell_rows if len(row) >= 2) < 2:
+        return None
+
+    column_anchors = _infer_column_anchors(cell_rows)
+    if len(column_anchors) < 2:
+        return None
+    if len(column_anchors) > int(os.getenv("BOXBIIBOO_TABLE_MAX_INFERRED_COLS", "12")):
+        return None
+
+    rows: list[list[str]] = []
+    cell_bboxes: list[list[tuple[float, float, float, float] | None]] = []
+    row_bboxes: list[tuple[float, float, float, float]] = []
+    for cells in cell_rows:
+        row = [""] * len(column_anchors)
+        bboxes: list[tuple[float, float, float, float] | None] = [None] * len(column_anchors)
+        for cell in cells:
+            col = _nearest_anchor_index(cell["x0"], column_anchors)
+            if row[col]:
+                row[col] = f"{row[col]} {cell['text']}".strip()
+                bboxes[col] = _merge_bbox(bboxes[col], cell["bbox"])
+            else:
+                row[col] = cell["text"]
+                bboxes[col] = cell["bbox"]
+        if any(value.strip() for value in row):
+            rows.append(row)
+            cell_bboxes.append(bboxes)
+            row_bboxes.append(_union_bbox(bbox for bbox in bboxes if bbox is not None))
+
+    trim_left, trim_right = _empty_edge_bounds(rows)
+    rows = [row[trim_left:trim_right] for row in rows]
+    cell_bboxes = [row[trim_left:trim_right] for row in cell_bboxes[: len(rows)]]
+    if len(rows) < 2 or max((len(row) for row in rows), default=0) < 2:
+        return None
+
+    return {
+        "rows": rows,
+        "cell_bboxes": cell_bboxes,
+        "row_bboxes": row_bboxes[: len(rows)],
+        "column_bounds": _column_bounds_from_cells(cell_bboxes, len(rows[0])),
+    }
+
+
+def _extract_rows_from_words(page: fitz.Page, rect: fitz.Rect) -> list[list[str]]:
+    grid = _extract_table_grid_from_words(page, rect)
+    return list(grid["rows"]) if grid else []
+
+
+def _group_words_into_rows(words: list[dict]) -> list[dict]:
     heights = [w["y1"] - w["y0"] for w in words]
     y_tolerance = max(4.0, median(heights) * 0.65) if heights else 5.0
 
@@ -114,15 +177,26 @@ def _extract_rows_from_words(page: fitz.Page, rect: fitz.Rect) -> list[list[str]
             continue
 
         row_groups.append({"y_mid": y_mid, "words": [word]})
+    return row_groups
 
-    rows = [_split_row_into_cells(row["words"]) for row in row_groups]
-    rows = [row for row in rows if any(cell.strip() for cell in row)]
-    if len(rows) < 2:
-        return []
-    return rows
+
+def _split_row_into_cell_infos(words: list[dict]) -> list[dict]:
+    grouped = _split_row_words(words)
+    cells: list[dict] = []
+    for group in grouped:
+        text = " ".join(word["text"] for word in group).strip()
+        if not text:
+            continue
+        bbox = _union_bbox((word["x0"], word["y0"], word["x1"], word["y1"]) for word in group)
+        cells.append({"text": text, "bbox": bbox, "x0": bbox[0], "x1": bbox[2]})
+    return cells
 
 
 def _split_row_into_cells(words: list[dict]) -> list[str]:
+    return [" ".join(word["text"] for word in group).strip() for group in _split_row_words(words)]
+
+
+def _split_row_words(words: list[dict]) -> list[list[dict]]:
     ordered = sorted(words, key=lambda item: item["x0"])
     widths = [max(1.0, item["x1"] - item["x0"]) for item in ordered]
     positive_gaps = [
@@ -135,8 +209,8 @@ def _split_row_into_cells(words: list[dict]) -> list[str]:
     if positive_gaps:
         gap_threshold = max(gap_threshold, median(positive_gaps) * 1.4)
 
-    cells: list[list[str]] = []
-    current: list[str] = []
+    cells: list[list[dict]] = []
+    current: list[dict] = []
 
     for i, word in enumerate(ordered):
         if i > 0:
@@ -145,12 +219,94 @@ def _split_row_into_cells(words: list[dict]) -> list[str]:
                 cells.append(current)
                 current = []
 
-        current.append(word["text"])
+        current.append(word)
 
     if current:
         cells.append(current)
 
-    return [" ".join(cell).strip() for cell in cells if " ".join(cell).strip()]
+    return [cell for cell in cells if cell]
+
+
+def _infer_column_anchors(cell_rows: list[list[dict]]) -> list[float]:
+    tolerance = float(os.getenv("BOXBIIBOO_TABLE_COLUMN_TOLERANCE", "18"))
+    anchors: list[dict[str, float]] = []
+    for cell in sorted((cell for row in cell_rows for cell in row), key=lambda item: item["x0"]):
+        matched = None
+        for anchor in anchors:
+            if abs(cell["x0"] - anchor["x0"]) <= tolerance:
+                matched = anchor
+                break
+        if matched is None:
+            anchors.append({"x0": cell["x0"], "count": 1.0})
+            continue
+        matched["x0"] = (matched["x0"] * matched["count"] + cell["x0"]) / (matched["count"] + 1.0)
+        matched["count"] += 1.0
+
+    min_count = 2 if len(cell_rows) >= 3 else 1
+    frequent = [anchor["x0"] for anchor in anchors if anchor["count"] >= min_count]
+    if len(frequent) >= 2:
+        return sorted(frequent)
+
+    widest_row = max(cell_rows, key=len)
+    return [cell["x0"] for cell in widest_row]
+
+
+def _nearest_anchor_index(x0: float, anchors: list[float]) -> int:
+    return min(range(len(anchors)), key=lambda idx: abs(x0 - anchors[idx]))
+
+
+def _empty_edge_bounds(rows: list[list[str]]) -> tuple[int, int]:
+    if not rows:
+        return (0, 0)
+    left = 0
+    right = max(len(row) for row in rows)
+    while left < right and all(left >= len(row) or not row[left].strip() for row in rows):
+        left += 1
+    while right > left and all(right - 1 >= len(row) or not row[right - 1].strip() for row in rows):
+        right -= 1
+    return (left, right)
+
+
+def _merge_bbox(
+    left: tuple[float, float, float, float] | None,
+    right: tuple[float, float, float, float],
+) -> tuple[float, float, float, float]:
+    if left is None:
+        return right
+    return (
+        min(left[0], right[0]),
+        min(left[1], right[1]),
+        max(left[2], right[2]),
+        max(left[3], right[3]),
+    )
+
+
+def _union_bbox(boxes: Iterable[tuple[float, float, float, float]]) -> tuple[float, float, float, float]:
+    box_list = list(boxes)
+    return (
+        min(box[0] for box in box_list),
+        min(box[1] for box in box_list),
+        max(box[2] for box in box_list),
+        max(box[3] for box in box_list),
+    )
+
+
+def _column_bounds_from_cells(
+    cell_bboxes: list[list[tuple[float, float, float, float] | None]],
+    column_count: int,
+) -> list[tuple[float, float]]:
+    bounds: list[tuple[float, float]] = []
+    for col_index in range(column_count):
+        boxes = [
+            row[col_index]
+            for row in cell_bboxes
+            if col_index < len(row) and row[col_index] is not None
+        ]
+        if not boxes:
+            bounds.append((0.0, 0.0))
+            continue
+        bounds.append((min(box[0] for box in boxes), max(box[2] for box in boxes)))
+    return bounds
 
 
 def _normalize_rows(rows: list[list[str]]) -> list[list[str]]:
@@ -170,21 +326,36 @@ def table_structure_from_text(text: str, *, backend: str = "table_text") -> dict
     return table_structure_from_rows(normalized_rows, backend=backend)
 
 
-def table_structure_from_rows(rows: list[list[str]], *, backend: str) -> dict[str, Any]:
+def table_structure_from_rows(
+    rows: list[list[str]],
+    *,
+    backend: str,
+    cell_bboxes: list[list[tuple[float, float, float, float] | None]] | None = None,
+    column_bounds: list[tuple[float, float]] | None = None,
+    row_bboxes: list[tuple[float, float, float, float]] | None = None,
+) -> dict[str, Any]:
     max_cols = max((len(row) for row in rows), default=0)
     headers = list(rows[0]) if rows and max_cols > 1 else []
     body_rows = rows[1:] if headers else rows
-    cells = [
-        {
+    cells: list[dict[str, Any]] = []
+    for row_index, row in enumerate(rows):
+        for col_index, cell in enumerate(row):
+            if not cell:
+                continue
+            payload = {
             "row": row_index,
             "col": col_index,
             "text": cell,
             "is_header": bool(headers and row_index == 0),
         }
-        for row_index, row in enumerate(rows)
-        for col_index, cell in enumerate(row)
-        if cell
-    ]
+            if cell_bboxes and row_index < len(cell_bboxes) and col_index < len(cell_bboxes[row_index]):
+                bbox = cell_bboxes[row_index][col_index]
+                if bbox is not None:
+                    payload["bbox"] = bbox
+            cells.append(payload)
+
+    csv_text = rows_to_csv(rows)
+    html_text = rows_to_html(rows)
     return {
         "backend": backend,
         "table_backend": backend,
@@ -192,9 +363,51 @@ def table_structure_from_rows(rows: list[list[str]], *, backend: str) -> dict[st
         "table_col_count": max_cols,
         "table_headers": headers,
         "table_body_row_count": len(body_rows),
+        "table_rows": rows,
+        "table_records": _rows_to_records(headers, body_rows),
+        "table_csv": csv_text,
+        "table_html": html_text,
+        "table_column_bounds": column_bounds or [],
+        "table_row_bboxes": row_bboxes or [],
         "table_cells": cells,
         "table_cell_count": len(cells),
     }
+
+
+def _rows_to_records(headers: list[str], body_rows: list[list[str]]) -> list[dict[str, str]]:
+    if not headers:
+        return []
+    records: list[dict[str, str]] = []
+    for row in body_rows:
+        record = {
+            header: row[index] if index < len(row) else ""
+            for index, header in enumerate(headers)
+            if header
+        }
+        if record:
+            records.append(record)
+    return records
+
+
+def rows_to_csv(rows: list[list[str]]) -> str:
+    import csv
+    import io
+
+    output = io.StringIO()
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerows(rows)
+    return output.getvalue().strip()
+
+
+def rows_to_html(rows: list[list[str]]) -> str:
+    if not rows:
+        return ""
+    lines = ["<table>"]
+    for row_index, row in enumerate(rows):
+        tag = "th" if row_index == 0 and len(rows) > 1 else "td"
+        lines.append("  <tr>" + "".join(f"<{tag}>{escape(cell)}</{tag}>" for cell in row) + "</tr>")
+    lines.append("</table>")
+    return "\n".join(lines)
 
 
 def _rows_to_markdown(rows: list[list[str]]) -> str:

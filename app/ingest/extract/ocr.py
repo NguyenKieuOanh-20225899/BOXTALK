@@ -8,6 +8,7 @@ from statistics import median
 
 import fitz
 
+from app.ingest.reading_order import sort_in_reading_order
 from app.ingest.schemas import BlockNode, PageNode
 
 _OCR = None
@@ -69,11 +70,11 @@ def extract_with_ocr_backend(pdf_path: str | Path) -> tuple[list[PageNode], list
 
         pix = page.get_pixmap(matrix=fitz.Matrix(page_scale, page_scale), alpha=False)
         image_path = pdf_path.parent / f"__tmp_ocr_page_{page_index}.png"
-        pix.save(str(image_path))
+        _save_pixmap_for_ocr(pix, image_path)
 
         raw_lines = _run_ocr(ocr, image_path)
 
-        raw_lines = sorted(raw_lines, key=_ocr_sort_key)
+        raw_lines = _sort_ocr_lines(raw_lines, page_width=float(pix.width), page_height=float(pix.height))
 
         page_blocks: list[BlockNode] = []
         page_text_parts: list[str] = []
@@ -91,7 +92,12 @@ def extract_with_ocr_backend(pdf_path: str | Path) -> tuple[list[PageNode], list
 
             xs = [p[0] for p in quad]
             ys = [p[1] for p in quad]
-            bbox = (float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys)))
+            bbox = (
+                float(min(xs)) / page_scale,
+                float(min(ys)) / page_scale,
+                float(max(xs)) / page_scale,
+                float(max(ys)) / page_scale,
+            )
 
             block_type = _guess_ocr_block_type(text)
             accepted_lines.append(
@@ -140,7 +146,7 @@ def extract_with_ocr_backend(pdf_path: str | Path) -> tuple[list[PageNode], list
                 source_mode="ocr",
                 has_ocr=True,
                 has_table=any(b.block_type == "table" for b in page_blocks),
-                meta={"backend": "paddleocr"},
+                meta={"backend": "paddleocr", "ocr_preprocess": _ocr_preprocess_mode()},
             )
         )
         blocks.extend(page_blocks)
@@ -185,7 +191,7 @@ def extract_ocr_region(
         image_path = Path(tmp.name)
 
     try:
-        pix.save(str(image_path))
+        _save_pixmap_for_ocr(pix, image_path)
         raw_lines = _run_ocr(ocr, image_path)
     finally:
         try:
@@ -193,7 +199,7 @@ def extract_ocr_region(
         except Exception:
             pass
 
-    raw_lines = sorted(raw_lines, key=_ocr_sort_key)
+    raw_lines = _sort_ocr_lines(raw_lines, page_width=float(pix.width), page_height=float(pix.height))
 
     texts: list[str] = []
     scores: list[float] = []
@@ -441,6 +447,35 @@ def _run_ocr(ocr, image_path: str | Path) -> list[dict]:
     return _normalize_ocr_result(result)
 
 
+def _save_pixmap_for_ocr(pix: fitz.Pixmap, image_path: Path) -> None:
+    pix.save(str(image_path))
+    mode = _ocr_preprocess_mode()
+    if mode in {"0", "false", "no", "off", "none", "raw"}:
+        return
+    try:
+        from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+    except Exception:
+        return
+
+    try:
+        with Image.open(image_path) as image:
+            processed = ImageOps.grayscale(image)
+            processed = ImageOps.autocontrast(processed)
+            if mode in {"auto", "contrast", "sharpen", "binarize"}:
+                processed = ImageEnhance.Contrast(processed).enhance(1.25)
+                processed = processed.filter(ImageFilter.SHARPEN)
+            if mode == "binarize":
+                threshold = int(os.getenv("BOXBIIBOO_OCR_BINARIZE_THRESHOLD", "180"))
+                processed = processed.point(lambda value: 255 if value >= threshold else 0)
+            processed.convert("RGB").save(image_path)
+    except Exception:
+        return
+
+
+def _ocr_preprocess_mode() -> str:
+    return os.getenv("BOXBIIBOO_OCR_PREPROCESS", "none").strip().lower()
+
+
 def _normalize_ocr_result(result) -> list[dict]:
     if not result:
         return []
@@ -574,11 +609,25 @@ def _to_quad(poly) -> list[tuple[float, float]] | None:
     return quad[:4]
 
 
-def _ocr_sort_key(line):
+def _sort_ocr_lines(lines: list[dict], *, page_width: float, page_height: float) -> list[dict]:
+    return sort_in_reading_order(
+        lines,
+        bbox_getter=_ocr_line_bbox,
+        page_width=page_width,
+        page_height=page_height,
+    )
+
+
+def _ocr_line_bbox(line: dict) -> tuple[float, float, float, float]:
     quad = line["quad"]
     xs = [p[0] for p in quad]
     ys = [p[1] for p in quad]
-    return (min(ys), min(xs))
+    return (float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys)))
+
+
+def _ocr_sort_key(line):
+    bbox = _ocr_line_bbox(line)
+    return (bbox[1], bbox[0])
 
 
 def _to_markdown(text: str, block_type: str) -> str:

@@ -60,6 +60,8 @@ class IngestPrediction:
     layout_regions: list[LayoutRegion] = field(default_factory=list)
     table_regions: list[LayoutRegion] = field(default_factory=list)
     table_cells: list[dict[str, Any]] = field(default_factory=list)
+    table_html: str | None = None
+    table_csv: str | None = None
     backend: str = "unknown"
     latency_sec: float = 0.0
     success: bool = True
