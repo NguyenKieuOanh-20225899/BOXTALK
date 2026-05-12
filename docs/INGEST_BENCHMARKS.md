@@ -253,6 +253,9 @@ Metric bo sung:
 
 - `table_cell_iou50` va `table_cell_iou75`: do cell bbox detection.
 - `table_structure`: do khop row/col/text cua cell.
+- `text_assignment_f1`, `row_count_error`, `col_count_error`, `empty_cell_rate`: debug loi structure.
 - `table_exact_csv` va `table_exact_html`: do khop output co cau truc neu ground truth co san.
+
+Khi dung `--save-predictions`, runner ghi them debug JSON vao `table_debug/<doc_id>.json`, gom predicted cells, ground-truth cells, matched cells va unmatched cells.
 
 OCR-D hoac tai lieu lich su co them cac metric `ocr_historical_*`. Cac metric nay chuan hoa long-s, ligature va mot so ky tu co de do noi dung doc duoc; raw `ocr_*` metrics van duoc giu nguyen.

@@ -312,6 +312,111 @@ def table_cell_bbox_metrics(
     }
 
 
+def table_structure_breakdown(
+    predicted_cells: list[dict[str, Any]],
+    gt_cells: list[dict[str, Any]],
+    *,
+    iou_threshold: float = 0.5,
+) -> dict[str, Any] | None:
+    if not gt_cells:
+        return None
+    matches, unmatched_pred, unmatched_gt = table_cell_matches(predicted_cells, gt_cells, iou_threshold=iou_threshold)
+    text_scores = [
+        token_f1(str(predicted_cells[pred_idx].get("text", "")), str(gt_cells[gt_idx].get("text", "")))["f1"]
+        for pred_idx, gt_idx, _ in matches
+    ]
+    has_bbox_gt = any(_cell_bbox(cell) is not None for cell in gt_cells)
+    pred_row_count = _max_cell_index(predicted_cells, "row") + 1
+    gt_row_count = _max_cell_index(gt_cells, "row") + 1
+    pred_col_count = _max_cell_index(predicted_cells, "col") + 1
+    gt_col_count = _max_cell_index(gt_cells, "col") + 1
+    empty_pred = sum(1 for cell in predicted_cells if not normalize_text(str(cell.get("text", ""))))
+    return {
+        "text_assignment_f1": (sum(text_scores) / len(text_scores)) if text_scores else (0.0 if has_bbox_gt else None),
+        "row_count_error": abs(pred_row_count - gt_row_count),
+        "col_count_error": abs(pred_col_count - gt_col_count),
+        "empty_cell_rate": empty_pred / len(predicted_cells) if predicted_cells else 0.0,
+        "matched_cell_count": len(matches),
+        "unmatched_pred_count": len(unmatched_pred),
+        "unmatched_gt_count": len(unmatched_gt),
+    }
+
+
+def table_cell_debug_payload(
+    predicted_cells: list[dict[str, Any]],
+    gt_cells: list[dict[str, Any]],
+    *,
+    iou_threshold: float = 0.5,
+) -> dict[str, Any] | None:
+    if not gt_cells:
+        return None
+    matches, unmatched_pred, unmatched_gt = table_cell_matches(predicted_cells, gt_cells, iou_threshold=iou_threshold)
+    return {
+        "predicted": {
+            "row_count": _max_cell_index(predicted_cells, "row") + 1,
+            "col_count": _max_cell_index(predicted_cells, "col") + 1,
+            "cell_count": len(predicted_cells),
+            "cells": predicted_cells,
+        },
+        "ground_truth": {
+            "row_count": _max_cell_index(gt_cells, "row") + 1,
+            "col_count": _max_cell_index(gt_cells, "col") + 1,
+            "cell_count": len(gt_cells),
+            "cells": gt_cells,
+        },
+        "matched_cells": [
+            {
+                "pred_index": pred_idx,
+                "gt_index": gt_idx,
+                "iou": score,
+                "pred": predicted_cells[pred_idx],
+                "gt": gt_cells[gt_idx],
+                "text_f1": token_f1(
+                    str(predicted_cells[pred_idx].get("text", "")),
+                    str(gt_cells[gt_idx].get("text", "")),
+                )["f1"],
+            }
+            for pred_idx, gt_idx, score in matches
+        ],
+        "unmatched_predicted": [predicted_cells[idx] for idx in unmatched_pred],
+        "unmatched_ground_truth": [gt_cells[idx] for idx in unmatched_gt],
+    }
+
+
+def table_cell_matches(
+    predicted_cells: list[dict[str, Any]],
+    gt_cells: list[dict[str, Any]],
+    *,
+    iou_threshold: float,
+) -> tuple[list[tuple[int, int, float]], list[int], list[int]]:
+    candidates: list[tuple[float, int, int]] = []
+    for pred_idx, pred in enumerate(predicted_cells):
+        pred_bbox = _cell_bbox(pred)
+        if pred_bbox is None:
+            continue
+        for gt_idx, gt in enumerate(gt_cells):
+            gt_bbox = _cell_bbox(gt)
+            if gt_bbox is None:
+                continue
+            score = iou(pred_bbox, gt_bbox)
+            if score >= iou_threshold:
+                candidates.append((score, pred_idx, gt_idx))
+
+    matched_pred: set[int] = set()
+    matched_gt: set[int] = set()
+    matches: list[tuple[int, int, float]] = []
+    for score, pred_idx, gt_idx in sorted(candidates, reverse=True):
+        if pred_idx in matched_pred or gt_idx in matched_gt:
+            continue
+        matched_pred.add(pred_idx)
+        matched_gt.add(gt_idx)
+        matches.append((pred_idx, gt_idx, score))
+
+    unmatched_pred = [idx for idx in range(len(predicted_cells)) if idx not in matched_pred]
+    unmatched_gt = [idx for idx in range(len(gt_cells)) if idx not in matched_gt]
+    return matches, unmatched_pred, unmatched_gt
+
+
 def table_exact_match(prediction: str | None, ground_truth: str | None) -> float | None:
     if ground_truth is None:
         return None
@@ -388,3 +493,16 @@ def _cell_key(cell: dict[str, Any]) -> tuple[int, int, str]:
         int(cell.get("col", 0) or 0),
         normalize_text(str(cell.get("text", ""))),
     )
+
+
+def _cell_bbox(cell: dict[str, Any]) -> tuple[float, float, float, float] | None:
+    bbox = cell.get("bbox")
+    if not isinstance(bbox, (list, tuple)) or len(bbox) < 4:
+        return None
+    return tuple(float(value) for value in bbox[:4])
+
+
+def _max_cell_index(cells: list[dict[str, Any]], field: str) -> int:
+    if not cells:
+        return -1
+    return max(int(cell.get(field, 0) or 0) for cell in cells)

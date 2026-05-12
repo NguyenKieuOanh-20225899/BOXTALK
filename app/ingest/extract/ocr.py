@@ -374,7 +374,13 @@ def _build_synthetic_table_block(
     structure = table_structure_from_positioned_cells(
         [{"text": info["text"], "bbox": info["bbox"]} for info in cluster],
         backend="paddleocr_positioned_table",
+        table_bbox=best_candidate["bbox"],
+        page=page.number,
+        table_id=f"p{page.number:04d}_t{block_index:04d}",
     )
+    if structure.get("table_rows"):
+        table_text = "\n".join(" | ".join(row) for row in structure["table_rows"]).strip()
+    table_bbox = structure.get("table_bbox") or best_candidate["bbox"]
     scores = [info["score"] for info in cluster if info.get("score") is not None]
     return BlockNode(
         block_id=f"p{page.number:04d}_b{block_index:04d}",
@@ -383,7 +389,7 @@ def _build_synthetic_table_block(
         text=table_text,
         markdown=table_text,
         reading_order=block_index,
-        bbox=best_candidate["bbox"],
+        bbox=table_bbox,
         source_mode="ocr",
         meta={
             "backend": "paddleocr_table_cluster",

@@ -32,7 +32,9 @@ from app.eval.ingest_metrics import (
     reading_order_score,
     summarize_numeric,
     table_cell_bbox_metrics,
+    table_cell_debug_payload,
     table_exact_match,
+    table_structure_breakdown,
     table_structure_score,
     token_f1,
     wer,
@@ -432,8 +434,10 @@ def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
     samples = adapter.load_samples()
     records: list[dict[str, Any]] = []
     prediction_dir = out_dir / "predictions"
+    debug_dir = out_dir / "table_debug"
     if args.save_predictions:
         prediction_dir.mkdir(parents=True, exist_ok=True)
+        debug_dir.mkdir(parents=True, exist_ok=True)
 
     for sample in samples:
         prediction = predict_ingest(sample, work_dir=out_dir / "_work", mode=args.mode)
@@ -444,6 +448,11 @@ def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
                 json.dumps(prediction.to_dict(), ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
+            if record.get("table_debug") is not None:
+                (debug_dir / f"{sample.doc_id}.json").write_text(
+                    json.dumps(record["table_debug"], ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
 
     summary = summarize_unified_records(
         records,
@@ -464,7 +473,8 @@ def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     with (out_dir / "per_sample.jsonl").open("w", encoding="utf-8") as handle:
         for record in records:
-            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+            compact_record = {key: value for key, value in record.items() if key != "table_debug"}
+            handle.write(json.dumps(compact_record, ensure_ascii=False) + "\n")
     (out_dir / "README.md").write_text(render_unified_readme(summary, records), encoding="utf-8")
     if (out_dir / "_work").exists():
         shutil.rmtree(out_dir / "_work", ignore_errors=True)
@@ -681,8 +691,17 @@ def score_sample(sample: IngestBenchmarkSample, prediction: IngestPrediction, *,
             record["table_detection_iou50"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.50)
             record["table_detection_iou75"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.75)
         record["table_structure"] = table_structure_score(prediction.table_cells, gt.table_cells)
-        record["table_cell_iou50"] = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
+        cell_iou50 = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
+        record["table_cell_iou50"] = cell_iou50
         record["table_cell_iou75"] = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.75)
+        if cell_iou50 is not None:
+            record["cell_precision_iou50"] = cell_iou50["precision"]
+            record["cell_recall_iou50"] = cell_iou50["recall"]
+            record["cell_f1_iou50"] = cell_iou50["f1"]
+        breakdown = table_structure_breakdown(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
+        if breakdown is not None:
+            record.update({key: value for key, value in breakdown.items() if isinstance(value, (int, float))})
+        record["table_debug"] = table_cell_debug_payload(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
         record["table_exact_csv"] = table_exact_match(prediction.table_csv or _cells_to_csv(prediction.table_cells), gt.table_csv)
         record["table_exact_html"] = table_exact_match(prediction.table_html, gt.table_html)
     if mode in {"ocr", "all"}:
@@ -723,6 +742,17 @@ def summarize_unified_records(
         "ocr_historical_token_f1",
         "form_field_f1",
         "table_exact_csv",
+        "table_exact_html",
+        "cell_precision_iou50",
+        "cell_recall_iou50",
+        "cell_f1_iou50",
+        "text_assignment_f1",
+        "row_count_error",
+        "col_count_error",
+        "empty_cell_rate",
+        "matched_cell_count",
+        "unmatched_pred_count",
+        "unmatched_gt_count",
     ):
         values = [float(record[key]) for record in success_records if record.get(key) is not None]
         if values:

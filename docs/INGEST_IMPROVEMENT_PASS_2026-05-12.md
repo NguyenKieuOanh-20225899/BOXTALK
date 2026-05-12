@@ -83,6 +83,20 @@ Results:
 | OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_historical_metrics` | 19 | historical-normalized OCR token F1 | 0.689 |
 | OCR-D PAGE-XML | `ocrd_pagexml_gpu_19_historical_metrics` | 19 | historical-normalized CER | 0.606 |
 
+## PubTables Structure Post-processing Update
+
+Sau khi them PubTables-1M OTSL benchmark, post-processing bang duoc cai tien tiep trong `docs/TABLE_STRUCTURE_IMPROVEMENT_2026-05-12.md`.
+
+| Metric | Before 25 | After 25 |
+|---|---:|---:|
+| table detection F1@0.50 | 0.927 | 0.967 |
+| table cell IoU@0.50 F1 | 0.521 | 0.668 |
+| table cell IoU@0.75 F1 | 0.163 | 0.185 |
+| table text cell structure F1 | 0.158 | 0.169 |
+| text assignment F1 | n/a | 0.963 |
+
+Ket qua nay nen duoc bao cao la cai thien ro ve cell bbox reconstruction va text assignment. Exact CSV/HTML van bang 0 vi bai toan yeu cau row/column/merged-cell/text trung tuyet doi.
+
 ## Interpretation
 
 PubTables detection subset local van la bbox-only, nhung da bo sung PubTables-1M OTSL subset de danh gia cell/html structure bang ground truth that. Ket qua structure hien tai con thap hon detection, phan anh dung do kho cua OCR + structure recognition tren table image crop.
