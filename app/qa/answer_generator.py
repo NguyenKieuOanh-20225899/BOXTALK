@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
-from app.qa.table_lookup_utils import lookup_table_answer_from_text
+from app.qa.table_lookup_utils import lookup_table_answer, lookup_table_answer_from_text, normalize_table_from_sources
 from app.qa.table_query_utils import is_table_lookup_query
 from app.qa.text_utils import contains_text, normalize_text, split_sentences, token_set
 from app.retrieval.schemas import RetrievedHit
@@ -912,6 +912,22 @@ class GroundedAnswerGenerator:
     def _table_lookup_answer(self, question: str, hits: list[RetrievedHit]) -> str | None:
         if not is_table_lookup_query(question):
             return None
+        for hit in hits[:30]:
+            metadata = {**dict(hit.chunk.metadata or {}), **dict(hit.metadata or {})}
+            table_json = metadata.get("table_json") or metadata.get("table")
+            if table_json is None and metadata.get("table_cells") is not None:
+                table_json = {"table_cells": metadata.get("table_cells")}
+            table = normalize_table_from_sources(
+                table_text=hit.chunk.text,
+                table_rows=metadata.get("table_records") or metadata.get("table_rows") or metadata.get("rows"),
+                table_json=table_json,
+            )
+            if table is None:
+                continue
+            result = lookup_table_answer(question, table)
+            if result is not None:
+                return result.answer
+
         evidence_text = "\n".join(
             normalize_text(part)
             for hit in hits[:30]

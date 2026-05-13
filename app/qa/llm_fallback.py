@@ -633,12 +633,15 @@ def build_evidence_packets(
         raw_text = str(hit.chunk.text or "")
         normalized_table = None
         table_rows_source = None
+        table_json_source = metadata.get("table_json") or metadata.get("table")
+        if table_json_source is None and metadata.get("table_cells") is not None:
+            table_json_source = {"table_cells": metadata.get("table_cells")}
         if modality == "table":
             table_rows_source = metadata.get("table_records") or metadata.get("table_rows") or metadata.get("rows")
             normalized_table = normalize_table_from_sources(
                 table_text=raw_text,
                 table_rows=table_rows_source,
-                table_json=metadata.get("table_json") or metadata.get("table"),
+                table_json=table_json_source,
             )
             metadata = {**metadata, **table_metadata_for_prompt(normalized_table)}
         text_source = normalized_table.rendered_text if normalized_table is not None else raw_text
@@ -661,7 +664,7 @@ def build_evidence_packets(
                 table_text=table_text,
                 table_rows=table_rows_for_prompt(normalized_table)
                 or _coerce_list(table_rows_source),
-                table_json=metadata.get("table_json") or metadata.get("table"),
+                table_json=table_json_source,
                 formula_text=_extract_formula_text(text) if modality == "formula" else None,
                 caption=_extract_caption(text, metadata) if modality == "figure" else None,
                 metadata=metadata,
@@ -682,6 +685,7 @@ def detect_modality(hit: RetrievedHit) -> ReasoningMode:
         or metadata.get("table_json") is not None
         or metadata.get("table_rows") is not None
         or metadata.get("table_records") is not None
+        or metadata.get("table_cells") is not None
         or _looks_like_table(text)
     ):
         return "table"

@@ -79,6 +79,19 @@ HEADER_KEYWORDS: dict[str, tuple[str, ...]] = {
         "action",
         "status",
     ),
+    "owner": (
+        "owner",
+        "owns",
+        "owned by",
+        "responsible",
+        "responsible party",
+        "responsibility",
+        "pic",
+        "team",
+        "department",
+        "phu trach",
+        "chu so huu",
+    ),
     "model": ("model", "configuration", "config", "variant"),
     "heads": ("head", "heads"),
     "layers": ("layer", "layers"),
@@ -232,9 +245,15 @@ def normalize_table_from_sources(
     table_rows: Any = None,
     table_json: Any = None,
 ) -> NormalizedTable | None:
-    rows_from_metadata = _coerce_mapping_rows(table_rows)
+    rows_from_metadata = _coerce_positioned_cell_rows(table_rows)
+    if not rows_from_metadata:
+        rows_from_metadata = _coerce_mapping_rows(table_rows)
     if not rows_from_metadata and table_json is not None:
-        rows_from_metadata = _coerce_mapping_rows(_extract_rows_from_json(table_json))
+        rows_from_metadata = _coerce_positioned_cell_rows(_extract_cells_from_json(table_json))
+        if not rows_from_metadata:
+            rows_from_metadata = _coerce_positioned_cell_rows(_extract_rows_from_json(table_json))
+        if not rows_from_metadata:
+            rows_from_metadata = _coerce_mapping_rows(_extract_rows_from_json(table_json))
     if rows_from_metadata:
         return _table_from_mapping_rows(rows_from_metadata, original_text=table_text or "")
     if table_text:
@@ -293,7 +312,144 @@ def lookup_table_answer_from_text(question: str, text: str) -> TableLookupResult
         result = lookup_table_answer(question, candidate)
         if result is not None:
             return result
+    flattened = _lookup_flattened_table_answer(question, text)
+    if flattened is not None:
+        return flattened
     return None
+
+
+def _lookup_flattened_table_answer(question: str, text: str) -> TableLookupResult | None:
+    """Handle compact table chunks where row/cell separators were lost during chunking."""
+
+    folded_question = _fold(question)
+    if not any(term in folded_question for term in ("who owns", "owner", "owned by", "responsible for")):
+        return None
+    subject = _extract_owner_subject(question)
+    if not subject:
+        return None
+    owner = _extract_flat_owner_value(subject, text)
+    if not owner:
+        return None
+    if _looks_vietnamese(question):
+        answer = f"{subject} do {owner} phụ trách."
+    elif "responsible" in folded_question:
+        answer = f"{owner} is responsible for {subject}."
+    else:
+        answer = f"{subject} is owned by {owner}."
+    return TableLookupResult(
+        answer=answer,
+        row_index=-1,
+        confidence=0.68,
+        trace={
+            "match_reason": "flattened_owner_table_lookup",
+            "subject": subject,
+            "owner": owner,
+        },
+    )
+
+
+def _extract_owner_subject(question: str) -> str | None:
+    normalized = normalize_text(question).strip().strip("?!. ")
+    patterns = (
+        r"\bwho\s+owns\s+(?P<subject>.+?)(?:\s+in\s+(?:the\s+)?[^?]*?table|\s+from\s+(?:the\s+)?[^?]*?table|$)",
+        r"\bwho\s+is\s+responsible\s+for\s+(?P<subject>.+?)(?:\s+in\s+(?:the\s+)?[^?]*?table|\s+from\s+(?:the\s+)?[^?]*?table|$)",
+        r"\bowner\s+(?:of|for)\s+(?P<subject>.+?)(?:\s+in\s+(?:the\s+)?[^?]*?table|\s+from\s+(?:the\s+)?[^?]*?table|$)",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, normalized, flags=re.I)
+        if not match:
+            continue
+        subject = normalize_text(match.group("subject"))
+        subject = re.sub(r"\b(?:in|from)\s+(?:the\s+)?[^?]*?table\b.*$", "", subject, flags=re.I)
+        subject = re.sub(r"\btable\b.*$", "", subject, flags=re.I)
+        subject = subject.strip(" ,;:-")
+        if subject:
+            return subject
+    return None
+
+
+def _extract_flat_owner_value(subject: str, text: str) -> str | None:
+    tokens = _flat_tokens(text)
+    if not tokens:
+        return None
+    folded_tokens = [_fold(token) for token in tokens]
+    subject_tokens = _fold(subject).split()
+    if not subject_tokens:
+        return None
+
+    owner_header_positions = [
+        idx
+        for idx, token in enumerate(folded_tokens)
+        if token in {"owner", "owners", "responsible", "responsibility", "pic"}
+    ]
+    for start in _find_token_sequence(folded_tokens, subject_tokens):
+        if owner_header_positions and not any(pos < start for pos in owner_header_positions):
+            continue
+        tail = tokens[start + len(subject_tokens) :]
+        owner_tokens = _trim_flat_owner_tokens(_strip_flat_owner_prefix(tail))
+        if owner_tokens:
+            return _normalize_cell_text(" ".join(owner_tokens))
+    return None
+
+
+def _flat_tokens(text: str) -> list[str]:
+    tokens: list[str] = []
+    for raw in normalize_text(text).split():
+        token = raw.strip("|,;:()[]{}\"'")
+        if token:
+            tokens.append(token)
+    return tokens
+
+
+def _find_token_sequence(tokens: list[str], needle: list[str]) -> list[int]:
+    if not needle or len(needle) > len(tokens):
+        return []
+    starts: list[int] = []
+    width = len(needle)
+    for idx in range(0, len(tokens) - width + 1):
+        if tokens[idx : idx + width] == needle:
+            starts.append(idx)
+    return starts
+
+
+def _strip_flat_owner_prefix(tokens: list[str]) -> list[str]:
+    if not tokens:
+        return []
+    folded = [_fold(token) for token in tokens]
+    if len(folded) >= 2 and folded[0] == "same" and folded[1] in {"day", "date"}:
+        return tokens[2:]
+    if folded[0] in {"immediate", "immediately", "none", "n/a"}:
+        return tokens[1:]
+    if len(folded) >= 2 and _to_float(folded[0]) is not None and folded[1] in {
+        "day",
+        "days",
+        "week",
+        "weeks",
+        "month",
+        "months",
+        "year",
+        "years",
+        "hour",
+        "hours",
+    }:
+        return tokens[2:]
+    return tokens
+
+
+def _trim_flat_owner_tokens(tokens: list[str]) -> list[str]:
+    result: list[str] = []
+    for token in tokens:
+        folded = _fold(token)
+        if folded in {"benefit", "benefits", "waiting", "period", "owner", "table"}:
+            break
+        if _to_float(folded.strip("%")) is not None and result:
+            break
+        result.append(token)
+        if len(result) >= 3:
+            break
+    while result and result[-1].strip(".,;:").lower() in {"and", "or"}:
+        result.pop()
+    return result
 
 
 def table_rows_for_prompt(table: NormalizedTable | None) -> list[dict[str, Any]]:
@@ -733,7 +889,10 @@ def _compose_lookup_answer(
     first_match = matched_cells[0]
     targets = _dedupe_cells(target_cells)
     target_text = _format_target_cells(targets)
+    target_group = _column_group(targets[0].column)
     if _looks_vietnamese(question):
+        if target_group == "owner":
+            return f"{first_match.text} do {target_text} phụ trách."
         if first_match.interval is not None:
             number = _first_number(question)
             if number is not None:
@@ -749,13 +908,17 @@ def _compose_lookup_answer(
         return f"{first_match.text} maps to {target_text}."
     if first_match.grade is not None and reason == "grade_match":
         return f"{first_match.grade} corresponds to {target_text}."
+    if target_group == "owner":
+        if "responsible" in _fold(question):
+            return f"{target_text} is responsible for {first_match.text}."
+        return f"{first_match.text} is owned by {target_text}."
     return f"For {first_match.column.label} = {first_match.text}, {target_text}."
 
 
 def _format_target_cells(cells: list[TableCell]) -> str:
     if len(cells) == 1:
         cell = cells[0]
-        if _column_group(cell.column) in {"grade", "classification", "model"}:
+        if _column_group(cell.column) in {"grade", "classification", "model", "owner"}:
             return cell.text
         return f"{cell.column.label} {cell.text}"
     return " and ".join(f"{cell.column.label} {cell.text}" for cell in cells)
@@ -774,6 +937,21 @@ def _target_groups(folded_question: str) -> list[str]:
         groups.insert(0, "grade_point")
     if any(term in folded_question for term in ("which level", "what level", "which category", "what category", "muc nao", "loai nao", "nhom nao")):
         groups.insert(0, "classification")
+    if any(
+        term in folded_question
+        for term in (
+            "who owns",
+            "whose",
+            "owner",
+            "owned by",
+            "who is responsible",
+            "responsible for",
+            "ai phu trach",
+            "phu trach",
+            "chu so huu",
+        )
+    ):
+        groups.insert(0, "owner")
     if any(term in folded_question for term in ("letter grade", "diem chu", "grade")) and "grade_point" not in groups:
         groups.insert(0, "grade")
     return _dedupe_strings(groups)
@@ -827,9 +1005,106 @@ def _coerce_mapping_rows(value: Any) -> list[Mapping[str, Any]]:
     return []
 
 
+def _coerce_positioned_cell_rows(value: Any) -> list[Mapping[str, Any]]:
+    """Convert positioned table_cells metadata into row mappings for lookup."""
+
+    cells = _coerce_positioned_cells(value)
+    if not cells:
+        return []
+
+    by_row: dict[int, dict[int, str]] = {}
+    header_row_candidates: set[int] = set()
+    for cell in cells:
+        row = cell["row"]
+        col = cell["col"]
+        text = str(cell["text"]).strip()
+        by_row.setdefault(row, {})[col] = text
+        if cell["is_header"]:
+            header_row_candidates.add(row)
+
+    row_ids = sorted(by_row)
+    if not row_ids:
+        return []
+    header_row = min(header_row_candidates) if header_row_candidates else row_ids[0]
+    col_ids = sorted({col for row in by_row.values() for col in row})
+    headers: dict[int, str] = {}
+    for col in col_ids:
+        header = by_row.get(header_row, {}).get(col, "").strip()
+        headers[col] = header or f"Column {col + 1}"
+
+    rows: list[Mapping[str, Any]] = []
+    for row_id in row_ids:
+        if row_id == header_row:
+            continue
+        row_values = by_row[row_id]
+        if not any(value.strip() for value in row_values.values()):
+            continue
+        rows.append({headers[col]: row_values.get(col, "") for col in col_ids})
+    return rows
+
+
+def _coerce_positioned_cells(value: Any) -> list[dict[str, Any]]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return []
+        return _coerce_positioned_cells(parsed)
+    if isinstance(value, Mapping):
+        for key in ("table_cells", "cells", "cell_grid"):
+            if key in value:
+                return _coerce_positioned_cells(value[key])
+        return []
+    if not isinstance(value, Iterable) or isinstance(value, (bytes, bytearray)):
+        return []
+
+    cells: list[dict[str, Any]] = []
+    for item in value:
+        if not isinstance(item, Mapping):
+            continue
+        row = _optional_int_value(item.get("row", item.get("row_index", item.get("row_idx"))))
+        col = _optional_int_value(item.get("col", item.get("column", item.get("col_index", item.get("column_index")))))
+        if row is None or col is None:
+            continue
+        text = item.get("text", item.get("value", item.get("content", "")))
+        is_header = bool(
+            item.get("is_header")
+            or item.get("header")
+            or str(item.get("cell_type") or item.get("type") or "").lower() in {"header", "column_header", "table_column_header"}
+        )
+        cells.append({"row": row, "col": col, "text": "" if text is None else str(text), "is_header": is_header})
+    if cells and not any(cell["is_header"] for cell in cells):
+        first_row = min(cell["row"] for cell in cells)
+        first_row_cells = [cell for cell in cells if cell["row"] == first_row]
+        if len(first_row_cells) >= 2 and any(not NUMBER_RE.fullmatch(cell["text"].strip()) for cell in first_row_cells):
+            for cell in cells:
+                if cell["row"] == first_row:
+                    cell["is_header"] = True
+    return cells
+
+
+def _optional_int_value(value: Any) -> int | None:
+    if value is None or value == "":
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _extract_rows_from_json(value: Any) -> Any:
     if isinstance(value, Mapping):
         for key in ("rows", "table_rows", "data"):
+            if key in value:
+                return value[key]
+    return value
+
+
+def _extract_cells_from_json(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        for key in ("table_cells", "cells", "cell_grid"):
             if key in value:
                 return value[key]
     return value

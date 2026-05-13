@@ -11,10 +11,20 @@ if str(ROOT) not in sys.path:
 
 from app.qa.answer_generator import GroundedAnswerGenerator
 from app.qa.schemas import EvidenceAssessment
+from app.qa.table_lookup_utils import lookup_table_answer_from_text
+from app.qa.table_query_utils import is_table_lookup_query
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
 
 
-def make_hit(chunk_id: str, text: str, *, rank: int = 1, score: float = 1.0) -> RetrievedHit:
+def make_hit(
+    chunk_id: str,
+    text: str,
+    *,
+    rank: int = 1,
+    score: float = 1.0,
+    block_type: str = "paragraph",
+    metadata: dict | None = None,
+) -> RetrievedHit:
     return RetrievedHit(
         chunk=DocumentChunkRef(
             chunk_id=chunk_id,
@@ -22,6 +32,8 @@ def make_hit(chunk_id: str, text: str, *, rank: int = 1, score: float = 1.0) -> 
             doc_id="doc",
             source_name="doc.pdf",
             page=1,
+            block_type=block_type,
+            metadata=metadata or {},
         ),
         score=score,
         final_score=score,
@@ -100,6 +112,52 @@ class AnswerGeneratorTest(unittest.TestCase):
 
         self.assertIn("24 hours", answer.answer)
         self.assertIn("Privileged access", answer.answer)
+
+    def test_table_owner_lookup_returns_concise_answer_from_flattened_chunk(self) -> None:
+        question = "Who owns VPN access in the benefits table?"
+        flattened_table = (
+            "Benefits Table\n"
+            "Benefit Waiting period Owner Health plan 30 days HR Ops VPN access Same day IT Support\n"
+            "Benefits Table"
+        )
+
+        self.assertTrue(is_table_lookup_query(question))
+        lookup = lookup_table_answer_from_text(question, flattened_table)
+        self.assertIsNotNone(lookup)
+        self.assertEqual(lookup.answer, "VPN access is owned by IT Support.")
+
+        answer = GroundedAnswerGenerator().generate(
+            question=question,
+            query_type="factoid",
+            hits=[make_hit("h1", flattened_table, block_type="table")],
+            evidence=answer_evidence("h1"),
+        )
+
+        self.assertEqual(answer.answer, "VPN access is owned by IT Support.")
+
+    def test_table_lookup_reads_positioned_table_cells_metadata(self) -> None:
+        metadata = {
+            "table_cells": [
+                {"row": 0, "col": 0, "text": "Benefit"},
+                {"row": 0, "col": 1, "text": "Waiting period"},
+                {"row": 0, "col": 2, "text": "Owner"},
+                {"row": 1, "col": 0, "text": "Health plan"},
+                {"row": 1, "col": 1, "text": "30 days"},
+                {"row": 1, "col": 2, "text": "HR Ops"},
+                {"row": 2, "col": 0, "text": "VPN access"},
+                {"row": 2, "col": 1, "text": "Same day"},
+                {"row": 2, "col": 2, "text": "IT Support"},
+            ]
+        }
+
+        answer = GroundedAnswerGenerator().generate(
+            question="Who owns VPN access in the benefits table?",
+            query_type="factoid",
+            hits=[make_hit("h1", "Benefits Table", block_type="table", metadata=metadata)],
+            evidence=answer_evidence("h1"),
+        )
+
+        self.assertEqual(answer.answer, "VPN access is owned by IT Support.")
 
 
 if __name__ == "__main__":
