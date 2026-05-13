@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from app.eval.ingest_metrics import detection_metrics, normalized_text_similarity, token_f1
+from app.eval.ingest_metrics import detection_metrics, normalized_text_similarity, table_structure_breakdown, token_f1
 from app.eval.ingest_schemas import LayoutRegion
 from scripts.benchmark_ingest_suite import MockAdapter
 
@@ -24,6 +24,29 @@ def test_detection_metrics() -> None:
     metrics = detection_metrics(pred, gt, labels=["table"], iou_threshold=0.5)
     assert metrics["micro_f1"] == 1.0
     assert metrics["per_label"]["table"]["tp"] == 1.0
+
+
+def test_table_structure_breakdown_reports_row_col_segmentation() -> None:
+    gt_cells = [
+        {"row": 0, "col": 0, "text": "A", "bbox": (0, 0, 50, 20)},
+        {"row": 0, "col": 1, "text": "B", "bbox": (50, 0, 100, 20)},
+        {"row": 1, "col": 0, "text": "C", "bbox": (0, 20, 50, 40)},
+        {"row": 1, "col": 1, "text": "D", "bbox": (50, 20, 100, 40)},
+    ]
+    pred_cells = [
+        {"row": 0, "col": 0, "text": "A", "bbox": (0, 0, 50, 20)},
+        {"row": 0, "col": 1, "text": "B", "bbox": (50, 0, 100, 20)},
+        {"row": 1, "col": 0, "text": "C", "bbox": (0, 20, 50, 30)},
+        {"row": 2, "col": 0, "text": "D", "bbox": (50, 30, 100, 40)},
+    ]
+
+    breakdown = table_structure_breakdown(pred_cells, gt_cells)
+
+    assert breakdown is not None
+    assert breakdown["row_count_mae"] == 1
+    assert breakdown["row_oversegmentation_count"] == 1
+    assert breakdown["row_undersegmentation_count"] == 0
+    assert breakdown["col_count_mae"] == 0
 
 
 def test_mock_adapter(tmp_path: Path) -> None:

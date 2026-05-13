@@ -330,15 +330,64 @@ def table_structure_breakdown(
     gt_row_count = _max_cell_index(gt_cells, "row") + 1
     pred_col_count = _max_cell_index(predicted_cells, "col") + 1
     gt_col_count = _max_cell_index(gt_cells, "col") + 1
+    row_delta = pred_row_count - gt_row_count
+    col_delta = pred_col_count - gt_col_count
     empty_pred = sum(1 for cell in predicted_cells if not normalize_text(str(cell.get("text", ""))))
     return {
         "text_assignment_f1": (sum(text_scores) / len(text_scores)) if text_scores else (0.0 if has_bbox_gt else None),
-        "row_count_error": abs(pred_row_count - gt_row_count),
-        "col_count_error": abs(pred_col_count - gt_col_count),
+        "row_count_error": abs(row_delta),
+        "col_count_error": abs(col_delta),
+        "row_count_mae": abs(row_delta),
+        "col_count_mae": abs(col_delta),
+        "row_oversegmentation_count": 1 if row_delta > 0 else 0,
+        "row_undersegmentation_count": 1 if row_delta < 0 else 0,
+        "col_oversegmentation_count": 1 if col_delta > 0 else 0,
+        "col_undersegmentation_count": 1 if col_delta < 0 else 0,
         "empty_cell_rate": empty_pred / len(predicted_cells) if predicted_cells else 0.0,
         "matched_cell_count": len(matches),
         "unmatched_pred_count": len(unmatched_pred),
         "unmatched_gt_count": len(unmatched_gt),
+    }
+
+
+def grits_like_metrics(predicted_cells: list[dict[str, Any]], gt_cells: list[dict[str, Any]]) -> dict[str, float] | None:
+    """Lightweight GriTS-style approximation.
+
+    This is not the official Microsoft GriTS implementation. It provides a
+    stable local signal for topology, location and content when exact CSV/HTML
+    is too strict for benchmark iteration.
+    """
+
+    if not gt_cells:
+        return None
+    pred_by_topology = {_cell_topology_key(cell): cell for cell in predicted_cells}
+    gt_by_topology = {_cell_topology_key(cell): cell for cell in gt_cells}
+    pred_keys = set(pred_by_topology)
+    gt_keys = set(gt_by_topology)
+    if not pred_keys and not gt_keys:
+        return {"grits_top_like": 1.0, "grits_loc_like": 1.0, "grits_con_like": 1.0}
+    overlap = pred_keys & gt_keys
+    precision = len(overlap) / len(pred_keys) if pred_keys else 0.0
+    recall = len(overlap) / len(gt_keys) if gt_keys else 0.0
+    top = f1_from_pr(precision, recall)
+    if not overlap:
+        return {"grits_top_like": top, "grits_loc_like": 0.0, "grits_con_like": 0.0}
+
+    loc_scores: list[float] = []
+    con_scores: list[float] = []
+    for key in overlap:
+        pred = pred_by_topology[key]
+        gt = gt_by_topology[key]
+        pred_bbox = _cell_bbox(pred)
+        gt_bbox = _cell_bbox(gt)
+        loc = iou(pred_bbox, gt_bbox) if pred_bbox is not None and gt_bbox is not None else 0.0
+        text_score = token_f1(str(pred.get("text", "")), str(gt.get("text", "")))["f1"]
+        loc_scores.append(loc)
+        con_scores.append(loc * text_score)
+    return {
+        "grits_top_like": top,
+        "grits_loc_like": top * (sum(loc_scores) / len(loc_scores)),
+        "grits_con_like": top * (sum(con_scores) / len(con_scores)),
     }
 
 
@@ -492,6 +541,15 @@ def _cell_key(cell: dict[str, Any]) -> tuple[int, int, str]:
         int(cell.get("row", 0) or 0),
         int(cell.get("col", 0) or 0),
         normalize_text(str(cell.get("text", ""))),
+    )
+
+
+def _cell_topology_key(cell: dict[str, Any]) -> tuple[int, int, int, int]:
+    return (
+        int(cell.get("row", 0) or 0),
+        int(cell.get("col", 0) or 0),
+        int(cell.get("row_span", 1) or 1),
+        int(cell.get("col_span", 1) or 1),
     )
 
 

@@ -24,6 +24,8 @@ class TableCell:
     text: str = ""
     confidence: float | None = None
     source_boxes: list[BBox] = field(default_factory=list)
+    source_words: list[dict[str, Any]] = field(default_factory=list)
+    grid_bbox: BBox | None = None
     page: int | None = None
     table_id: str | None = None
 
@@ -82,6 +84,26 @@ def extract_table_region(
     if rect.is_empty or rect.width < 2 or rect.height < 2:
         return None
 
+    effective_region_meta = dict(region_meta or {})
+    if _hybrid_tatr_table_backend_enabled():
+        try:
+            from app.ingest.extract.hybrid_tatr_table import extract_hybrid_tatr_table_region
+
+            hybrid_block = extract_hybrid_tatr_table_region(
+                page,
+                bbox,
+                block_index=block_index,
+                reading_order=reading_order,
+                region_meta=effective_region_meta,
+            )
+            if hybrid_block is not None:
+                return hybrid_block
+            effective_region_meta["hybrid_tatr_skipped_reason"] = (
+                "missing_pdf_word_boxes_or_structure"
+            )
+        except Exception as exc:
+            effective_region_meta["hybrid_tatr_error"] = str(exc)
+
     grid = _extract_table_grid_from_words(page, rect)
     if grid:
         normalized_rows = grid["rows"]
@@ -104,7 +126,7 @@ def extract_table_region(
             bbox=bbox,
             source_mode="layout",
             meta={
-                **dict(region_meta or {}),
+                **effective_region_meta,
                 "backend": "table_words_grid",
                 **structure,
             },
@@ -122,7 +144,7 @@ def extract_table_region(
             reading_order=block_index if reading_order is None else reading_order,
             bbox=bbox,
             source_mode="layout",
-            meta={**dict(region_meta or {}), **structure},
+            meta={**effective_region_meta, **structure},
         )
 
     # OCR fallback still returns a table block, but notes that the text came
@@ -135,7 +157,7 @@ def extract_table_region(
         block_index=block_index,
         reading_order=reading_order,
         block_type_hint="table",
-        region_meta={**dict(region_meta or {}), "table_backend": "ocr_fallback"},
+        region_meta={**effective_region_meta, "table_backend": "ocr_fallback"},
     )
     if ocr_block is None:
         return None
@@ -147,6 +169,16 @@ def extract_table_region(
         markdown=table_text_to_markdown(ocr_block.text),
         meta={**dict(ocr_block.meta or {}), **structure},
     )
+
+
+def _hybrid_tatr_table_backend_enabled() -> bool:
+    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower()
+    if backend == "hybrid_tatr":
+        return True
+    value = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
+    if value is None:
+        return False
+    return value.strip().lower() not in {"0", "false", "no", "off"}
 
 
 def _extract_table_grid_from_words(page: fitz.Page, rect: fitz.Rect) -> dict[str, Any] | None:
@@ -437,7 +469,7 @@ def _trim_edge_noise_rows(cell_rows: list[list[dict]], column_bands: list[tuple[
     leading_noise = 0
     while leading_noise < end and _looks_edge_noise_row(cell_rows[leading_noise], occupancy[leading_noise], column_bands):
         leading_noise += 1
-    if leading_noise >= 2:
+    if leading_noise >= 2 or (leading_noise == 1 and _looks_caption_like_row(cell_rows[0])):
         start = leading_noise
 
     trailing_noise = 0
@@ -450,6 +482,11 @@ def _trim_edge_noise_rows(cell_rows: list[list[dict]], column_bands: list[tuple[
     if trailing_noise >= 2:
         end -= trailing_noise
     return cell_rows[start:end] if start < end else cell_rows
+
+
+def _looks_caption_like_row(row: list[dict]) -> bool:
+    text = " ".join(str(cell.get("text") or "") for cell in row).strip().lower()
+    return bool(re.match(r"^(table|figure|fig\.?)\s+\d+[\s.:;-]", text))
 
 
 def _looks_edge_noise_row(
@@ -594,21 +631,41 @@ def _extract_rows_from_words(page: fitz.Page, rect: fitz.Rect) -> list[list[str]
 
 
 def _group_words_into_rows(words: list[dict]) -> list[dict]:
-    heights = [w["y1"] - w["y0"] for w in words]
-    y_tolerance = max(4.0, median(heights) * 0.65) if heights else 5.0
-
+    heights = [max(1.0, w["y1"] - w["y0"]) for w in words]
+    median_height = median(heights) if heights else 5.0
+    y_tolerance = max(3.0, median_height * 0.50)
     row_groups: list[dict] = []
     for word in sorted(words, key=lambda item: ((item["y0"] + item["y1"]) / 2.0, item["x0"])):
         y_mid = (word["y0"] + word["y1"]) / 2.0
-        if row_groups and abs(y_mid - row_groups[-1]["y_mid"]) <= y_tolerance:
-            row_groups[-1]["words"].append(word)
-            row_groups[-1]["y_mid"] = (
-                row_groups[-1]["y_mid"] * (len(row_groups[-1]["words"]) - 1) + y_mid
-            ) / len(row_groups[-1]["words"])
+        best_row: dict | None = None
+        best_score = -1.0
+        for row in row_groups:
+            overlap_ratio = _vertical_overlap_ratio((word["y0"], word["y1"]), (row["y0"], row["y1"]))
+            center_diff = abs(y_mid - row["y_mid"])
+            if overlap_ratio <= 0.35 and center_diff > y_tolerance:
+                continue
+            score = overlap_ratio + max(0.0, 1.0 - center_diff / max(median_height * 2.0, 1.0))
+            if score > best_score:
+                best_score = score
+                best_row = row
+
+        if best_row is not None:
+            best_row["words"].append(word)
+            best_row["y0"] = min(best_row["y0"], word["y0"])
+            best_row["y1"] = max(best_row["y1"], word["y1"])
+            best_row["y_mid"] = (
+                best_row["y_mid"] * (len(best_row["words"]) - 1) + y_mid
+            ) / len(best_row["words"])
             continue
 
-        row_groups.append({"y_mid": y_mid, "words": [word]})
-    return row_groups
+        row_groups.append({"y0": word["y0"], "y1": word["y1"], "y_mid": y_mid, "words": [word]})
+    return sorted(row_groups, key=lambda row: (row["y0"], row["y_mid"]))
+
+
+def _vertical_overlap_ratio(left: tuple[float, float], right: tuple[float, float]) -> float:
+    overlap = max(0.0, min(left[1], right[1]) - max(left[0], right[0]))
+    min_height = max(1.0, min(left[1] - left[0], right[1] - right[0]))
+    return overlap / min_height
 
 
 def _split_row_into_cell_infos(words: list[dict]) -> list[dict]:

@@ -258,4 +258,61 @@ Metric bo sung:
 
 Khi dung `--save-predictions`, runner ghi them debug JSON vao `table_debug/<doc_id>.json`, gom predicted cells, ground-truth cells, matched cells va unmatched cells.
 
+Debug summary va visualization cho PubTables structure:
+
+```powershell
+python scripts/analyze_pubtables_structure_debug.py --run-dir results/ingest/pubtables_structure_25_after_rowcol_fix --data-dir data/benchmarks/pubtables_structure --out results/ingest/pubtables_structure_debug --limit-visualizations 10
+```
+
+Script nay ghi `summary.json`, `per_sample.jsonl`, `README.md` va anh debug tuy chon. Anh debug overlay table bbox, ground-truth cells, predicted cells, predicted row bands va predicted column bands.
+
 OCR-D hoac tai lieu lich su co them cac metric `ocr_historical_*`. Cac metric nay chuan hoa long-s, ligature va mot so ky tu co de do noi dung doc duoc; raw `ocr_*` metrics van duoc giu nguyen.
+
+## TATR Backend Add-on
+
+Experimental Microsoft Table Transformer backends:
+
+```powershell
+python scripts/benchmark_ingest_suite.py --dataset pubtables_structure --data-dir data/benchmarks/pubtables_structure --limit 25 --out results/ingest/pubtables_structure_25_tatr --mode table --table-backend tatr --save-predictions
+
+python scripts/benchmark_ingest_suite.py --dataset pubtables_structure --data-dir data/benchmarks/pubtables_structure --limit 25 --out results/ingest/pubtables_structure_25_hybrid_tatr --mode table --table-backend hybrid_tatr --save-predictions
+```
+
+Models:
+
+- `microsoft/table-transformer-detection`
+- `microsoft/table-transformer-structure-recognition-v1.1-all`
+
+TATR improves table detection and row/column count on the current 25-sample PubTables structure subset, but it does not replace the default backend yet because TATR predicts geometry only and does not provide OCR text. `hybrid_tatr` combines TATR geometry with supplied word boxes and reports GriTS-like topology/location/content metrics. See `docs/TATR_INTEGRATION_2026-05-12.md` and `docs/HYBRID_TATR_GRITS_2026-05-12.md`.
+
+Trong pipeline ingest that, `hybrid_tatr` co the bat nhu module rieng cho table region:
+
+```powershell
+$env:BOXBIIBOO_TABLE_BACKEND="hybrid_tatr"
+```
+
+Khi layout/model routing detect region la `table`, `extract_table_region()` thu dung TATR de nhan dien row/column/spanning cell va gan PDF word boxes vao cell. Neu TATR/model/word boxes khong san sang, pipeline fallback ve `table_words_grid`, `table_clip_text` hoac OCR fallback cu.
+
+De chay `hybrid_tatr` voi word boxes OCR that thay vi annotation proxy:
+
+```powershell
+.\.venv-ocr-gpu\Scripts\python.exe scripts\prepare_pubtables_ocr_word_boxes.py --data-dir data\benchmarks\pubtables_structure --out data\benchmarks\pubtables_structure_ocr_words --limit 25 --lang en --device gpu:0
+
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_ingest_suite.py --dataset pubtables_structure --data-dir data\benchmarks\pubtables_structure_ocr_words --limit 25 --out results\ingest\pubtables_structure_ocr_words_25_hybrid_tatr --mode table --table-backend hybrid_tatr --save-predictions
+```
+
+Buoc dau chay rieng trong `.venv-ocr-gpu` de tranh xung dot DLL CUDA/cuDNN cua PaddleOCR voi PyTorch. Buoc benchmark TATR chay trong `.venv-gpu`.
+
+Ket qua 25 mau voi word boxes tu PaddleOCR:
+
+| Metric | Hybrid TATR + OCR words |
+|---|---:|
+| table detection F1@0.50 | 0.987 |
+| table detection F1@0.75 | 0.987 |
+| table cell IoU@0.50 F1 | 0.598 |
+| table structure F1 | 0.638 |
+| text assignment F1 | 0.955 |
+| row count MAE | 0.600 |
+| col count MAE | 0.000 |
+| GriTS-con-like | 0.387 |
+| exact CSV / HTML | 0.040 / 0.000 |

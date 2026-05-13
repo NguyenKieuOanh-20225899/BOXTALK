@@ -48,7 +48,7 @@ def main() -> None:
         _download_image(row["image"]["src"], image_path)
         _image_to_pdf(image_path, pdf_path)
 
-        gt_rows, gt_cells = _parse_cells(row.get("cells") or [])
+        gt_rows, gt_cells, word_boxes = _parse_cells(row.get("cells") or [])
         table_region = {
             "label": "table",
             "bbox": [float(value) for value in row.get("table_bbox", [0, 0, row["image"]["width"], row["image"]["height"]])[:4]],
@@ -76,7 +76,10 @@ def main() -> None:
                     "rows": row.get("rows"),
                     "cols": row.get("cols"),
                     "filename": filename,
+                    "word_box_source": "pubtables_cell_tokens_proxy",
+                    "word_box_count": len(word_boxes),
                 },
+                "word_boxes": word_boxes,
             }
         )
 
@@ -142,7 +145,7 @@ def _image_to_pdf(image_path: Path, pdf_path: Path) -> None:
     doc.close()
 
 
-def _parse_cells(raw_rows: list[Any]) -> tuple[list[list[str]], list[dict[str, Any]]]:
+def _parse_cells(raw_rows: list[Any]) -> tuple[list[list[str]], list[dict[str, Any]], list[dict[str, Any]]]:
     flat_cells: list[dict[str, Any]] = []
     for item in raw_rows:
         if isinstance(item, dict):
@@ -151,18 +154,22 @@ def _parse_cells(raw_rows: list[Any]) -> tuple[list[list[str]], list[dict[str, A
             flat_cells.extend(cell for cell in item if isinstance(cell, dict))
 
     positioned: list[dict[str, Any]] = []
+    word_boxes: list[dict[str, Any]] = []
     for raw_cell in flat_cells:
-        text = " ".join("".join(raw_cell.get("tokens") or []).split())
+        raw_tokens = raw_cell.get("tokens") or []
+        text = " ".join("".join(raw_tokens).split())
         bbox = raw_cell.get("bbox")
         if not bbox or len(bbox) < 4:
             continue
         x0, y0, x1, y1 = [float(value) for value in bbox[:4]]
         if x1 <= x0 or y1 <= y0:
             continue
-        positioned.append({"text": text, "bbox": [x0, y0, x1, y1], "x0": x0, "y0": y0, "x1": x1, "y1": y1})
+        cell_bbox = [x0, y0, x1, y1]
+        positioned.append({"text": text, "bbox": cell_bbox, "x0": x0, "y0": y0, "x1": x1, "y1": y1})
+        word_boxes.extend(_word_boxes_from_cell_tokens(raw_tokens, cell_bbox))
 
     if not positioned:
-        return [], []
+        return [], [], []
 
     heights = [max(1.0, cell["y1"] - cell["y0"]) for cell in positioned]
     row_tolerance = max(4.0, sorted(heights)[len(heights) // 2] * 0.75)
@@ -197,7 +204,36 @@ def _parse_cells(raw_rows: list[Any]) -> tuple[list[list[str]], list[dict[str, A
                 }
             )
         rows.append(row_values)
-    return rows, cells
+    return rows, cells, word_boxes
+
+
+def _word_boxes_from_cell_tokens(raw_tokens: list[Any], bbox: list[float]) -> list[dict[str, Any]]:
+    text = " ".join("".join(str(token) for token in raw_tokens).split())
+    if not text:
+        return []
+    tokens = text.split()
+    if not tokens:
+        return []
+    x0, y0, x1, y1 = bbox
+    usable_width = max(1.0, x1 - x0)
+    total_chars = sum(max(len(token), 1) for token in tokens)
+    cursor = x0
+    words: list[dict[str, Any]] = []
+    for index, token in enumerate(tokens):
+        if index == len(tokens) - 1:
+            next_cursor = x1
+        else:
+            next_cursor = cursor + usable_width * (max(len(token), 1) / max(total_chars, 1))
+        words.append(
+            {
+                "text": token,
+                "bbox": [cursor, y0, next_cursor, y1],
+                "confidence": 1.0,
+                "source": "pubtables_cell_tokens_proxy",
+            }
+        )
+        cursor = next_cursor
+    return words
 
 
 def _infer_column_anchors_from_cells(cells: list[dict[str, Any]]) -> list[float]:

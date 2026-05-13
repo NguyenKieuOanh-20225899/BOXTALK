@@ -25,6 +25,7 @@ from app.eval.ingest_metrics import (
     char_accuracy,
     confusion_summary,
     detection_metrics,
+    grits_like_metrics,
     historical_ocr_cer,
     historical_ocr_token_f1,
     historical_ocr_wer,
@@ -58,6 +59,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out", type=Path, default=None, help="Output directory for unified benchmark")
     parser.add_argument("--device", default=None, help="Optional device hint for model-backed ingest")
     parser.add_argument("--mode", choices=["text", "layout", "table", "ocr", "all"], default="all", help="Unified benchmark mode")
+    parser.add_argument(
+        "--table-backend",
+        choices=["default", "ocr_cluster", "tatr", "hybrid_tatr"],
+        default="default",
+        help="Optional table extraction backend for unified table benchmarks",
+    )
     parser.add_argument("--save-predictions", action="store_true", help="Save prediction payloads in per_sample.jsonl")
     parser.add_argument("--seed", type=int, default=13, help="Sampling seed for unified benchmark")
 
@@ -362,6 +369,10 @@ class TextJsonlAdapter(DatasetAdapter):
                 pdf_path = _optional_path(root, row.get("pdf_path"))
                 image_path = _optional_path(root, row.get("image_path"))
                 gt = row.get("ground_truth", {})
+                metadata = dict(row.get("metadata", {}) or {})
+                if row.get("word_boxes") is not None:
+                    metadata["word_boxes"] = list(row.get("word_boxes") or [])
+                    metadata["word_box_source"] = metadata.get("word_box_source") or "manifest"
                 samples.append(
                     IngestBenchmarkSample(
                         doc_id=str(row.get("doc_id") or (pdf_path or image_path).stem),
@@ -377,7 +388,7 @@ class TextJsonlAdapter(DatasetAdapter):
                             table_csv=gt.get("table_csv"),
                             form_fields=dict(gt.get("form_fields", {}) or {}),
                         ),
-                        metadata=dict(row.get("metadata", {}) or {}),
+                        metadata=metadata,
                     )
                 )
         return self._limit_samples(samples)
@@ -440,7 +451,7 @@ def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
         debug_dir.mkdir(parents=True, exist_ok=True)
 
     for sample in samples:
-        prediction = predict_ingest(sample, work_dir=out_dir / "_work", mode=args.mode)
+        prediction = predict_ingest(sample, work_dir=out_dir / "_work", mode=args.mode, table_backend=args.table_backend, device=args.device)
         record = score_sample(sample, prediction, mode=args.mode)
         records.append(record)
         if args.save_predictions:
@@ -465,6 +476,7 @@ def run_unified_ingest_benchmark(args: argparse.Namespace) -> Path:
             "out": str(out_dir),
             "device": args.device,
             "mode": args.mode,
+            "table_backend": args.table_backend,
             "save_predictions": args.save_predictions,
             "seed": args.seed,
         },
@@ -497,7 +509,14 @@ def make_adapter(dataset: str, data_dir: Path | None, *, limit: int, seed: int, 
     return adapter_cls(data_dir, limit=limit, seed=seed, out_dir=out_dir)
 
 
-def predict_ingest(sample: IngestBenchmarkSample, *, work_dir: Path, mode: str = "all") -> IngestPrediction:
+def predict_ingest(
+    sample: IngestBenchmarkSample,
+    *,
+    work_dir: Path,
+    mode: str = "all",
+    table_backend: str = "default",
+    device: str | None = None,
+) -> IngestPrediction:
     from app.ingest.pipeline import ingest_pdf
 
     work_dir.mkdir(parents=True, exist_ok=True)
@@ -505,6 +524,10 @@ def predict_ingest(sample: IngestBenchmarkSample, *, work_dir: Path, mode: str =
     pdf_path = sample.pdf_path
     generated_pdf: Path | None = None
     try:
+        if table_backend == "ocr_cluster":
+            os.environ["BOXBIIBOO_ENABLE_OCR_TABLE_CLUSTER"] = "1"
+        if table_backend in {"tatr", "hybrid_tatr"} and mode in {"table", "all"}:
+            return predict_tatr_table_direct(sample, work_dir=work_dir, started=started, device=device, table_backend=table_backend)
         if pdf_path is None and sample.image_path is not None:
             generated_pdf = image_to_pdf(sample.image_path, work_dir / f"{sample.doc_id}.pdf")
             pdf_path = generated_pdf
@@ -590,6 +613,119 @@ def predict_text_extraction_direct(pdf_path: Path, *, started: float) -> IngestP
     )
 
 
+def predict_tatr_table_direct(
+    sample: IngestBenchmarkSample,
+    *,
+    work_dir: Path,
+    started: float,
+    device: str | None,
+    table_backend: str = "tatr",
+) -> IngestPrediction:
+    from app.ingest.tatr_table_backend import predict_tables_from_image
+
+    image_path = sample.image_path
+    text_boxes: list[dict[str, Any]] = []
+    text_source = "none"
+    generated_image: Path | None = None
+    if image_path is None and sample.pdf_path is not None:
+        generated_image = render_pdf_first_page_to_image(sample.pdf_path, work_dir / f"{sample.doc_id}_page0.png")
+        image_path = generated_image
+        if table_backend == "hybrid_tatr":
+            text_boxes = _sample_word_boxes(sample) or _extract_first_page_text_boxes(sample.pdf_path)
+            text_source = _text_source_for_boxes(text_boxes, default="pdf_text")
+    elif table_backend == "hybrid_tatr":
+        text_boxes = _sample_word_boxes(sample)
+        text_source = _text_source_for_boxes(text_boxes, default="manifest_words")
+    elif sample.pdf_path is not None and image_path is None:
+        text_boxes = _extract_first_page_text_boxes(sample.pdf_path)
+
+    if image_path is None:
+        raise ValueError("TATR backend needs image_path or pdf_path")
+
+    result = predict_tables_from_image(
+        image_path,
+        text_boxes=text_boxes if table_backend == "hybrid_tatr" else None,
+        device=device,
+        backend_name=table_backend,
+        text_source=text_source if table_backend == "hybrid_tatr" else "none",
+    )
+    table_regions = [
+        LayoutRegion(
+            "table",
+            tuple(float(value) for value in region["bbox"][:4]),
+            "Table",
+            {
+                "score": region.get("score"),
+                "model_label": region.get("model_label"),
+                "table_backend": table_backend,
+            },
+        )
+        for region in result.get("table_regions", [])
+    ]
+    latency = time.perf_counter() - started
+    return IngestPrediction(
+        text=str(result.get("text") or ""),
+        ordered_text=list(result.get("ordered_text") or []),
+        layout_regions=table_regions,
+        table_regions=table_regions,
+        table_cells=list(result.get("table_cells") or []),
+        table_csv=result.get("table_csv"),
+        table_html=result.get("table_html"),
+        backend=table_backend,
+        latency_sec=latency,
+        success=True,
+        metadata={
+            "direct_component_benchmark": True,
+            "table_backend": table_backend,
+            "source_model_name": result.get("source_model_name"),
+            "spanning_cell_count": result.get("spanning_cell_count"),
+            "text_source": result.get("text_source"),
+            "text_source_missing_count": 1 if not text_boxes and table_backend == "hybrid_tatr" else 0,
+            "warnings": result.get("warnings", []),
+            "tatr_rows": result.get("tatr_rows", []),
+            "tatr_columns": result.get("tatr_columns", []),
+            "tatr_spanning_cells": result.get("tatr_spanning_cells", []),
+            "assigned_words_per_cell": result.get("assigned_words_per_cell", []),
+            "coordinate_space": result.get("coordinate_space"),
+            "generated_image": str(generated_image) if generated_image else None,
+            "text_box_count": len(text_boxes),
+            "cuda_memory_allocated_mb": _torch_cuda_memory_allocated_mb(),
+        },
+    )
+
+
+def _sample_word_boxes(sample: IngestBenchmarkSample) -> list[dict[str, Any]]:
+    boxes = sample.metadata.get("word_boxes") or sample.metadata.get("ocr_words") or sample.metadata.get("pdf_words") or []
+    if not isinstance(boxes, list):
+        return []
+    normalized: list[dict[str, Any]] = []
+    for box in boxes:
+        if not isinstance(box, dict):
+            continue
+        bbox = box.get("bbox")
+        if not isinstance(bbox, (list, tuple)) or len(bbox) < 4:
+            continue
+        text = str(box.get("text") or "").strip()
+        if not text:
+            continue
+        normalized.append(
+            {
+                "text": text,
+                "bbox": [float(value) for value in bbox[:4]],
+                "confidence": float(box.get("confidence", 1.0) or 0.0),
+                "source": str(box.get("source") or sample.metadata.get("word_box_source") or "manifest_words"),
+            }
+        )
+    return normalized
+
+
+def _text_source_for_boxes(boxes: list[dict[str, Any]], *, default: str) -> str:
+    if not boxes:
+        return "none"
+    sources = sorted({str(box.get("source") or default) for box in boxes})
+    return ",".join(sources) if sources else default
+
+
 def _collect_table_payload(blocks: list[Any]) -> dict[str, Any]:
     table_cells: list[dict[str, Any]] = []
     csv_parts: list[str] = []
@@ -608,6 +744,53 @@ def _collect_table_payload(blocks: list[Any]) -> dict[str, Any]:
         "csv": "\n\n".join(csv_parts) if csv_parts else None,
         "html": "\n".join(html_parts) if html_parts else None,
     }
+
+
+def render_pdf_first_page_to_image(pdf_path: Path, output_path: Path) -> Path:
+    import fitz
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    doc = fitz.open(str(pdf_path))
+    try:
+        page = doc[0]
+        pix = page.get_pixmap(matrix=fitz.Matrix(1, 1), alpha=False)
+        pix.save(str(output_path))
+    finally:
+        doc.close()
+    return output_path
+
+
+def _extract_first_page_text_boxes(pdf_path: Path) -> list[dict[str, Any]]:
+    import fitz
+
+    doc = fitz.open(str(pdf_path))
+    boxes: list[dict[str, Any]] = []
+    try:
+        if len(doc) == 0:
+            return boxes
+        for word in doc[0].get_text("words", sort=True) or []:
+            text = str(word[4]).strip()
+            if not text:
+                continue
+            boxes.append(
+                {
+                    "text": text,
+                    "bbox": (float(word[0]), float(word[1]), float(word[2]), float(word[3])),
+                }
+            )
+    finally:
+        doc.close()
+    return boxes
+
+
+def _torch_cuda_memory_allocated_mb() -> float | None:
+    try:
+        import torch
+    except Exception:
+        return None
+    if not torch.cuda.is_available():
+        return None
+    return float(torch.cuda.max_memory_allocated() / (1024 * 1024))
 
 
 def predict_model_layout_direct(
@@ -687,10 +870,21 @@ def score_sample(sample: IngestBenchmarkSample, prediction: IngestPrediction, *,
         record["layout_iou75"] = detection_metrics(predicted_layout_regions, gt.layout_regions, labels=labels, iou_threshold=0.75)
         record["layout_confusion_iou50"] = confusion_summary(predicted_layout_regions, gt.layout_regions, iou_threshold=0.50)
     if mode in {"table", "all"}:
+        non_empty_cells = sum(1 for cell in prediction.table_cells if str(cell.get("text") or "").strip())
+        record["non_empty_pred_cell_rate"] = non_empty_cells / len(prediction.table_cells) if prediction.table_cells else 0.0
+        record["text_source_missing_count"] = int((prediction.metadata or {}).get("text_source_missing_count") or 0)
+        record["spanning_cell_count"] = sum(
+            1
+            for cell in prediction.table_cells
+            if int(cell.get("row_span", 1) or 1) > 1 or int(cell.get("col_span", 1) or 1) > 1
+        )
         if gt.table_regions:
             record["table_detection_iou50"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.50)
             record["table_detection_iou75"] = detection_metrics(predicted_table_regions, gt.table_regions, labels=["table"], iou_threshold=0.75)
         record["table_structure"] = table_structure_score(prediction.table_cells, gt.table_cells)
+        grits_scores = grits_like_metrics(prediction.table_cells, gt.table_cells)
+        if grits_scores is not None:
+            record.update(grits_scores)
         cell_iou50 = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.50)
         record["table_cell_iou50"] = cell_iou50
         record["table_cell_iou75"] = table_cell_bbox_metrics(prediction.table_cells, gt.table_cells, iou_threshold=0.75)
@@ -749,6 +943,18 @@ def summarize_unified_records(
         "text_assignment_f1",
         "row_count_error",
         "col_count_error",
+        "row_count_mae",
+        "col_count_mae",
+        "row_oversegmentation_count",
+        "row_undersegmentation_count",
+        "col_oversegmentation_count",
+        "col_undersegmentation_count",
+        "spanning_cell_count",
+        "non_empty_pred_cell_rate",
+        "text_source_missing_count",
+        "grits_top_like",
+        "grits_loc_like",
+        "grits_con_like",
         "empty_cell_rate",
         "matched_cell_count",
         "unmatched_pred_count",

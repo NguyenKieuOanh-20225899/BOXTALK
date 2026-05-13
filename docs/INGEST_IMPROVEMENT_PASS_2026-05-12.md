@@ -97,6 +97,21 @@ Sau khi them PubTables-1M OTSL benchmark, post-processing bang duoc cai tien tie
 
 Ket qua nay nen duoc bao cao la cai thien ro ve cell bbox reconstruction va text assignment. Exact CSV/HTML van bang 0 vi bai toan yeu cau row/column/merged-cell/text trung tuyet doi.
 
+## PubTables Row/Column Debug Pass
+
+Chi tiet trong `docs/TABLE_STRUCTURE_ROWCOL_FIX_2026-05-12.md`.
+
+| Metric | Previous structure pass 25 | After row/column fix 25 |
+|---|---:|---:|
+| table detection F1@0.50 | 0.967 | 0.967 |
+| table cell IoU@0.50 F1 | 0.668 | 0.659 |
+| table text cell structure F1 | 0.169 | 0.202 |
+| text assignment F1 | 0.963 | 0.963 |
+| row count MAE | 2.240 | 2.040 |
+| col count MAE | 0.840 | 0.840 |
+
+Pass nay them `scripts/analyze_pubtables_structure_debug.py` de tao per-sample error summary va visualization. Row over-segmentation giam tu 18/25 xuong 14/25, row exact tang tu 4/25 len 6/25. Column under-segmentation van la loi con lai lon nhat tren cac bang rong/sparse.
+
 ## Interpretation
 
 PubTables detection subset local van la bbox-only, nhung da bo sung PubTables-1M OTSL subset de danh gia cell/html structure bang ground truth that. Ket qua structure hien tai con thap hon detection, phan anh dung do kho cua OCR + structure recognition tren table image crop.
