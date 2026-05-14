@@ -431,7 +431,10 @@ def evidence_match(case: dict[str, Any], result_dict: dict[str, Any]) -> bool:
     gold_ids = expected_chunk_ids(case)
     if gold_ids:
         cited_or_hit_ids = {item.get("chunk_id") for item in candidates}
-        return bool(gold_ids & cited_or_hit_ids)
+        if gold_ids & cited_or_hit_ids:
+            return True
+        if not string_list(case.get("gold_evidence_texts")):
+            return False
 
     expected_section = str(case.get("expected_section") or case.get("section") or "").lower().strip()
     expected_sections = [
@@ -447,6 +450,7 @@ def evidence_match(case: dict[str, Any], result_dict: dict[str, Any]) -> bool:
         expected_sections.append(expected_section)
     expected_pages = int_set(case.get("expected_pages")) | int_set(case.get("gold_page")) | int_set(case.get("gold_pages"))
     match_text = str(case.get("match_text") or "").lower().strip()
+    gold_evidence_texts = string_list(case.get("gold_evidence_texts"))
     expected_source = case.get("source_name")
 
     for item in candidates:
@@ -467,22 +471,69 @@ def evidence_match(case: dict[str, Any], result_dict: dict[str, Any]) -> bool:
         page_matches = bool(expected_pages and item_page in expected_pages)
         section_matches = bool(expected_sections and any(section in section_blob for section in expected_sections))
         text_matches = bool(match_text and match_text in section_blob)
+        evidence_text_matches = bool(
+            gold_evidence_texts
+            and any(evidence_text_supported(section_blob, evidence_text) for evidence_text in gold_evidence_texts)
+        )
 
-        if page_matches or section_matches or text_matches:
+        if page_matches or section_matches or text_matches or evidence_text_matches:
             return True
     return False
 
 
 def answer_match(case: dict[str, Any], answer: str, *, min_token_f1: float) -> tuple[bool, float, bool]:
-    gold_answer = str(case.get("gold_answer") or "").strip()
+    gold_answers = expected_answers(case)
     match_text = str(case.get("match_text") or "").strip()
-    contains_expected = contains_text(answer, match_text) if match_text else False
-    f1 = token_f1(answer, gold_answer) if gold_answer else 0.0
-    if gold_answer:
-        return bool(contains_expected or f1 >= min_token_f1), f1, contains_expected
+    contains_expected = bool(match_text and contains_text(answer, match_text))
+    if gold_answers:
+        best_f1 = max(token_f1(answer, gold_answer) for gold_answer in gold_answers)
+        contains_gold = any(contains_text(answer, gold_answer) for gold_answer in gold_answers)
+        yes_no_ok = yes_no_answer_match(answer, gold_answers)
+        return bool(contains_expected or contains_gold or yes_no_ok or best_f1 >= min_token_f1), best_f1, bool(
+            contains_expected or contains_gold or yes_no_ok
+        )
     if match_text:
-        return contains_expected, f1, contains_expected
-    return False, f1, contains_expected
+        return contains_expected, 0.0, contains_expected
+    return False, 0.0, contains_expected
+
+
+def expected_answers(case: dict[str, Any]) -> list[str]:
+    values: list[str] = []
+    gold_answer = str(case.get("gold_answer") or "").strip()
+    if gold_answer:
+        values.append(gold_answer)
+    for key in ("gold_answers", "answers", "reference_answers"):
+        for value in string_list(case.get(key)):
+            if value.strip():
+                values.append(value.strip())
+
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        key = folded_text(value)
+        if key and key not in seen:
+            seen.add(key)
+            deduped.append(value)
+    return deduped
+
+
+def yes_no_answer_match(answer: str, gold_answers: list[str]) -> bool:
+    gold_labels = {folded_text(value) for value in gold_answers}
+    if not gold_labels or not gold_labels <= {"yes", "no"}:
+        return False
+    answer_folded = folded_text(answer)
+    first_token_match = re.match(r"\s*(yes|no)\b", answer_folded)
+    return bool(first_token_match and first_token_match.group(1) in gold_labels)
+
+
+def evidence_text_supported(candidate_text: str, evidence_text: str) -> bool:
+    if contains_text(candidate_text, evidence_text):
+        return True
+    evidence_terms = token_set(evidence_text)
+    candidate_terms = token_set(candidate_text)
+    if not evidence_terms or not candidate_terms:
+        return False
+    return len(evidence_terms & candidate_terms) / len(evidence_terms) >= 0.60
 
 
 def answer_supported_by_citations(answer: str, result_dict: dict[str, Any]) -> bool:
@@ -678,7 +729,9 @@ def evaluate_case(
         "fallback_answer": fallback_trace.get("answer"),
         "fallback_used_evidence_ids": fallback_trace.get("used_evidence_ids") or [],
         "gold_answer": case.get("gold_answer"),
+        "gold_answers": case.get("gold_answers") or [],
         "match_text": case.get("match_text"),
+        "gold_evidence_texts": case.get("gold_evidence_texts") or [],
         "answer_match": answer_ok,
         "answer_token_f1": f1,
         "answer_contains_expected": contains_expected,
@@ -822,6 +875,8 @@ def summarize_flat(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "grounded_rate": mean_float(float(row["grounded_answer"]) for row in rows),
         "answerable_grounded_rate": mean_float(float(row["grounded_answer"]) for row in answerable),
         "end_to_end_success_rate": mean_float(float(row["end_to_end_success"]) for row in rows),
+        "answerable_success_rate": mean_float(float(row["end_to_end_success"]) for row in answerable),
+        "unanswerable_success_rate": mean_float(float(row["end_to_end_success"]) for row in unanswerable),
         "avg_answer_token_f1": mean_float(float(row["answer_token_f1"]) for row in answerable),
         "avg_sufficiency": mean_float(float(row["sufficiency"]) for row in rows),
         "avg_total_latency_ms": mean_float(float(row["total_latency_ms"]) for row in rows),
@@ -832,6 +887,7 @@ def summarize_flat(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "false_answer_count": len(false_answers),
         "abstention_precision": ratio(len(correct_abstentions), len(abstentions)),
         "abstention_recall": ratio(len(correct_abstentions), len(unanswerable)),
+        "abstain_accuracy": ratio(len(correct_abstentions), len(unanswerable)),
         "hallucination_rate": mean_float(float(row["hallucinated"]) for row in rows),
         "avg_route_attempt_count": mean_float(float(row.get("route_attempt_count") or 1) for row in rows),
         "route_retry_rate": mean_float(float(row.get("route_retry_used", False)) for row in rows),

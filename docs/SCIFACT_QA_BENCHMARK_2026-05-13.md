@@ -98,4 +98,4 @@ For the thesis, this benchmark should be described as:
 
 ## Limitation
 
-If the thesis needs a public benchmark with official natural-language answers and evidence spans, add Qasper as the next benchmark. Qasper is more appropriate for answer correctness, while SciFact is stronger for citation/evidence correctness.
+QASPER has now been added as the complementary public benchmark for natural scientific QA. QASPER is more appropriate for free-form answer correctness, while SciFact remains stronger for citation/evidence correctness against official qrels.

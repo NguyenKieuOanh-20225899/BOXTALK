@@ -65,8 +65,11 @@ Runs without that environment variable fail by design with `Model layout backend
 | Attention rebuilt with region_routed + no reranker | 1.000 | 0.870 | -0.130 | 1.000 | 0.870 | 0.000 | 0.000 | 0.000 |
 | Operations routed | 0.925 | 0.925 | +0.000 | 0.925 | 0.925 | 0.025 | 0.000 | 1.000 |
 | SciFact public scientific QA/citation | - | 0.220 | - | - | 0.203 | - | 0.000 | - |
+| QASPER public scientific natural QA | - | 0.100 | - | - | 0.020 | - | 0.050 | - |
 
 SciFact is not directly comparable with the local PDF QA rows because it is a public claim-evidence benchmark converted into QA format. Its strongest metric here is citation/evidence correctness: `evidence_match_rate = 0.727` against official BEIR SciFact qrels. See `docs/SCIFACT_QA_BENCHMARK_2026-05-13.md`.
+
+QASPER is also not directly comparable with the local PDF rows because it is distributed as paper text, not PDF pages. It is more natural than SciFact for scientific QA, but harder for the current extractive/rule-based QA path: `answer_match_rate = 0.100`, `evidence_match_rate = 0.360`, `grounded_rate = 1.000`, and `hallucination_rate = 0.050` on the 100-question validation subset. See `docs/QASPER_QA_BENCHMARK_2026-05-13.md`.
 
 ## QCDT All Configs After
 
