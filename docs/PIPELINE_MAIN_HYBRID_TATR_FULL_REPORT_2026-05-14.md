@@ -260,19 +260,20 @@ Kết luận QASPER:
 
 ## 12. Validation sau khi tích hợp Hybrid TATR vào pipeline chính
 
-Cần chạy:
+Đã chạy:
 
 ```powershell
 .\.venv-gpu\Scripts\python.exe -m compileall app scripts
 .\.venv-gpu\Scripts\python.exe -m pytest -q
-.\.venv-gpu\Scripts\python.exe scripts\benchmark_ingest_suite.py --dataset mock --limit 5 --out results\ingest\mock_after_main_hybrid_tatr --mode all
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_ingest_suite.py --dataset mock --limit 5 --out results\ingest\mock_after_main_hybrid_tatr_final --mode all
 ```
 
-Kỳ vọng:
+Kết quả:
 
 - compileall pass;
-- pytest pass;
+- pytest: 56 passed;
 - mock ingest success_rate = 1.000;
+- mock ingest error_count = 0;
 - nếu TATR model không có cache, pipeline vẫn fallback default, không fail.
 
 ## 13. Safe claims sau cập nhật
