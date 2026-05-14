@@ -11,11 +11,11 @@ Tài liệu này tổng hợp lại toàn bộ kiến trúc hệ thống BOXTALK
 
 Phạm vi đúng của hệ thống:
 
-- Pipeline chính: `PDF ingest -> chunk/index -> retrieval -> routed_grounded -> grounded answer + citation`.
+- Pipeline chính: `PDF ingest -> conditional hybrid_tatr table enhancement -> chunk/index -> retrieval -> routed_grounded -> grounded answer + citation`.
 - Backend QA chính: `routed_grounded`.
-- Ingest chính: `default ingest backend`.
+- Ingest chính: `default ingest backend` có thêm bước tự động thử `hybrid_tatr` cho block/vùng bảng khi đủ điều kiện.
 - Không bật LLM thật làm lõi pipeline chính.
-- `hybrid_tatr` là nhánh thực nghiệm cho xử lý bảng ở tầng ingest, chưa thay backend chính toàn hệ thống.
+- `hybrid_tatr` là module tăng cường bảng có điều kiện trong pipeline chính; module này chỉ chạy cho table block và luôn fallback về backend mặc định nếu thiếu điều kiện.
 
 ## 2. Sơ đồ kiến trúc tổng thể
 
@@ -90,7 +90,7 @@ flowchart TD
     K --> L
 ```
 
-Luồng chính hiện tại dùng default ingest. `hybrid_tatr` chỉ nên được gọi khi upstream layout/region detector đã xác định vùng là `table`.
+Luồng chính hiện tại dùng default ingest và có thêm bước `hybrid_tatr` có điều kiện cho block/vùng `table`.
 
 ## 4. Sơ đồ xử lý bảng
 
@@ -99,7 +99,7 @@ flowchart LR
     A[Table region/image] --> B{Backend}
     B -->|default| C[PDF/OCR words + deterministic clustering]
     B -->|tatr| D[TATR detection + TATR structure]
-    B -->|hybrid_tatr experimental| E[TATR geometry + OCR/PDF word boxes]
+    B -->|hybrid_tatr conditional| E[TATR geometry + OCR/PDF word boxes]
 
     C --> F[Rows/cols/cells]
     D --> G[Geometry-only rows/cols/spanning cells]
@@ -114,7 +114,7 @@ Diễn giải:
 
 - `default`: ổn định hơn cho pipeline chính, có text assignment tốt.
 - `TATR`: tốt về phát hiện bảng và row/column geometry, nhưng image-only nên không tự có text trong cell.
-- `hybrid_tatr`: dùng TATR để lấy geometry và dùng OCR/PDF word boxes để gán text vào cell. Đây là nhánh thực nghiệm có kết quả tốt hơn về structure F1, nhưng chưa thay backend chính.
+- `hybrid_tatr`: dùng TATR để lấy geometry và dùng OCR/PDF word boxes để gán text vào cell. Module này hiện được nối vào pipeline chính theo cơ chế có điều kiện/fallback cho bảng.
 
 ## 5. Các mô hình và kỹ thuật sử dụng
 
@@ -125,9 +125,9 @@ Diễn giải:
 | Layout detection | DocLayNet/PubLayNet-compatible layout backend | Object detection/layout labels | Phát hiện text, title, table, figure, caption | Chính/benchmark |
 | OCR | PaddleOCR GPU | OCR text boxes | Đọc scan/image-heavy PDF | Chính cho OCR path |
 | Reading order | `reading_order.py` | Heuristic multi-column sorting | Sắp xếp block theo thứ tự đọc | Chính |
-| Table default | `extract/table.py` | OCR/PDF word clustering | Tạo rows/cols/cells/csv/html | Chính |
-| Table TATR | Microsoft Table Transformer | `microsoft/table-transformer-detection`, `microsoft/table-transformer-structure-recognition-v1.1-all` | Geometry bảng/hàng/cột | Thực nghiệm |
-| Table hybrid | TATR + OCR/PDF word boxes | Deterministic text assignment | Cải thiện structure/text-in-cell | Thực nghiệm |
+| Table default | `extract/table.py` | OCR/PDF word clustering | Tạo rows/cols/cells/csv/html | Chính/fallback |
+| Table TATR | Microsoft Table Transformer | `microsoft/table-transformer-detection`, `microsoft/table-transformer-structure-recognition-v1.1-all` | Geometry bảng/hàng/cột | Thành phần của hybrid |
+| Table hybrid | TATR + OCR/PDF word boxes | Deterministic text assignment | Cải thiện structure/text-in-cell cho table block | Chính có điều kiện |
 | Sparse retrieval | BM25 | Lexical retrieval | Tìm đoạn theo từ khóa | Chính |
 | Dense retrieval | MiniLM | `sentence-transformers/all-MiniLM-L6-v2` | Semantic retrieval | Chính |
 | Rerank | heuristic reranker | Score fusion/heuristic rerank | Sắp xếp lại kết quả | Chính/benchmark |
@@ -269,9 +269,9 @@ Lưu ý: Cell F1 của `hybrid_tatr OCR words` thấp hơn một số mốc defa
 
 Kết luận:
 
-- Default nên giữ làm backend chính vì ổn định và text assignment tốt.
+- Default vẫn là fallback ổn định vì có text assignment tốt và không phụ thuộc model nặng.
 - TATR geometry-only không đủ cho table QA vì thiếu text.
-- `hybrid_tatr OCR words` là nhánh thực nghiệm tốt nhất cho table structure, nhưng chưa thay backend chính vì còn phụ thuộc OCR/PDF word boxes và merged-cell handling.
+- `hybrid_tatr OCR words` là module table structure tốt nhất và đã được nối vào pipeline chính theo cơ chế có điều kiện; nó không thay toàn bộ ingest backend vì còn phụ thuộc OCR/PDF word boxes và merged-cell handling.
 
 ### 7.5. QA E2E before/after
 
@@ -496,9 +496,9 @@ Không nên nói:
 - Không claim xử lý hoàn hảo mọi PDF.
 - Không claim table extraction hoàn chỉnh.
 - Không claim exact CSV/HTML đã giải quyết xong.
-- Không claim `hybrid_tatr` là backend chính production.
+- Không claim `hybrid_tatr` thay thế toàn bộ production ingest backend; chỉ claim nó là module tăng cường bảng có điều kiện.
 - Không claim LLM là lõi chính của hệ thống.
 
 ## 11. Kết luận chốt
 
-BOXTALK đã đạt mục tiêu chính của đồ án: xây dựng một hệ thống hỏi đáp trên PDF có pipeline ingest, retrieval, grounded QA và citation; đồng thời có benchmark nhiều tầng để đánh giá chất lượng. Kết quả tốt nhất nằm ở khả năng trích xuất/truy xuất có căn cứ và kiểm soát hallucination trong các benchmark chính. Nhánh `hybrid_tatr` chứng minh hướng cải thiện bảng có tiềm năng, nhưng vẫn nên được trình bày là thực nghiệm. QASPER là phần quan trọng để chứng minh người làm đồ án hiểu giới hạn của hệ thống: natural scientific QA trên paper dài vẫn cần retrieval theo section, answer synthesis tốt hơn và abstention mạnh hơn.
+BOXTALK đã đạt mục tiêu chính của đồ án: xây dựng một hệ thống hỏi đáp trên PDF có pipeline ingest, retrieval, grounded QA và citation; đồng thời có benchmark nhiều tầng để đánh giá chất lượng. Kết quả tốt nhất nằm ở khả năng trích xuất/truy xuất có căn cứ và kiểm soát hallucination trong các benchmark chính. `hybrid_tatr` hiện đã được nối vào pipeline chính như module tăng cường bảng có điều kiện/fallback. QASPER là phần quan trọng để chứng minh người làm đồ án hiểu giới hạn của hệ thống: natural scientific QA trên paper dài vẫn cần retrieval theo section, answer synthesis tốt hơn và abstention mạnh hơn.

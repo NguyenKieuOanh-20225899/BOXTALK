@@ -172,13 +172,9 @@ def extract_table_region(
 
 
 def _hybrid_tatr_table_backend_enabled() -> bool:
-    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower()
-    if backend == "hybrid_tatr":
-        return True
-    value = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
-    if value is None:
-        return False
-    return value.strip().lower() not in {"0", "false", "no", "off"}
+    from app.ingest.extract.hybrid_tatr_table import is_hybrid_tatr_table_enabled
+
+    return is_hybrid_tatr_table_enabled()
 
 
 def _extract_table_grid_from_words(page: fitz.Page, rect: fitz.Rect) -> dict[str, Any] | None:

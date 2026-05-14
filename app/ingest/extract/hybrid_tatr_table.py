@@ -9,10 +9,15 @@ from app.ingest.schemas import BlockNode
 
 
 def is_hybrid_tatr_table_enabled() -> bool:
-    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower()
+    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "auto").strip().lower()
     if backend == "hybrid_tatr":
         return True
-    return _env_bool("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES", default=False)
+    if backend in {"default", "ocr_cluster", "none", "off", "0", "false", "no"}:
+        return False
+    explicit = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
+    if explicit is not None:
+        return _env_bool("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES", default=False)
+    return _env_bool("BOXBIIBOO_ENABLE_PIPELINE_HYBRID_TATR_TABLES", default=True)
 
 
 def extract_hybrid_tatr_table_region(
@@ -39,6 +44,8 @@ def extract_hybrid_tatr_table_region(
     text_source = "pdf_text_words" if text_boxes else "none"
     allow_geometry_only = _env_bool("BOXBIIBOO_HYBRID_TATR_ALLOW_GEOMETRY_ONLY", default=False)
     if not text_boxes and not allow_geometry_only:
+        return None
+    if not _can_attempt_tatr_load():
         return None
 
     scale = float(os.getenv("BOXBIIBOO_HYBRID_TATR_REGION_SCALE", "2.0"))
@@ -195,3 +202,47 @@ def _env_bool(name: str, *, default: bool) -> bool:
     if value is None:
         return default
     return value.strip().lower() not in {"0", "false", "no", "off"}
+
+
+def _can_attempt_tatr_load() -> bool:
+    """Avoid accidental model downloads in automatic pipeline mode.
+
+    Explicit requests (`BOXBIIBOO_TABLE_BACKEND=hybrid_tatr` or
+    `BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES=1`) may download/load models. The
+    default pipeline auto mode only runs when the TATR model configs are already
+    present in the Hugging Face cache, then falls back silently otherwise.
+    """
+
+    if os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower() == "hybrid_tatr":
+        return True
+    explicit = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
+    if explicit is not None:
+        return _env_bool("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES", default=False)
+    if _env_bool("BOXBIIBOO_HYBRID_TATR_AUTO_DOWNLOAD", default=False):
+        return True
+    return _tatr_models_look_cached()
+
+
+def _tatr_models_look_cached() -> bool:
+    try:
+        from huggingface_hub import try_to_load_from_cache
+    except Exception:
+        return False
+
+    from app.ingest.tatr_table_backend import DEFAULT_TATR_DETECTION_MODEL, DEFAULT_TATR_STRUCTURE_MODEL
+
+    detection_model = os.getenv("BOXBIIBOO_TATR_DETECTION_MODEL") or DEFAULT_TATR_DETECTION_MODEL
+    structure_model = os.getenv("BOXBIIBOO_TATR_STRUCTURE_MODEL") or DEFAULT_TATR_STRUCTURE_MODEL
+    return all(_tatr_model_files_look_cached(model_name, try_to_load_from_cache) for model_name in (detection_model, structure_model))
+
+
+def _tatr_model_files_look_cached(model_name: str, try_to_load_from_cache: Any) -> bool:
+    def cached(filename: str) -> bool:
+        value = try_to_load_from_cache(model_name, filename)
+        return isinstance(value, str) and bool(value)
+
+    return (
+        cached("config.json")
+        and cached("preprocessor_config.json")
+        and (cached("model.safetensors") or cached("pytorch_model.bin"))
+    )

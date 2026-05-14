@@ -15,12 +15,12 @@ Mục tiêu không phải đạt SOTA trên mọi benchmark, mà là xây dựng
 Luồng chính được dùng trong báo cáo:
 
 ```text
-PDF ingest -> chunk/index -> retrieval -> routed_grounded -> grounded answer + citation
+PDF ingest -> conditional hybrid_tatr table enhancement -> chunk/index -> retrieval -> routed_grounded -> grounded answer + citation
 ```
 
 Các lựa chọn chính:
 
-- Ingest backend chính: `default ingest backend`.
+- Ingest backend chính: `default ingest backend` có thêm bước `hybrid_tatr` có điều kiện cho block/vùng bảng.
 - QA path chính: `routed_grounded`.
 - Câu trả lời chính: grounded QA có citation.
 - LLM thật: không bật làm pipeline chính.
@@ -29,7 +29,7 @@ Các lựa chọn chính:
 
 Các nhánh sau được giữ ở mức thực nghiệm:
 
-- `hybrid_tatr`: TATR geometry + OCR/PDF word boxes để cải thiện table structure ở tầng ingest.
+- `hybrid_tatr`: TATR geometry + OCR/PDF word boxes để cải thiện table structure ở tầng ingest. Module này đã được nối vào pipeline chính theo kiểu chỉ chạy cho bảng và luôn fallback.
 - LLM fallback/explanation: chỉ dùng như hướng mở rộng, không phải lõi chính.
 - QASPER top-k/rerank probe: dùng để phân tích hướng cải thiện retrieval, chưa thay pipeline mặc định.
 
@@ -138,7 +138,7 @@ Kết luận QASPER: tăng top-k/rerank cải thiện evidence recall, nhưng ch
 - QASPER thấp vì paper dài, free-form answer và unanswerable handling còn yếu.
 - Table exact CSV/HTML còn thấp do merged cell, text OCR và yêu cầu exact markup.
 - Một số benchmark ingest dùng subset nhỏ 25 hoặc 100 mẫu.
-- `hybrid_tatr` phụ thuộc OCR/PDF word boxes; chưa thay backend chính.
+- `hybrid_tatr` phụ thuộc OCR/PDF word boxes và chỉ là module tăng cường bảng có điều kiện, không thay toàn bộ ingest backend.
 - LLM fallback chưa được đưa vào pipeline chính.
 
 ## 10. Safe Claims
@@ -146,7 +146,7 @@ Kết luận QASPER: tăng top-k/rerank cải thiện evidence recall, nhưng ch
 - Hệ thống có pipeline PDF QA hoàn chỉnh với retrieval, grounded answer và citation.
 - Hệ thống đạt grounded_rate cao trong các benchmark chính đã chạy.
 - Không ghi nhận hallucination trong QA smoke, QCDT, Operations và SciFact với cấu hình chính.
-- `hybrid_tatr OCR words` cải thiện table_structure F1 trên PubTables structure subset.
+- `hybrid_tatr OCR words` cải thiện table_structure F1 trên PubTables structure subset và đã được đưa vào pipeline chính theo cơ chế có điều kiện/fallback.
 - SciFact cho thấy khả năng evidence/citation trên benchmark khoa học công khai.
 - QASPER chỉ ra hạn chế thật của natural scientific QA trên paper dài.
 
@@ -155,12 +155,12 @@ Kết luận QASPER: tăng top-k/rerank cải thiện evidence recall, nhưng ch
 - Không claim SOTA.
 - Không claim xử lý hoàn hảo mọi PDF.
 - Không claim table extraction hoàn chỉnh.
-- Không claim `hybrid_tatr` là production backend chính.
+- Không claim `hybrid_tatr` thay thế toàn bộ production ingest backend; chỉ claim nó là module tăng cường bảng có điều kiện.
 - Không claim LLM là lõi chính của hệ thống.
 - Không claim exact CSV/HTML đã giải quyết xong.
 
 ## 12. Kết luận đưa vào báo cáo
 
-Kết quả thực nghiệm cho thấy BOXTALK đã đáp ứng mục tiêu đồ án ở mức hệ thống: trích xuất PDF, lập chỉ mục, truy xuất, trả lời có dẫn chứng và đánh giá nhiều tầng. Pipeline chính `routed_grounded` phù hợp để demo và báo cáo vì có grounded_rate cao và kiểm soát hallucination tốt trên các benchmark chính.
+Kết quả thực nghiệm cho thấy BOXTALK đã đáp ứng mục tiêu đồ án ở mức hệ thống: trích xuất PDF, tăng cường bảng có điều kiện bằng `hybrid_tatr`, lập chỉ mục, truy xuất, trả lời có dẫn chứng và đánh giá nhiều tầng. Pipeline chính `routed_grounded` phù hợp để demo và báo cáo vì có grounded_rate cao và kiểm soát hallucination tốt trên các benchmark chính.
 
 Phần table structure và QASPER nên được trình bày như phân tích mở rộng. `hybrid_tatr` là đóng góp thực nghiệm có kết quả tốt ở tầng ingest, còn QASPER là bằng chứng trung thực về giới hạn của hệ thống khi chuyển sang natural scientific QA khó hơn.

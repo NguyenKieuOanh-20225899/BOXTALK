@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import os
+from dataclasses import replace
 from pathlib import Path
 from typing import Callable
+
+import fitz
 
 from app.ingest.chunker import build_chunks
 from app.ingest.cleaners import clean_blocks
@@ -64,6 +67,11 @@ def ingest_pdf(pdf_path: str | Path) -> dict:
     # Normalize
     pages, blocks = normalize_pages_blocks(pages, blocks)
 
+    # Production table enhancement: hybrid TATR is part of the main ingest path
+    # for table blocks, but it is conditional and falls back to the stable table
+    # extraction result when unavailable.
+    blocks = _enhance_table_blocks_with_hybrid_tatr(pdf_path, blocks)
+
     # Clean
     blocks = clean_blocks(blocks)
 
@@ -74,6 +82,10 @@ def ingest_pdf(pdf_path: str | Path) -> dict:
 
     for page in pages:
         page.block_ids = page_to_block_ids.get(page.page_index, [])
+        page_blocks = [b for b in blocks if b.page_index == page.page_index]
+        page.text = "\n".join(b.text for b in page_blocks if b.text).strip()
+        page.markdown = "\n\n".join(b.markdown for b in page_blocks if b.markdown).strip()
+        page.has_table = any(b.block_type == "table" for b in page_blocks)
         page.meta["used_backend"] = used_backend
         page.meta["probe_mode"] = mode
         if errors:
@@ -155,6 +167,96 @@ def _build_extractor_plan(probe) -> list[tuple[str, ExtractorFn]]:
         *layout_backends,
         ("ocr", extract_with_ocr_backend),
     ]
+
+
+def _enhance_table_blocks_with_hybrid_tatr(
+    pdf_path: Path,
+    blocks: list[BlockNode],
+) -> list[BlockNode]:
+    table_candidates = [
+        block
+        for block in blocks
+        if block.block_type == "table"
+        and block.bbox is not None
+        and (block.meta or {}).get("table_backend") != "hybrid_tatr"
+        and not (block.meta or {}).get("hybrid_tatr_error")
+        and not (block.meta or {}).get("hybrid_tatr_skipped_reason")
+    ]
+    if not table_candidates:
+        return blocks
+
+    try:
+        from app.ingest.extract.hybrid_tatr_table import (
+            extract_hybrid_tatr_table_region,
+            is_hybrid_tatr_table_enabled,
+        )
+    except Exception:
+        return blocks
+    if not is_hybrid_tatr_table_enabled():
+        return blocks
+
+    enhanced_by_id: dict[str, BlockNode] = {}
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception:
+        return blocks
+
+    try:
+        for block in table_candidates:
+            if block.page_index < 0 or block.page_index >= len(doc):
+                continue
+            region_meta = {
+                **dict(block.meta or {}),
+                "pipeline_table_backend": "hybrid_tatr_auto",
+                "fallback_table_backend": (block.meta or {}).get("table_backend") or (block.meta or {}).get("backend"),
+                "fallback_source_mode": block.source_mode,
+            }
+            try:
+                hybrid_block = extract_hybrid_tatr_table_region(
+                    doc[block.page_index],
+                    block.bbox,  # type: ignore[arg-type]
+                    block_index=block.reading_order,
+                    reading_order=block.reading_order,
+                    region_meta=region_meta,
+                )
+            except Exception as exc:
+                enhanced_by_id[block.block_id] = replace(
+                    block,
+                    meta={**dict(block.meta or {}), "hybrid_tatr_pipeline_error": str(exc)},
+                )
+                continue
+            if hybrid_block is None:
+                enhanced_by_id[block.block_id] = replace(
+                    block,
+                    meta={
+                        **dict(block.meta or {}),
+                        "hybrid_tatr_pipeline_skipped": "unavailable_or_no_result",
+                    },
+                )
+                continue
+
+            enhanced_by_id[block.block_id] = replace(
+                hybrid_block,
+                block_id=block.block_id,
+                level=block.level,
+                item_number=block.item_number,
+                parent_block_id=block.parent_block_id,
+                heading_path=list(block.heading_path),
+                source_mode=block.source_mode,
+                meta={
+                    **dict(hybrid_block.meta or {}),
+                    "pipeline_table_backend": "hybrid_tatr_auto",
+                    "pipeline_enhanced_from": (block.meta or {}).get("table_backend")
+                    or (block.meta or {}).get("backend")
+                    or block.source_mode,
+                },
+            )
+    finally:
+        doc.close()
+
+    if not enhanced_by_id:
+        return blocks
+    return [enhanced_by_id.get(block.block_id, block) for block in blocks]
 
 
 def _region_extractors() -> list[tuple[str, ExtractorFn]]:
