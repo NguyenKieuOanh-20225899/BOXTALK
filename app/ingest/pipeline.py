@@ -178,6 +178,7 @@ def _enhance_table_blocks_with_hybrid_tatr(
         for block in blocks
         if block.block_type == "table"
         and block.bbox is not None
+        and not _should_keep_stable_table_without_hybrid(block)
         and (block.meta or {}).get("table_backend") != "hybrid_tatr"
         and not (block.meta or {}).get("hybrid_tatr_error")
         and not (block.meta or {}).get("hybrid_tatr_skipped_reason")
@@ -257,6 +258,37 @@ def _enhance_table_blocks_with_hybrid_tatr(
     if not enhanced_by_id:
         return blocks
     return [enhanced_by_id.get(block.block_id, block) for block in blocks]
+
+
+def _should_keep_stable_table_without_hybrid(block: BlockNode) -> bool:
+    if _hybrid_tatr_explicitly_forced():
+        return False
+    meta = block.meta or {}
+    row_count = int(meta.get("table_row_count") or 0)
+    col_count = int(meta.get("table_col_count") or 0)
+    cell_count = int(meta.get("table_cell_count") or 0)
+    table_backend = str(meta.get("table_backend") or meta.get("backend") or "")
+    stable_backends = {
+        "table_words_grid",
+        "text_table",
+        "text_region_table",
+        "text_row_cluster",
+        "table_clip_text",
+    }
+    return (
+        table_backend in stable_backends
+        and row_count >= 2
+        and col_count >= 2
+        and cell_count >= row_count * min(col_count, 2)
+    )
+
+
+def _hybrid_tatr_explicitly_forced() -> bool:
+    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower()
+    if backend == "hybrid_tatr":
+        return True
+    explicit = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
+    return explicit is not None and explicit.strip().lower() not in {"0", "false", "no", "off"}
 
 
 def _region_extractors() -> list[tuple[str, ExtractorFn]]:

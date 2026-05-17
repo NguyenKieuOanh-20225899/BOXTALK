@@ -6,8 +6,9 @@ from pathlib import Path
 import fitz
 
 from app.ingest.extract.ocr import extract_ocr_region
+from app.ingest.extract.table import extract_table_region
 from app.ingest.extract.text import extract_text_region
-from app.ingest.reading_order import sort_in_reading_order
+from app.ingest.region.detector import detect_regions
 from app.ingest.schemas import BlockNode, PageNode
 
 
@@ -75,59 +76,7 @@ def extract_with_region_routed_backend(
 
 
 def _detect_page_regions(page: fitz.Page) -> list[dict]:
-    regions: list[dict] = []
-
-    raw_blocks = page.get_text("blocks") or []
-    for idx, raw in enumerate(raw_blocks):
-        x0, y0, x1, y1, text, *_ = raw
-        text = str(text or "").strip()
-        bbox = (float(x0), float(y0), float(x1), float(y1))
-        if text:
-            regions.append(
-                {
-                    "region_id": f"p{page.number:04d}_text_{idx:04d}",
-                    "kind": "text",
-                    "bbox": bbox,
-                    "text": text,
-                    "page_index": page.number,
-                }
-            )
-
-    text_bboxes = [tuple(region["bbox"]) for region in regions if region["kind"] == "text"]
-    has_text_regions = bool(text_bboxes)
-    page_area = max(1.0, float(page.rect.width * page.rect.height))
-    image_min_area = float(os.getenv("BOXBIIBOO_REGION_IMAGE_MIN_AREA", "1600"))
-    for image_index, image in enumerate(page.get_images(full=True) or []):
-        xref = int(image[0])
-        try:
-            rects = page.get_image_rects(xref) or []
-        except Exception:
-            rects = []
-
-        for rect_index, rect in enumerate(rects):
-            bbox = (float(rect.x0), float(rect.y0), float(rect.x1), float(rect.y1))
-            if _area(bbox) < image_min_area:
-                continue
-            if _mostly_text_overlap(bbox, text_bboxes):
-                continue
-            regions.append(
-                {
-                    "region_id": f"p{page.number:04d}_image_{image_index:04d}_{rect_index:04d}",
-                    "kind": "image",
-                    "bbox": bbox,
-                    "text": "",
-                    "page_index": page.number,
-                    "has_text_regions": has_text_regions,
-                    "image_area_ratio": _area(bbox) / page_area,
-                }
-            )
-
-    return sort_in_reading_order(
-        regions,
-        bbox_getter=lambda item: tuple(item["bbox"]),
-        page_width=float(page.rect.width),
-        page_height=float(page.rect.height),
-    )
+    return detect_regions(page)
 
 
 def _extract_region(
@@ -143,20 +92,47 @@ def _extract_region(
         "backend": "region_routed",
         "region_id": region.get("region_id"),
         "region_kind": kind,
+        "detection_source": region.get("detection_source"),
     }
 
-    if kind == "text":
+    if kind == "table":
+        block = extract_table_region(
+            page,
+            bbox,
+            block_index=block_index,
+            reading_order=reading_order,
+            region_meta={
+                **region_meta,
+                "route_backend": "table",
+                "route_reason": "detected_table_region",
+            },
+        )
+        if block is not None:
+            return block
+
+        region_meta["table_route_fallback"] = "text_region"
+
+    if kind in {"text", "paragraph", "heading", "list_item", "caption", "metadata", "header", "footer", "table"}:
+        block_type_hint = str(region.get("block_type") or kind).strip().lower()
+        if block_type_hint in {"header", "footer"}:
+            block_type_hint = "metadata"
         region_dict = {
             "bbox": bbox,
             "page_index": page.number,
             "text": str(region.get("text") or "").strip(),
-            "meta": {**region_meta, "route_backend": "text"},
+            "block_type": block_type_hint,
+            "meta": {
+                **region_meta,
+                "route_backend": "text",
+                "route_reason": "detected_text_region" if kind != "table" else "table_fallback_to_text",
+            },
         }
         return extract_text_region(
             region_dict,
             page.number,
             block_index,
             reading_order=reading_order,
+            block_type_hint=block_type_hint,
             region_meta=region_dict["meta"],
         )
 
@@ -222,28 +198,3 @@ def _try_extract_image_ocr(
         region_meta["ocr_error"] = str(exc)
         return None
 
-
-def _area(bbox: tuple[float, float, float, float]) -> float:
-    return max(0.0, bbox[2] - bbox[0]) * max(0.0, bbox[3] - bbox[1])
-
-
-def _mostly_text_overlap(
-    bbox: tuple[float, float, float, float],
-    text_bboxes: list[tuple[float, float, float, float]],
-) -> bool:
-    bbox_area = max(_area(bbox), 1.0)
-    overlap = sum(_intersection_area(bbox, text_bbox) for text_bbox in text_bboxes)
-    return overlap / bbox_area >= 0.35
-
-
-def _intersection_area(
-    left: tuple[float, float, float, float],
-    right: tuple[float, float, float, float],
-) -> float:
-    x0 = max(left[0], right[0])
-    y0 = max(left[1], right[1])
-    x1 = min(left[2], right[2])
-    y1 = min(left[3], right[3])
-    if x1 <= x0 or y1 <= y0:
-        return 0.0
-    return (x1 - x0) * (y1 - y0)

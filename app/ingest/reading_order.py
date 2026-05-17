@@ -16,12 +16,12 @@ def sort_in_reading_order(
 ) -> list[T]:
     ordered = list(items)
     if len(ordered) < 4:
-        return sorted(ordered, key=lambda item: _simple_key(bbox_getter(item)))
+        return _sort_by_horizontal_bands(ordered, bbox_getter=bbox_getter)
 
     page_width = max(float(page_width), 1.0)
     page_height = max(float(page_height), 1.0)
     if not _looks_two_column(ordered, bbox_getter=bbox_getter, page_width=page_width):
-        return sorted(ordered, key=lambda item: _simple_key(bbox_getter(item)))
+        return _sort_by_horizontal_bands(ordered, bbox_getter=bbox_getter)
 
     full_width: list[T] = []
     column_items: list[T] = []
@@ -111,6 +111,40 @@ def _sort_column_band(
             bbox_getter(item)[0],
         ),
     )
+
+
+def _sort_by_horizontal_bands(
+    items: list[T],
+    *,
+    bbox_getter: Callable[[T], BBox],
+) -> list[T]:
+    if not items:
+        return []
+
+    ordered = sorted(items, key=lambda item: _simple_key(bbox_getter(item)))
+    heights = [max(1.0, bbox_getter(item)[3] - bbox_getter(item)[1]) for item in ordered]
+    y_tolerance = max(3.0, median_value(heights) * 0.60)
+
+    bands: list[list[T]] = []
+    band_y1: list[float] = []
+    for item in ordered:
+        bbox = bbox_getter(item)
+        matched_index = None
+        for idx, current_y1 in enumerate(band_y1):
+            if bbox[1] <= current_y1 + y_tolerance:
+                matched_index = idx
+                break
+        if matched_index is None:
+            bands.append([item])
+            band_y1.append(bbox[3])
+            continue
+        bands[matched_index].append(item)
+        band_y1[matched_index] = max(band_y1[matched_index], bbox[3])
+
+    result: list[T] = []
+    for band in bands:
+        result.extend(sorted(band, key=lambda item: (bbox_getter(item)[0], bbox_getter(item)[1])))
+    return result
 
 
 def median_value(values: list[float]) -> float:
