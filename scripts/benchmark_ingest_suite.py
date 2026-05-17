@@ -545,7 +545,8 @@ def predict_ingest(
         report = ingest_pdf(pdf_path)
         latency = time.perf_counter() - started
         blocks = report.get("blocks", [])
-        text = "\n".join(str(getattr(block, "text", "") or "") for block in blocks)
+        text_blocks = [block for block in blocks if not _is_auxiliary_text_block(block)]
+        text = "\n".join(str(getattr(block, "text", "") or "") for block in text_blocks)
         layout_regions = [
             LayoutRegion(_canonical_label(str(getattr(block, "block_type", "paragraph"))), tuple(getattr(block, "bbox", None) or (0, 0, 0, 0)), str(getattr(block, "text", "") or ""))
             for block in blocks
@@ -555,7 +556,7 @@ def predict_ingest(
         table_payload = _collect_table_payload(blocks)
         return IngestPrediction(
             text=text,
-            ordered_text=[str(getattr(block, "text", "") or "") for block in blocks],
+            ordered_text=[str(getattr(block, "text", "") or "") for block in text_blocks],
             layout_regions=layout_regions,
             table_regions=table_regions,
             table_cells=table_payload["cells"],
@@ -567,6 +568,7 @@ def predict_ingest(
             metadata={
                 "page_count": len(report.get("pages", [])),
                 "block_count": len(blocks),
+                "text_block_count": len(text_blocks),
                 "chunk_count": len(report.get("chunks", [])),
                 "generated_pdf": str(generated_pdf) if generated_pdf else None,
             },
@@ -717,6 +719,13 @@ def _sample_word_boxes(sample: IngestBenchmarkSample) -> list[dict[str, Any]]:
             }
         )
     return normalized
+
+
+def _is_auxiliary_text_block(block: Any) -> bool:
+    meta = getattr(block, "meta", None) or {}
+    if not isinstance(meta, dict):
+        return False
+    return bool(meta.get("synthetic_table_cluster"))
 
 
 def _text_source_for_boxes(boxes: list[dict[str, Any]], *, default: str) -> str:

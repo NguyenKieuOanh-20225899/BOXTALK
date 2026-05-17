@@ -7,7 +7,7 @@ from pathlib import Path
 
 from app.eval.ingest_metrics import detection_metrics, normalized_text_similarity, table_structure_breakdown, token_f1
 from app.eval.ingest_schemas import LayoutRegion
-from scripts.benchmark_ingest_suite import MockAdapter
+from scripts.benchmark_ingest_suite import MockAdapter, _is_auxiliary_text_block
 
 
 def test_text_metrics() -> None:
@@ -47,6 +47,16 @@ def test_table_structure_breakdown_reports_row_col_segmentation() -> None:
     assert breakdown["row_oversegmentation_count"] == 1
     assert breakdown["row_undersegmentation_count"] == 0
     assert breakdown["col_count_mae"] == 0
+
+
+def test_auxiliary_ocr_table_block_is_not_primary_text() -> None:
+    class DummyBlock:
+        def __init__(self, meta: dict | None) -> None:
+            self.meta = meta
+
+    assert _is_auxiliary_text_block(DummyBlock({"synthetic_table_cluster": True}))
+    assert not _is_auxiliary_text_block(DummyBlock({"synthetic_table_cluster": False}))
+    assert not _is_auxiliary_text_block(DummyBlock({}))
 
 
 def test_mock_adapter(tmp_path: Path) -> None:
