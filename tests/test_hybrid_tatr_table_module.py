@@ -140,3 +140,56 @@ def test_pipeline_auto_enhances_table_blocks_with_hybrid_tatr(monkeypatch, tmp_p
     assert enhanced[0].text == "Metric | Value"
     assert enhanced[0].meta["table_backend"] == "hybrid_tatr"
     assert enhanced[0].meta["pipeline_table_backend"] == "hybrid_tatr_auto"
+
+
+def test_pipeline_keeps_stable_table_grid_unless_hybrid_forced(monkeypatch, tmp_path: Path) -> None:
+    pdf_path = tmp_path / "stable_table.pdf"
+    doc = fitz.open()
+    page = doc.new_page(width=300, height=200)
+    page.insert_text((50, 80), "Metric Value", fontsize=12)
+    doc.save(pdf_path)
+    doc.close()
+
+    from app.ingest.extract import hybrid_tatr_table
+
+    def fake_hybrid_extract(page, bbox, *, block_index, reading_order=None, region_meta=None):
+        return BlockNode(
+            block_id="temporary",
+            page_index=page.number,
+            block_type="table",
+            text="hybrid",
+            markdown="hybrid",
+            reading_order=reading_order or block_index,
+            bbox=bbox,
+            source_mode="layout",
+            meta={**dict(region_meta or {}), "table_backend": "hybrid_tatr"},
+        )
+
+    monkeypatch.delenv("BOXBIIBOO_TABLE_BACKEND", raising=False)
+    monkeypatch.delenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES", raising=False)
+    monkeypatch.setattr(hybrid_tatr_table, "extract_hybrid_tatr_table_region", fake_hybrid_extract)
+
+    block = BlockNode(
+        block_id="table_block",
+        page_index=0,
+        block_type="table",
+        text="Metric | Value\nLatency | Low",
+        markdown="| Metric | Value |",
+        reading_order=0,
+        bbox=(40, 60, 180, 100),
+        source_mode="layout",
+        meta={
+            "backend": "table_words_grid",
+            "table_backend": "table_words_grid",
+            "table_row_count": 2,
+            "table_col_count": 2,
+            "table_cell_count": 4,
+        },
+    )
+
+    enhanced = _enhance_table_blocks_with_hybrid_tatr(pdf_path, [block])
+    assert enhanced[0].text == "Metric | Value\nLatency | Low"
+
+    monkeypatch.setenv("BOXBIIBOO_TABLE_BACKEND", "hybrid_tatr")
+    forced = _enhance_table_blocks_with_hybrid_tatr(pdf_path, [block])
+    assert forced[0].text == "hybrid"

@@ -85,6 +85,30 @@ def extract_table_region(
         return None
 
     effective_region_meta = dict(region_meta or {})
+    force_hybrid_tatr = _hybrid_tatr_table_backend_forced()
+    if not force_hybrid_tatr:
+        grid = _extract_table_grid_from_words(page, rect)
+        if grid:
+            return _block_from_table_grid(
+                page=page,
+                bbox=bbox,
+                block_index=block_index,
+                reading_order=reading_order,
+                region_meta=effective_region_meta,
+                grid=grid,
+            )
+        clip_block = _block_from_table_clip_text(
+            page=page,
+            bbox=bbox,
+            rect=rect,
+            block_index=block_index,
+            reading_order=reading_order,
+            region_meta=effective_region_meta,
+            require_structure=True,
+        )
+        if clip_block is not None:
+            return clip_block
+
     if _hybrid_tatr_table_backend_enabled():
         try:
             from app.ingest.extract.hybrid_tatr_table import extract_hybrid_tatr_table_region
@@ -106,46 +130,26 @@ def extract_table_region(
 
     grid = _extract_table_grid_from_words(page, rect)
     if grid:
-        normalized_rows = grid["rows"]
-        text = "\n".join(" | ".join(row) for row in normalized_rows).strip()
-        markdown = _rows_to_markdown(normalized_rows)
-        structure = table_structure_from_rows(
-            normalized_rows,
-            backend="table_words_grid",
-            cell_bboxes=grid.get("cell_bboxes"),
-            column_bounds=grid.get("column_bounds"),
-            row_bboxes=grid.get("row_bboxes"),
-        )
-        return BlockNode(
-            block_id=f"p{page.number:04d}_b{block_index:04d}",
-            page_index=page.number,
-            block_type="table",
-            text=text,
-            markdown=markdown,
-            reading_order=block_index if reading_order is None else reading_order,
+        return _block_from_table_grid(
+            page=page,
             bbox=bbox,
-            source_mode="layout",
-            meta={
-                **effective_region_meta,
-                "backend": "table_words_grid",
-                **structure,
-            },
+            block_index=block_index,
+            reading_order=reading_order,
+            region_meta=effective_region_meta,
+            grid=grid,
         )
 
-    fallback_text = page.get_text("text", clip=rect, sort=True).strip()
-    if fallback_text:
-        structure = table_structure_from_text(fallback_text, backend="table_clip_text")
-        return BlockNode(
-            block_id=f"p{page.number:04d}_b{block_index:04d}",
-            page_index=page.number,
-            block_type="table",
-            text=fallback_text,
-            markdown=table_text_to_markdown(fallback_text),
-            reading_order=block_index if reading_order is None else reading_order,
-            bbox=bbox,
-            source_mode="layout",
-            meta={**effective_region_meta, **structure},
-        )
+    clip_block = _block_from_table_clip_text(
+        page=page,
+        bbox=bbox,
+        rect=rect,
+        block_index=block_index,
+        reading_order=reading_order,
+        region_meta=effective_region_meta,
+        require_structure=False,
+    )
+    if clip_block is not None:
+        return clip_block
 
     # OCR fallback still returns a table block, but notes that the text came
     # from OCR because the PDF region had no native words/text.
@@ -175,6 +179,82 @@ def _hybrid_tatr_table_backend_enabled() -> bool:
     from app.ingest.extract.hybrid_tatr_table import is_hybrid_tatr_table_enabled
 
     return is_hybrid_tatr_table_enabled()
+
+
+def _hybrid_tatr_table_backend_forced() -> bool:
+    backend = os.getenv("BOXBIIBOO_TABLE_BACKEND", "").strip().lower()
+    if backend == "hybrid_tatr":
+        return True
+    explicit = os.getenv("BOXBIIBOO_ENABLE_HYBRID_TATR_TABLES")
+    return explicit is not None and explicit.strip().lower() not in {"0", "false", "no", "off"}
+
+
+def _block_from_table_grid(
+    *,
+    page: fitz.Page,
+    bbox: tuple[float, float, float, float],
+    block_index: int,
+    reading_order: int | None,
+    region_meta: dict,
+    grid: dict[str, Any],
+) -> BlockNode:
+    normalized_rows = grid["rows"]
+    text = "\n".join(" | ".join(row) for row in normalized_rows).strip()
+    markdown = _rows_to_markdown(normalized_rows)
+    structure = table_structure_from_rows(
+        normalized_rows,
+        backend="table_words_grid",
+        cell_bboxes=grid.get("cell_bboxes"),
+        column_bounds=grid.get("column_bounds"),
+        row_bboxes=grid.get("row_bboxes"),
+    )
+    return BlockNode(
+        block_id=f"p{page.number:04d}_b{block_index:04d}",
+        page_index=page.number,
+        block_type="table",
+        text=text,
+        markdown=markdown,
+        reading_order=block_index if reading_order is None else reading_order,
+        bbox=bbox,
+        source_mode="layout",
+        meta={
+            **region_meta,
+            "backend": "table_words_grid",
+            **structure,
+        },
+    )
+
+
+def _block_from_table_clip_text(
+    *,
+    page: fitz.Page,
+    bbox: tuple[float, float, float, float],
+    rect: fitz.Rect,
+    block_index: int,
+    reading_order: int | None,
+    region_meta: dict,
+    require_structure: bool,
+) -> BlockNode | None:
+    fallback_text = page.get_text("text", clip=rect, sort=True).strip()
+    if not fallback_text:
+        return None
+    structure = table_structure_from_text(fallback_text, backend="table_clip_text")
+    if require_structure and (
+        int(structure.get("table_row_count") or 0) < 2
+        or int(structure.get("table_col_count") or 0) < 2
+    ):
+        return None
+    return BlockNode(
+        block_id=f"p{page.number:04d}_b{block_index:04d}",
+        page_index=page.number,
+        block_type="table",
+        text=fallback_text,
+        markdown=table_text_to_markdown(fallback_text),
+        reading_order=block_index if reading_order is None else reading_order,
+        bbox=bbox,
+        source_mode="layout",
+        meta={**region_meta, **structure},
+    )
 
 
 def _extract_table_grid_from_words(page: fitz.Page, rect: fitz.Rect) -> dict[str, Any] | None:
