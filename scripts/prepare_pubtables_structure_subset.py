@@ -104,20 +104,37 @@ def main() -> None:
 def _fetch_rows(dataset_id: str, split: str, offset: int, limit: int) -> list[dict[str, Any]]:
     import requests
 
-    response = requests.get(
-        ROWS_API,
-        params={
-            "dataset": dataset_id,
-            "config": "default",
-            "split": split,
-            "offset": offset,
-            "length": limit,
-        },
-        timeout=120,
-    )
-    response.raise_for_status()
-    payload = response.json()
-    return list(payload.get("rows", []) or [])
+    rows: list[dict[str, Any]] = []
+    remaining = limit
+    current_offset = offset
+    # The Hugging Face rows endpoint rejects large length values for this
+    # dataset, so larger local subsets are fetched in stable API-sized pages.
+    page_size = 100
+    while remaining > 0:
+        batch_size = min(page_size, remaining)
+        response = requests.get(
+            ROWS_API,
+            params={
+                "dataset": dataset_id,
+                "config": "default",
+                "split": split,
+                "offset": current_offset,
+                "length": batch_size,
+            },
+            timeout=120,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        batch = list(payload.get("rows", []) or [])
+        if not batch:
+            break
+        rows.extend(batch)
+        fetched = len(batch)
+        remaining -= fetched
+        current_offset += fetched
+        if fetched < batch_size:
+            break
+    return rows
 
 
 def _download_image(url: str, path: Path) -> None:
