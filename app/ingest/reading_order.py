@@ -123,27 +123,45 @@ def _sort_by_horizontal_bands(
 
     ordered = sorted(items, key=lambda item: _simple_key(bbox_getter(item)))
     heights = [max(1.0, bbox_getter(item)[3] - bbox_getter(item)[1]) for item in ordered]
-    y_tolerance = max(3.0, median_value(heights) * 0.60)
+    y_tolerance = max(3.0, median_value(heights) * 0.45)
 
-    bands: list[list[T]] = []
-    band_y1: list[float] = []
+    bands: list[dict[str, object]] = []
     for item in ordered:
         bbox = bbox_getter(item)
+        center_y = _center_y(bbox)
         matched_index = None
-        for idx, current_y1 in enumerate(band_y1):
-            if bbox[1] <= current_y1 + y_tolerance:
+        for idx, band in enumerate(bands):
+            band_center = float(band["center_y"])
+            band_top = float(band["top"])
+            band_bottom = float(band["bottom"])
+            same_visual_line = abs(center_y - band_center) <= y_tolerance
+            overlaps_band = min(bbox[3], band_bottom) - max(bbox[1], band_top) > 0
+            if same_visual_line and overlaps_band:
                 matched_index = idx
                 break
         if matched_index is None:
-            bands.append([item])
-            band_y1.append(bbox[3])
+            bands.append(
+                {
+                    "items": [item],
+                    "center_y": center_y,
+                    "top": bbox[1],
+                    "bottom": bbox[3],
+                }
+            )
             continue
-        bands[matched_index].append(item)
-        band_y1[matched_index] = max(band_y1[matched_index], bbox[3])
+        band = bands[matched_index]
+        band_items = band["items"]
+        assert isinstance(band_items, list)
+        band_items.append(item)
+        band["center_y"] = sum(_center_y(bbox_getter(entry)) for entry in band_items) / len(band_items)
+        band["top"] = min(float(band["top"]), bbox[1])
+        band["bottom"] = max(float(band["bottom"]), bbox[3])
 
     result: list[T] = []
-    for band in bands:
-        result.extend(sorted(band, key=lambda item: (bbox_getter(item)[0], bbox_getter(item)[1])))
+    for band in sorted(bands, key=lambda item: (float(item["top"]), float(item["center_y"]))):
+        band_items = band["items"]
+        assert isinstance(band_items, list)
+        result.extend(sorted(band_items, key=lambda item: (bbox_getter(item)[0], bbox_getter(item)[1])))
     return result
 
 
@@ -159,6 +177,10 @@ def median_value(values: list[float]) -> float:
 
 def _center_x(bbox: BBox) -> float:
     return (bbox[0] + bbox[2]) / 2.0
+
+
+def _center_y(bbox: BBox) -> float:
+    return (bbox[1] + bbox[3]) / 2.0
 
 
 def _simple_key(bbox: BBox) -> tuple[float, float]:

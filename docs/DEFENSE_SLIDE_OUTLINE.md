@@ -141,3 +141,52 @@ Speaker note: Chủ động nói giới hạn để tránh overclaim.
 Hình/bảng nên dùng: sơ đồ “đã làm” và “tiếp theo”.
 
 Speaker note: Kết lại bằng phạm vi đúng: hệ thống hoàn chỉnh, đo lường minh bạch, còn hướng phát triển rõ ràng.
+
+## Slide bổ sung A. Vì sao không chỉ là gọi LLM hỏi PDF?
+
+- PDF cần ingest: text layer, layout, OCR, table, reading order.
+- Cần chunking có metadata để citation đúng trang/mục.
+- Cần retrieval để tìm evidence trước khi trả lời.
+- Cần evidence checker để hạn chế trả lời thiếu căn cứ.
+- Cần benchmark riêng cho ingest, retrieval và QA.
+- LLM thật không phải lõi bắt buộc của pipeline chính.
+
+Hình/bảng nên dùng: bảng `kĩ thuật -> vai trò -> metric đánh giá`.
+
+Speaker note: Đây là slide phòng thủ trước câu hỏi "đồ án có phải chỉ ghép chatbot với PDF không?". Nhấn mạnh đóng góp nằm ở pipeline, đánh giá nhiều tầng và kiểm soát evidence.
+
+## Slide bổ sung B. Ablation / vai trò từng thành phần
+
+- BM25 vs dense vs hybrid retrieval.
+- Chunk thường vs structure-aware chunking.
+- Không region routing vs có region routing.
+- Default table extractor vs TATR vs hybrid_tatr.
+- QA không kiểm evidence vs grounded QA.
+- top_k=5/10/20 cho retrieval evidence.
+
+Hình/bảng nên dùng: bảng ablation ngắn, mỗi dòng một thành phần.
+
+Speaker note: Nếu chưa có đủ số liệu, trình bày như kế hoạch thực nghiệm bổ sung và chỉ đưa các dòng đã chạy chắc chắn. Không đưa số liệu chưa kiểm chứng.
+
+## Slide bổ sung C. Safe claims và giới hạn
+
+- Claim chính: pipeline PDF QA có citation, đánh giá nhiều tầng, grounded_rate cao trên benchmark chính.
+- Không claim: SOTA, xử lý hoàn hảo mọi PDF, table extraction hoàn chỉnh, production-ready.
+- Phạm vi mạnh: PDF text-layer/bán cấu trúc như quy chế, quy định, hướng dẫn nghiệp vụ.
+- Phạm vi mở rộng: scan mờ, bảng phức tạp, paper khoa học dài, free-form synthesis.
+- QASPER và exact CSV được dùng để phân tích giới hạn, không phải claim chính.
+
+Hình/bảng nên dùng: bảng `Có thể claim / Không nên claim`.
+
+Speaker note: Chủ động nêu giới hạn giúp phần bảo vệ đáng tin hơn và giảm rủi ro bị phản biện bắt lỗi overclaim.
+
+## Slide bổ sung D. Case study phản biện
+
+- Case 1: văn bản pháp quy, giữ đúng Điều/Khoản/danh sách.
+- Case 2: câu hỏi bảng, chứng minh table-aware ingest/retrieval.
+- Case 3: câu hỏi ngoài tài liệu, kiểm tra abstention hoặc limitation.
+- Với mỗi case: câu hỏi, evidence, answer, citation, lỗi cũ nếu có, cải tiến đã làm.
+
+Hình/bảng nên dùng: screenshot answer + citation và một bảng evidence ngắn.
+
+Speaker note: Case study phải ngắn, chắc, đã chạy thử trước. Không demo PDF hoặc câu hỏi mới ngay trong buổi bảo vệ nếu chưa kiểm tra.

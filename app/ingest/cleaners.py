@@ -96,6 +96,12 @@ def detect_repeated_header_footer_candidates(
         if len(norm) > 220:
             continue
 
+        # Repeated labels like "1. Thành phần:" or "2. Nhiệm vụ..." are
+        # semantic structure in policy/procedure PDFs, not running headers.
+        # Keep them unless they are actually near the page edge.
+        if _looks_like_body_structure_label(b):
+            continue
+
         page_hits[norm].add(b.page_index)
 
         if is_top_or_bottom_block(b):
@@ -125,6 +131,17 @@ def remove_repeated_blocks(blocks: list[BlockNode], repeated_texts: set[str]) ->
             continue
         out.append(b)
     return out
+
+
+def _looks_like_body_structure_label(block: BlockNode) -> bool:
+    if is_top_or_bottom_block(block):
+        return False
+    text = (block.text or "").strip()
+    if not text:
+        return False
+    if PAGE_ONLY_RE.match(text):
+        return False
+    return looks_like_heading(text, block) or looks_like_list_item(text)
 
 
 def normalize_block(block: BlockNode) -> BlockNode:

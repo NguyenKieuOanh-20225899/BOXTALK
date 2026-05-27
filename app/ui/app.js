@@ -7,6 +7,7 @@ const state = {
   asking: false,
   uploading: false,
   pendingUploadFile: null,
+  docFilter: "",
   developerMode: window.localStorage.getItem("boxtalk.developerMode") === "1",
 };
 
@@ -17,21 +18,28 @@ const els = {
   uploadForm: document.getElementById("uploadForm"),
   uploadDropzone: document.getElementById("uploadDropzone"),
   uploadStatus: document.getElementById("uploadStatus"),
+  uploadButtonLabel: document.getElementById("uploadButtonLabel"),
   pdfFile: document.getElementById("pdfFile"),
   selectedFileMeta: document.getElementById("selectedFileMeta"),
   buildDense: document.getElementById("buildDense"),
   refreshDocs: document.getElementById("refreshDocs"),
+  docSearch: document.getElementById("docSearch"),
   docList: document.getElementById("docList"),
   docCount: document.getElementById("docCount"),
   activeDocName: document.getElementById("activeDocName"),
   activeDocMeta: document.getElementById("activeDocMeta"),
+  selectedDocStatus: document.getElementById("selectedDocStatus"),
   askForm: document.getElementById("askForm"),
   askButton: document.getElementById("askButton"),
+  askButtonLabel: document.getElementById("askButtonLabel"),
+  clearQuestion: document.getElementById("clearQuestion"),
   questionInput: document.getElementById("questionInput"),
+  questionTemplates: document.getElementById("questionTemplates"),
   answerText: document.getElementById("answerText"),
   answerNote: document.getElementById("answerNote"),
   answerExplanation: document.getElementById("answerExplanation"),
   answerBadges: document.getElementById("answerBadges"),
+  copyAnswer: document.getElementById("copyAnswer"),
   citationCount: document.getElementById("citationCount"),
   citationList: document.getElementById("citationList"),
   sourceViewer: document.getElementById("sourceViewer"),
@@ -96,7 +104,7 @@ function statusTone(status) {
 
 function buildPageUrl(doc, page) {
   if (!doc?.pdf_url) return null;
-  if (!page) return doc.pdf_url;
+  if (page === null || page === undefined || page === "" || page === "n/a") return doc.pdf_url;
   return `${doc.pdf_url}#page=${page}`;
 }
 
@@ -113,13 +121,22 @@ function selectedDocument() {
   return state.documents.find((doc) => doc.doc_id === state.selectedDocId) || null;
 }
 
+function filteredDocuments() {
+  const query = state.docFilter.trim().toLowerCase();
+  if (!query) return state.documents;
+  return state.documents.filter((doc) => {
+    const fields = [doc.filename, doc.document_type, doc.status, doc.doc_id].join(" ").toLowerCase();
+    return fields.includes(query);
+  });
+}
+
 function getPendingFile() {
   return state.pendingUploadFile || els.pdfFile.files[0] || null;
 }
 
 function setPendingFile(file) {
   state.pendingUploadFile = file || null;
-  const label = file ? `${file.name} · ${(file.size / (1024 * 1024)).toFixed(2)} MB` : "PDF only";
+  const label = file ? `${file.name} - ${(file.size / (1024 * 1024)).toFixed(2)} MB` : "PDF only";
   els.selectedFileMeta.textContent = label;
 }
 
@@ -182,9 +199,7 @@ function updateLibraryStats() {
   const ready = state.documents.filter((doc) => doc.status === "ready").length;
   const processing = state.documents.filter((doc) => doc.status === "processing").length;
   els.libraryStats.textContent = `${ready}/${total} ready`;
-  if (processing > 0) {
-    els.libraryStats.textContent += ` · ${processing} indexing`;
-  }
+  if (processing > 0) els.libraryStats.textContent += ` - ${processing} indexing`;
   els.docCount.textContent = String(total);
 }
 
@@ -192,13 +207,13 @@ async function loadDocuments() {
   const previousSelected = state.selectedDocId;
   state.documents = await api("/documents");
   const ids = new Set(state.documents.map((doc) => doc.doc_id));
+
   if (!ids.has(state.selectedDocId)) {
     const firstReady = state.documents.find((doc) => doc.status === "ready");
     state.selectedDocId = (firstReady || state.documents[0] || {}).doc_id || null;
-    if (previousSelected && previousSelected !== state.selectedDocId) {
-      resetQAView();
-    }
+    if (previousSelected && previousSelected !== state.selectedDocId) resetQAView();
   }
+
   updateLibraryStats();
   renderDocuments();
   renderActiveDocument();
@@ -206,12 +221,17 @@ async function loadDocuments() {
 
 function renderDocuments() {
   updateLibraryStats();
+  const docs = filteredDocuments();
   if (!state.documents.length) {
     els.docList.innerHTML = `<div class="empty-state">No PDFs uploaded yet.</div>`;
     return;
   }
+  if (!docs.length) {
+    els.docList.innerHTML = `<div class="empty-state">No documents match the current filter.</div>`;
+    return;
+  }
 
-  els.docList.innerHTML = state.documents
+  els.docList.innerHTML = docs
     .map((doc) => {
       const active = doc.doc_id === state.selectedDocId ? " active" : "";
       const docUrl = buildPageUrl(doc, 1) || "#";
@@ -222,7 +242,7 @@ function renderDocuments() {
           <div class="doc-card-head">
             <div>
               <button class="doc-title-button" type="button" data-select-doc="${escapeHtml(doc.doc_id)}">${escapeHtml(doc.filename)}</button>
-              <div class="doc-secondary">${escapeHtml(toLabel(doc.document_type))} · ${escapeHtml(String(doc.page_count || 0))} pages</div>
+              <div class="doc-secondary">${escapeHtml(toLabel(doc.document_type))} - ${escapeHtml(String(doc.page_count || 0))} pages</div>
             </div>
             <span class="status-chip ${statusTone(doc.status)}">${escapeHtml(formatStatus(doc.status))}</span>
           </div>
@@ -237,14 +257,14 @@ function renderDocuments() {
 
           ${
             doc.last_error
-              ? `<div class="status-line">${escapeHtml(doc.last_error)}</div>`
+              ? `<div class="status-line" data-tone="danger">${escapeHtml(doc.last_error)}</div>`
               : warnings.length
-                ? `<div class="status-line">${escapeHtml(warnings.join(" "))}</div>`
+                ? `<div class="status-line" data-tone="warn">${escapeHtml(warnings.join(" "))}</div>`
                 : `<div class="status-line">Indexed ${escapeHtml(formatDate(doc.indexed_at || doc.created_at))}</div>`
           }
 
           <div class="card-actions">
-            <button class="secondary-button" type="button" data-chat-doc="${escapeHtml(doc.doc_id)}" ${ready ? "" : "disabled"}>Open chat</button>
+            <button class="secondary-button" type="button" data-chat-doc="${escapeHtml(doc.doc_id)}" ${ready ? "" : "disabled"}>Chat</button>
             <a class="ghost-button" href="${escapeHtml(docUrl)}" target="_blank" rel="noreferrer">Open PDF</a>
             <button class="ghost-button" type="button" data-reindex-doc="${escapeHtml(doc.doc_id)}">Re-index</button>
             <button class="danger-button" type="button" data-delete-doc="${escapeHtml(doc.doc_id)}">Delete</button>
@@ -255,23 +275,54 @@ function renderDocuments() {
     .join("");
 }
 
+function renderQuestionTemplates(doc) {
+  if (!doc || doc.status !== "ready") {
+    els.questionTemplates.innerHTML = "";
+    return;
+  }
+
+  const type = String(doc.document_type || "").toLowerCase();
+  const base = [
+    "What is the main conclusion?",
+    "Summarize the key evidence.",
+    "Which page supports this answer?",
+  ];
+  const table = [
+    "What values are shown in the table?",
+    "Compare the rows in the table.",
+  ];
+  const prompts = type.includes("table") ? [...table, ...base.slice(0, 1)] : base;
+
+  els.questionTemplates.innerHTML = prompts
+    .slice(0, 3)
+    .map((prompt) => `<button class="question-chip" type="button" data-question-template="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>`)
+    .join("");
+}
+
 function renderActiveDocument() {
   const doc = selectedDocument();
   const canAsk = Boolean(doc && doc.status === "ready" && !state.asking);
   els.questionInput.disabled = !canAsk;
   els.askButton.disabled = !canAsk;
+  els.askButtonLabel.textContent = state.asking ? "Working..." : "Ask grounded";
 
   if (!doc) {
     els.activeDocName.textContent = "No document selected";
     els.activeDocMeta.textContent = "Choose a ready PDF to start grounded QA.";
+    els.selectedDocStatus.textContent = "No document";
+    els.selectedDocStatus.className = "status-chip";
     els.questionInput.placeholder = "Ask a question about the selected PDF";
+    renderQuestionTemplates(null);
     return;
   }
 
   els.activeDocName.textContent = doc.filename;
-  els.activeDocMeta.textContent = `${toLabel(doc.document_type)} · ${doc.page_count || 0} pages · ${formatStatus(doc.status)}`;
+  els.activeDocMeta.textContent = `${toLabel(doc.document_type)} - ${doc.page_count || 0} pages - ${formatStatus(doc.status)}`;
+  els.selectedDocStatus.textContent = formatStatus(doc.status);
+  els.selectedDocStatus.className = `status-chip ${statusTone(doc.status)}`;
   els.questionInput.placeholder =
     doc.status === "ready" ? `Ask a question about ${doc.filename}` : "Wait until indexing is complete";
+  renderQuestionTemplates(doc);
 }
 
 function renderAnswerBadges(result, citationCount) {
@@ -292,28 +343,21 @@ function renderAnswerBadges(result, citationCount) {
   if (citationCount > 0) {
     badges.push(`<span class="badge neutral">${escapeHtml(String(citationCount))} source${citationCount === 1 ? "" : "s"}</span>`);
   }
-
-  if (fallbackUsed) {
-    badges.push(`<span class="badge info">Enhanced reasoning</span>`);
-  }
-
-  if (result?.explanation) {
-    badges.push(`<span class="badge neutral">LLM explanation</span>`);
-  }
-
+  if (fallbackUsed) badges.push(`<span class="badge info">Fallback</span>`);
+  if (result?.explanation) badges.push(`<span class="badge neutral">Explanation</span>`);
   return badges.join("");
 }
 
 function buildAnswerNote(result, citationCount) {
   const routeAction = String(result?.route_action || "");
   if (routeAction === "abstain") {
-    return "The current evidence is not sufficient to support a confident answer. Review the source panel or upload a more relevant document.";
+    return "The current evidence is not sufficient for a supported answer.";
   }
   if (!result?.grounded) {
     return "Related evidence was found, but the answer should be reviewed against the cited passages.";
   }
   if (citationCount === 0) {
-    return "The answer is grounded, but no explicit citation card was emitted. Review the retrieved evidence.";
+    return "The answer is marked grounded, but no explicit citation card was returned.";
   }
   return `Grounded answer backed by ${citationCount} cited source${citationCount === 1 ? "" : "s"}.`;
 }
@@ -350,7 +394,7 @@ function renderCitationList(rows) {
       const citation = row.citation || {};
       const hit = row.hit || {};
       const page = citation.page || hit.page || "n/a";
-      const pageUrl = buildPageUrl(doc, page === "n/a" ? null : page);
+      const pageUrl = buildPageUrl(doc, page);
       const section = citation.section || hit.section || "No section";
       const blockType = hit.block_type || citation.block_type || "chunk";
       const score = pickScore(hit);
@@ -368,7 +412,7 @@ function renderCitationList(rows) {
 
           <div class="meta-row">
             <span class="meta-pill">${escapeHtml(toLabel(blockType))}</span>
-            <span class="meta-pill">${row.citationKind === "citation" ? "Cited evidence" : "Top retrieved chunk"}</span>
+            <span class="meta-pill">${row.citationKind === "citation" ? "Cited" : "Retrieved"}</span>
             <span class="meta-pill dev-only">${escapeHtml(hit.chunk_id || citation.chunk_id || "n/a")}</span>
           </div>
 
@@ -392,7 +436,7 @@ function renderSourceViewer(row) {
   if (!row) {
     els.sourceViewer.innerHTML = `
       <div class="empty-state">
-        Select a source card to inspect the cited snippet, page number, and source actions.
+        Select an evidence card to inspect the cited snippet, page number, and source actions.
       </div>
     `;
     return;
@@ -406,7 +450,7 @@ function renderSourceViewer(row) {
   const blockType = hit.block_type || citation.block_type || "chunk";
   const chunkId = hit.chunk_id || citation.chunk_id || "n/a";
   const snippet = hit.text || hit.snippet || citation.snippet || "No snippet available.";
-  const pageUrl = buildPageUrl(doc, page === "n/a" ? null : page);
+  const pageUrl = buildPageUrl(doc, page);
   const docUrl = doc?.pdf_url || null;
   const score = pickScore(hit);
 
@@ -427,16 +471,8 @@ function renderSourceViewer(row) {
     <div class="source-snippet">${escapeHtml(snippet)}</div>
 
     <div class="source-actions">
-      ${
-        pageUrl
-          ? `<a class="primary-button" href="${escapeHtml(pageUrl)}" target="_blank" rel="noreferrer">Open page</a>`
-          : ""
-      }
-      ${
-        docUrl
-          ? `<a class="ghost-button" href="${escapeHtml(docUrl)}" target="_blank" rel="noreferrer">Open document</a>`
-          : ""
-      }
+      ${pageUrl ? `<a class="primary-button" href="${escapeHtml(pageUrl)}" target="_blank" rel="noreferrer">Open page</a>` : ""}
+      ${docUrl ? `<a class="ghost-button" href="${escapeHtml(docUrl)}" target="_blank" rel="noreferrer">Open document</a>` : ""}
     </div>
   `;
 
@@ -478,8 +514,6 @@ function renderDeveloperPanel(payload) {
     ["Provider", fallback.provider_name || "n/a"],
     ["Explanation called", String(Boolean(explanation.called))],
     ["Explanation used", String(Boolean(explanation.used))],
-    ["Explanation provider", explanation.provider || "n/a"],
-    ["Override confidence", fallback.override_confidence ?? fallback.confidence ?? "n/a"],
     ["Evidence sufficiency", evidence.sufficiency ?? "n/a"],
   ];
 
@@ -543,11 +577,12 @@ function resetQAView() {
   state.activeCitationIndex = 0;
   els.answerBadges.innerHTML = "";
   els.answerText.textContent = "Choose a ready document and ask a question.";
-  els.answerNote.textContent = "The answer card highlights groundedness first. Developer traces stay behind the toggle.";
+  els.answerNote.textContent = "Answers are shown with cited evidence when retrieval finds enough support.";
   els.answerExplanation.hidden = true;
   els.answerExplanation.textContent = "";
+  els.copyAnswer.disabled = true;
   els.citationCount.textContent = "0";
-  els.citationList.innerHTML = `<div class="empty-state">No sources yet.</div>`;
+  els.citationList.innerHTML = `<div class="empty-state">No evidence yet.</div>`;
   renderSourceViewer(null);
   renderDeveloperPanel(null);
 }
@@ -570,16 +605,19 @@ function renderAnswer(payload, options = {}) {
   els.answerText.textContent = result.answer || "No answer available.";
   els.answerBadges.innerHTML = renderAnswerBadges(result, rows.length);
   els.answerNote.textContent = buildAnswerNote(result, rows.length);
+  els.copyAnswer.disabled = !result.answer;
+
   if (result.explanation) {
     els.answerExplanation.hidden = false;
     els.answerExplanation.innerHTML = `
-      <div class="explanation-title">Easy explanation</div>
+      <div class="explanation-title">Explanation</div>
       <div class="explanation-copy">${escapeHtml(result.explanation)}</div>
     `;
   } else {
     els.answerExplanation.hidden = true;
     els.answerExplanation.textContent = "";
   }
+
   renderCitationList(rows);
   renderSourceViewer(rows[state.activeCitationIndex] || null);
   renderDeveloperPanel(payload);
@@ -591,9 +629,10 @@ function renderErrorAnswer(message) {
   state.activeCitationIndex = 0;
   els.answerBadges.innerHTML = `<span class="badge danger">Request failed</span>`;
   els.answerText.textContent = `Error: ${message}`;
-  els.answerNote.textContent = "The system could not complete the request. Check the API state and document status.";
+  els.answerNote.textContent = "The request could not be completed. Check API health and document status.";
   els.answerExplanation.hidden = true;
   els.answerExplanation.textContent = "";
+  els.copyAnswer.disabled = true;
   els.citationCount.textContent = "0";
   els.citationList.innerHTML = `<div class="empty-state">${escapeHtml(message)}</div>`;
   renderSourceViewer(null);
@@ -601,13 +640,16 @@ function renderErrorAnswer(message) {
 }
 
 function focusQuestionInput() {
-  if (!els.questionInput.disabled) {
-    els.questionInput.focus();
-  }
+  if (!els.questionInput.disabled) els.questionInput.focus();
 }
 
 els.developerModeToggle.addEventListener("change", () => {
   setDeveloperMode(els.developerModeToggle.checked);
+});
+
+els.docSearch.addEventListener("input", () => {
+  state.docFilter = els.docSearch.value;
+  renderDocuments();
 });
 
 els.pdfFile.addEventListener("change", () => {
@@ -631,6 +673,10 @@ els.pdfFile.addEventListener("change", () => {
 els.uploadDropzone.addEventListener("drop", (event) => {
   const file = event.dataTransfer?.files?.[0];
   if (!file) return;
+  if (file.type && file.type !== "application/pdf") {
+    setUploadStatus("Only PDF files are supported.", "warn");
+    return;
+  }
   setPendingFile(file);
 });
 
@@ -648,6 +694,7 @@ els.uploadForm.addEventListener("submit", async (event) => {
 
   state.uploading = true;
   setUploadStatus("Indexing document...", "info");
+  els.uploadButtonLabel.textContent = "Indexing...";
   els.uploadForm.querySelector("button[type='submit']").disabled = true;
 
   try {
@@ -668,6 +715,7 @@ els.uploadForm.addEventListener("submit", async (event) => {
     setUploadStatus(`Upload failed: ${error.message}`, "danger");
   } finally {
     state.uploading = false;
+    els.uploadButtonLabel.textContent = "Upload and index";
     els.uploadForm.querySelector("button[type='submit']").disabled = false;
   }
 });
@@ -688,7 +736,8 @@ els.docList.addEventListener("click", async (event) => {
   const reindexButton = event.target.closest("[data-reindex-doc]");
 
   if (selectButton || chatButton) {
-    const docId = (selectButton || chatButton).dataset.selectDoc || (selectButton || chatButton).dataset.chatDoc;
+    const button = selectButton || chatButton;
+    const docId = button.dataset.selectDoc || button.dataset.chatDoc;
     if (docId !== state.selectedDocId) {
       state.selectedDocId = docId;
       resetQAView();
@@ -722,13 +771,40 @@ els.docList.addEventListener("click", async (event) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ build_dense: doc?.index_mode === "hybrid" }),
       });
-      if (state.selectedDocId === docId) {
-        resetQAView();
-      }
+      if (state.selectedDocId === docId) resetQAView();
       await loadDocuments();
     } finally {
       reindexButton.disabled = false;
     }
+  }
+});
+
+els.questionTemplates.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-question-template]");
+  if (!button) return;
+  els.questionInput.value = button.dataset.questionTemplate;
+  focusQuestionInput();
+});
+
+els.clearQuestion.addEventListener("click", () => {
+  els.questionInput.value = "";
+  focusQuestionInput();
+});
+
+els.copyAnswer.addEventListener("click", async () => {
+  const text = els.answerText.textContent.trim();
+  if (!text || text.startsWith("Choose a ready document")) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    els.copyAnswer.textContent = "Copied";
+    window.setTimeout(() => {
+      els.copyAnswer.textContent = "Copy";
+    }, 1200);
+  } catch {
+    els.copyAnswer.textContent = "Copy failed";
+    window.setTimeout(() => {
+      els.copyAnswer.textContent = "Copy";
+    }, 1200);
   }
 });
 
@@ -742,11 +818,12 @@ els.askForm.addEventListener("submit", async (event) => {
   renderActiveDocument();
   els.answerBadges.innerHTML = `<span class="badge info">Retrieving evidence</span>`;
   els.answerText.textContent = "Retrieving evidence and building a grounded answer...";
-  els.answerNote.textContent = "This can take a little longer when fallback reasoning is triggered.";
+  els.answerNote.textContent = "This can take longer when fallback reasoning is triggered.";
   els.answerExplanation.hidden = true;
   els.answerExplanation.textContent = "";
+  els.copyAnswer.disabled = true;
   els.citationCount.textContent = "0";
-  els.citationList.innerHTML = `<div class="empty-state">Waiting for citations...</div>`;
+  els.citationList.innerHTML = `<div class="empty-state">Waiting for evidence...</div>`;
   renderSourceViewer(null);
   renderDeveloperPanel(null);
 
