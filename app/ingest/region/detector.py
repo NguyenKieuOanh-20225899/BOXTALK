@@ -36,6 +36,7 @@ def detect_regions(page: fitz.Page) -> list[dict[str, Any]]:
         regions.append(
             {
                 "region_id": f"p{page.number:04d}_table_{table_index:04d}",
+                "type": "table",
                 "kind": "table",
                 "block_type": "table",
                 "bbox": bbox,
@@ -43,6 +44,7 @@ def detect_regions(page: fitz.Page) -> list[dict[str, Any]]:
                 "page_index": page.number,
                 "route_backend": "table",
                 "detection_source": "native_or_text_cluster",
+                "confidence": 1.0,
             }
         )
 
@@ -62,10 +64,12 @@ def detect_regions(page: fitz.Page) -> list[dict[str, Any]]:
         regions.append(
             {
                 **region,
+                "type": kind,
                 "kind": kind,
                 "block_type": block_type,
                 "route_backend": route_backend,
                 "detection_source": "pdf_text_block",
+                "confidence": 1.0,
             }
         )
 
@@ -95,15 +99,17 @@ def _detect_text_regions(page: fitz.Page) -> list[dict[str, Any]]:
         if _area(bbox) <= 0:
             continue
         regions.append(
-            {
-                "region_id": f"p{page.number:04d}_text_{idx:04d}",
-                "kind": "text",
-                "block_type": "paragraph",
-                "bbox": bbox,
-                "text": text,
-                "page_index": page.number,
-            }
-        )
+                {
+                    "region_id": f"p{page.number:04d}_text_{idx:04d}",
+                    "type": "text",
+                    "kind": "text",
+                    "block_type": "paragraph",
+                    "bbox": bbox,
+                    "text": text,
+                    "page_index": page.number,
+                    "confidence": 1.0,
+                }
+            )
     return regions
 
 
@@ -220,6 +226,7 @@ def _detect_image_regions(
             regions.append(
                 {
                     "region_id": f"p{page.number:04d}_image_{image_index:04d}_{rect_index:04d}",
+                    "type": "image",
                     "kind": "image",
                     "block_type": "figure",
                     "bbox": bbox,
@@ -228,6 +235,7 @@ def _detect_image_regions(
                     "route_backend": "ocr",
                     "image_area_ratio": _area(bbox) / page_area,
                     "detection_source": "pdf_image_rect",
+                    "confidence": 1.0,
                 }
             )
     return regions
@@ -265,6 +273,7 @@ def _detect_vector_figure_regions(
         regions.append(
             {
                 "region_id": f"p{page.number:04d}_vector_{drawing_index:04d}",
+                "type": "image",
                 "kind": "image",
                 "block_type": "figure",
                 "bbox": bbox,
@@ -274,6 +283,7 @@ def _detect_vector_figure_regions(
                 "has_text_regions": True,
                 "image_area_ratio": _area(bbox) / page_area,
                 "detection_source": "pdf_vector_drawing",
+                "confidence": 1.0,
             }
         )
     return regions

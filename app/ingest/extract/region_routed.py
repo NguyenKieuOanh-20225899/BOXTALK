@@ -88,11 +88,19 @@ def _extract_region(
 ) -> BlockNode | None:
     kind = str(region.get("kind") or "")
     bbox = tuple(region["bbox"])
+    detection_source = region.get("detection_source")
+    confidence = region.get("confidence")
     region_meta = {
         "backend": "region_routed",
         "region_id": region.get("region_id"),
+        "region_type": kind,
         "region_kind": kind,
-        "detection_source": region.get("detection_source"),
+        "region_bbox": bbox,
+        "page_number": page.number + 1,
+        "confidence": confidence,
+        "source": detection_source,
+        "detection_source": detection_source,
+        "fallback_used": False,
     }
 
     if kind == "table":
@@ -111,6 +119,7 @@ def _extract_region(
             return block
 
         region_meta["table_route_fallback"] = "text_region"
+        region_meta["fallback_used"] = True
 
     if kind in {"text", "paragraph", "heading", "list_item", "caption", "metadata", "header", "footer", "table"}:
         block_type_hint = str(region.get("block_type") or kind).strip().lower()
