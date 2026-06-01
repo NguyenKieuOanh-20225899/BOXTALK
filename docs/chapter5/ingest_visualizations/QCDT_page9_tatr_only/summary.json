@@ -1,0 +1,1438 @@
+{
+  "pdf": "data\\real_pdfs\\QCDT_2025_5445_QD-DHBK.pdf",
+  "page": 9,
+  "mode": "tatr_only_geometry_no_text_boxes",
+  "table_region_count": 2,
+  "tables": [
+    {
+      "table_index": 1,
+      "page": 9,
+      "bbox": [
+        122.10000356038411,
+        294.60996500651044,
+        488.1800003051758,
+        334.2899856567383
+      ],
+      "crop_path": "docs\\chapter5\\ingest_visualizations\\QCDT_page9_tatr_only\\crops\\page9_table1.png",
+      "backend": "tatr",
+      "text_source": "none",
+      "warnings": [
+        "No text boxes supplied; TATR output is geometry-only."
+      ],
+      "detected_table_count": 1,
+      "cell_count": 10,
+      "row_count": 2,
+      "col_count": 5,
+      "non_empty_cell_count": 0,
+      "tatr_rows": [
+        {
+          "label": "table row",
+          "bbox": [
+            14.239882469177246,
+            5.343680381774902,
+            696.645751953125,
+            38.6670560836792
+          ],
+          "score": 0.9999299049377441
+        },
+        {
+          "label": "table row",
+          "bbox": [
+            14.239882469177246,
+            38.32014751434326,
+            696.645751953125,
+            66.4848051071167
+          ],
+          "score": 0.9993962049484253
+        }
+      ],
+      "tatr_columns": [
+        {
+          "label": "table column",
+          "bbox": [
+            14.239882469177246,
+            5.343680381774902,
+            358.194411277771,
+            66.49801635742188
+          ],
+          "score": 0.999875545501709
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            360.7118673324585,
+            5.343680381774902,
+            438.9672689437866,
+            66.49801635742188
+          ],
+          "score": 0.9999841451644897
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            438.11866664886475,
+            5.343680381774902,
+            527.415602684021,
+            66.49801635742188
+          ],
+          "score": 0.9999778270721436
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            527.9110860824585,
+            5.343680381774902,
+            630.179030418396,
+            66.49801635742188
+          ],
+          "score": 0.9999860525131226
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            630.6640157699585,
+            5.343680381774902,
+            696.645751953125,
+            66.49801635742188
+          ],
+          "score": 0.9999501705169678
+        }
+      ],
+      "tatr_spanning_cells": [],
+      "table_cells": [
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            14.239882469177246,
+            5.343680381774902,
+            358.194411277771,
+            38.6670560836792
+          ],
+          "text": "",
+          "confidence": 0.9999027252197266,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            14.239882469177246,
+            5.343680381774902,
+            358.194411277771,
+            38.6670560836792
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            360.7118673324585,
+            5.343680381774902,
+            438.9672689437866,
+            38.6670560836792
+          ],
+          "text": "",
+          "confidence": 0.9999570250511169,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            360.7118673324585,
+            5.343680381774902,
+            438.9672689437866,
+            38.6670560836792
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            438.11866664886475,
+            5.343680381774902,
+            527.415602684021,
+            38.6670560836792
+          ],
+          "text": "",
+          "confidence": 0.9999538660049438,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            438.11866664886475,
+            5.343680381774902,
+            527.415602684021,
+            38.6670560836792
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            527.9110860824585,
+            5.343680381774902,
+            630.179030418396,
+            38.6670560836792
+          ],
+          "text": "",
+          "confidence": 0.9999579787254333,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            527.9110860824585,
+            5.343680381774902,
+            630.179030418396,
+            38.6670560836792
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            630.6640157699585,
+            5.343680381774902,
+            696.645751953125,
+            38.6670560836792
+          ],
+          "text": "",
+          "confidence": 0.999940037727356,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            630.6640157699585,
+            5.343680381774902,
+            696.645751953125,
+            38.6670560836792
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            14.239882469177246,
+            38.32014751434326,
+            358.194411277771,
+            66.4848051071167
+          ],
+          "text": "",
+          "confidence": 0.9996358752250671,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            14.239882469177246,
+            38.32014751434326,
+            358.194411277771,
+            66.4848051071167
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            360.7118673324585,
+            38.32014751434326,
+            438.9672689437866,
+            66.4848051071167
+          ],
+          "text": "",
+          "confidence": 0.9996901750564575,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            360.7118673324585,
+            38.32014751434326,
+            438.9672689437866,
+            66.4848051071167
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 1
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            438.11866664886475,
+            38.32014751434326,
+            527.415602684021,
+            66.4848051071167
+          ],
+          "text": "",
+          "confidence": 0.9996870160102844,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            438.11866664886475,
+            38.32014751434326,
+            527.415602684021,
+            66.4848051071167
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            527.9110860824585,
+            38.32014751434326,
+            630.179030418396,
+            66.4848051071167
+          ],
+          "text": "",
+          "confidence": 0.9996911287307739,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            527.9110860824585,
+            38.32014751434326,
+            630.179030418396,
+            66.4848051071167
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 3
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            630.6640157699585,
+            38.32014751434326,
+            696.645751953125,
+            66.4848051071167
+          ],
+          "text": "",
+          "confidence": 0.9996731877326965,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            630.6640157699585,
+            38.32014751434326,
+            696.645751953125,
+            66.4848051071167
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 4
+        }
+      ],
+      "rows": [
+        [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    },
+    {
+      "table_index": 2,
+      "page": 9,
+      "bbox": [
+        88.76400089263916,
+        639.7981567382812,
+        521.175048828125,
+        717.6018343838779
+      ],
+      "crop_path": "docs\\chapter5\\ingest_visualizations\\QCDT_page9_tatr_only\\crops\\page9_table2.png",
+      "backend": "tatr",
+      "text_source": "none",
+      "warnings": [
+        "No text boxes supplied; TATR output is geometry-only."
+      ],
+      "detected_table_count": 1,
+      "cell_count": 30,
+      "row_count": 3,
+      "col_count": 10,
+      "non_empty_cell_count": 0,
+      "tatr_rows": [
+        {
+          "label": "table row",
+          "bbox": [
+            6.123863220214844,
+            2.3932576179504395,
+            856.4207763671875,
+            68.14661455154419
+          ],
+          "score": 0.990399181842804
+        },
+        {
+          "label": "table row",
+          "bbox": [
+            6.123863220214844,
+            68.11927843093872,
+            856.4207763671875,
+            110.72906541824341
+          ],
+          "score": 0.9994581341743469
+        },
+        {
+          "label": "table row",
+          "bbox": [
+            6.123863220214844,
+            111.28121995925903,
+            856.4207763671875,
+            147.77586364746094
+          ],
+          "score": 0.9995985627174377
+        }
+      ],
+      "tatr_columns": [
+        {
+          "label": "table column",
+          "bbox": [
+            6.123863220214844,
+            2.3932576179504395,
+            244.23722076416016,
+            147.77586364746094
+          ],
+          "score": 0.9999010562896729
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            247.33165740966797,
+            2.3932576179504395,
+            335.8517074584961,
+            147.77586364746094
+          ],
+          "score": 0.9999092817306519
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            338.17122650146484,
+            2.3932576179504395,
+            403.0189437866211,
+            147.77586364746094
+          ],
+          "score": 0.9998770952224731
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            403.4359359741211,
+            2.3932576179504395,
+            469.7590866088867,
+            147.77586364746094
+          ],
+          "score": 0.9999557733535767
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            470.12596893310547,
+            2.3932576179504395,
+            539.5786361694336,
+            147.77586364746094
+          ],
+          "score": 0.9999794960021973
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            544.7714462280273,
+            2.3932576179504395,
+            611.6051864624023,
+            147.77586364746094
+          ],
+          "score": 0.9986697435379028
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            612.8780136108398,
+            2.3932576179504395,
+            673.3033065795898,
+            147.77586364746094
+          ],
+          "score": 0.9997928738594055
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            672.8954086303711,
+            2.3932576179504395,
+            734.8002548217773,
+            147.77586364746094
+          ],
+          "score": 0.9998807907104492
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            737.4765243530273,
+            2.3932576179504395,
+            801.3130111694336,
+            147.77586364746094
+          ],
+          "score": 0.9989622831344604
+        },
+        {
+          "label": "table column",
+          "bbox": [
+            799.9085922241211,
+            2.3932576179504395,
+            855.7259140014648,
+            147.77586364746094
+          ],
+          "score": 0.9998295307159424
+        }
+      ],
+      "tatr_spanning_cells": [],
+      "table_cells": [
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            6.123863220214844,
+            2.3932576179504395,
+            244.23722076416016,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951501190662384,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            6.123863220214844,
+            2.3932576179504395,
+            244.23722076416016,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            247.33165740966797,
+            2.3932576179504395,
+            335.8517074584961,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951542317867279,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            247.33165740966797,
+            2.3932576179504395,
+            335.8517074584961,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            338.17122650146484,
+            2.3932576179504395,
+            403.0189437866211,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951381385326385,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            338.17122650146484,
+            2.3932576179504395,
+            403.0189437866211,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            403.4359359741211,
+            2.3932576179504395,
+            469.7590866088867,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951774775981903,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            403.4359359741211,
+            2.3932576179504395,
+            469.7590866088867,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            470.12596893310547,
+            2.3932576179504395,
+            539.5786361694336,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951893389225006,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            470.12596893310547,
+            2.3932576179504395,
+            539.5786361694336,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            544.7714462280273,
+            2.3932576179504395,
+            611.6051864624023,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9945344626903534,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            544.7714462280273,
+            2.3932576179504395,
+            611.6051864624023,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            612.8780136108398,
+            2.3932576179504395,
+            673.3033065795898,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9950960278511047,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            612.8780136108398,
+            2.3932576179504395,
+            673.3033065795898,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            672.8954086303711,
+            2.3932576179504395,
+            734.8002548217773,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951399862766266,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            672.8954086303711,
+            2.3932576179504395,
+            734.8002548217773,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 7
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            737.4765243530273,
+            2.3932576179504395,
+            801.3130111694336,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9946807324886322,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            737.4765243530273,
+            2.3932576179504395,
+            801.3130111694336,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 8
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            799.9085922241211,
+            2.3932576179504395,
+            855.7259140014648,
+            68.14661455154419
+          ],
+          "text": "",
+          "confidence": 0.9951143562793732,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            799.9085922241211,
+            2.3932576179504395,
+            855.7259140014648,
+            68.14661455154419
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": true,
+          "metadata": {},
+          "row": 0,
+          "col": 9
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            6.123863220214844,
+            68.11927843093872,
+            244.23722076416016,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9996795952320099,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            6.123863220214844,
+            68.11927843093872,
+            244.23722076416016,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            247.33165740966797,
+            68.11927843093872,
+            335.8517074584961,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9996837079524994,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            247.33165740966797,
+            68.11927843093872,
+            335.8517074584961,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 1
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            338.17122650146484,
+            68.11927843093872,
+            403.0189437866211,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.99966761469841,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            338.17122650146484,
+            68.11927843093872,
+            403.0189437866211,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            403.4359359741211,
+            68.11927843093872,
+            469.7590866088867,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9997069537639618,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            403.4359359741211,
+            68.11927843093872,
+            469.7590866088867,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 3
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            470.12596893310547,
+            68.11927843093872,
+            539.5786361694336,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9997188150882721,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            470.12596893310547,
+            68.11927843093872,
+            539.5786361694336,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 4
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            544.7714462280273,
+            68.11927843093872,
+            611.6051864624023,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9990639388561249,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            544.7714462280273,
+            68.11927843093872,
+            611.6051864624023,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 5
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            612.8780136108398,
+            68.11927843093872,
+            673.3033065795898,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9996255040168762,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            612.8780136108398,
+            68.11927843093872,
+            673.3033065795898,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            672.8954086303711,
+            68.11927843093872,
+            734.8002548217773,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9996694624423981,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            672.8954086303711,
+            68.11927843093872,
+            734.8002548217773,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            737.4765243530273,
+            68.11927843093872,
+            801.3130111694336,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9992102086544037,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            737.4765243530273,
+            68.11927843093872,
+            801.3130111694336,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 8
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            799.9085922241211,
+            68.11927843093872,
+            855.7259140014648,
+            110.72906541824341
+          ],
+          "text": "",
+          "confidence": 0.9996438324451447,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            799.9085922241211,
+            68.11927843093872,
+            855.7259140014648,
+            110.72906541824341
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 1,
+          "col": 9
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            6.123863220214844,
+            111.28121995925903,
+            244.23722076416016,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997498095035553,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            6.123863220214844,
+            111.28121995925903,
+            244.23722076416016,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 0
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            247.33165740966797,
+            111.28121995925903,
+            335.8517074584961,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997539222240448,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            247.33165740966797,
+            111.28121995925903,
+            335.8517074584961,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 1
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            338.17122650146484,
+            111.28121995925903,
+            403.0189437866211,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997378289699554,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            338.17122650146484,
+            111.28121995925903,
+            403.0189437866211,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 2
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            403.4359359741211,
+            111.28121995925903,
+            469.7590866088867,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997771680355072,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            403.4359359741211,
+            111.28121995925903,
+            469.7590866088867,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 3
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            470.12596893310547,
+            111.28121995925903,
+            539.5786361694336,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997890293598175,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            470.12596893310547,
+            111.28121995925903,
+            539.5786361694336,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 4
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            544.7714462280273,
+            111.28121995925903,
+            611.6051864624023,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9991341531276703,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            544.7714462280273,
+            111.28121995925903,
+            611.6051864624023,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 5
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            612.8780136108398,
+            111.28121995925903,
+            673.3033065795898,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9996957182884216,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            612.8780136108398,
+            111.28121995925903,
+            673.3033065795898,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 6
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            672.8954086303711,
+            111.28121995925903,
+            734.8002548217773,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997396767139435,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            672.8954086303711,
+            111.28121995925903,
+            734.8002548217773,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 7
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            737.4765243530273,
+            111.28121995925903,
+            801.3130111694336,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9992804229259491,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            737.4765243530273,
+            111.28121995925903,
+            801.3130111694336,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 8
+        },
+        {
+          "row_span": 1,
+          "col_span": 1,
+          "bbox": [
+            799.9085922241211,
+            111.28121995925903,
+            855.7259140014648,
+            147.77586364746094
+          ],
+          "text": "",
+          "confidence": 0.9997140467166901,
+          "source_boxes": [],
+          "source_words": [],
+          "grid_bbox": [
+            799.9085922241211,
+            111.28121995925903,
+            855.7259140014648,
+            147.77586364746094
+          ],
+          "page": null,
+          "table_id": "tatr_table_0",
+          "row_header": null,
+          "col_header": null,
+          "is_header": false,
+          "metadata": {},
+          "row": 2,
+          "col": 9
+        }
+      ],
+      "rows": [
+        [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ]
+    }
+  ]
+}

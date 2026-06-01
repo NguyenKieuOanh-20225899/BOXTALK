@@ -1,0 +1,7154 @@
+{
+  "text": "Characteristic N %\nAll births 691 100\nAll scans 2,848 100\nInfant sex\nMale 354 51\nFemale 337 49\nMaternal age (years)\nLess than 20 58 8\n20-24 132 19\n25-29 210 30\n30-34 201 29\n35 or over 90 13\nBirth order\nFirst birth 308 45\nSecond birth 215 31\nThird birth 108 16\nFourth birth or more 60 9\nScans per gestation period\n14-17 weeks 147 5\n18-22 weeks 578 20\n23-27 weeks 561 20\n28-32 weeks 550 19\n33-39 weeks 991 34\n40-42 weeks 21 1\nScans per individual\n2-3 scans 190 28\n4-5 scans 459 66\n6-8 scans 42 6",
+  "ordered_text": [
+    "Characteristic N %",
+    "All births 691 100",
+    "All scans 2,848 100",
+    "Infant sex",
+    "Male 354 51",
+    "Female 337 49",
+    "Maternal age (years)",
+    "Less than 20 58 8",
+    "20-24 132 19",
+    "25-29 210 30",
+    "30-34 201 29",
+    "35 or over 90 13",
+    "Birth order",
+    "First birth 308 45",
+    "Second birth 215 31",
+    "Third birth 108 16",
+    "Fourth birth or more 60 9",
+    "Scans per gestation period",
+    "14-17 weeks 147 5",
+    "18-22 weeks 578 20",
+    "23-27 weeks 561 20",
+    "28-32 weeks 550 19",
+    "33-39 weeks 991 34",
+    "40-42 weeks 21 1",
+    "Scans per individual",
+    "2-3 scans 190 28",
+    "4-5 scans 459 66",
+    "6-8 scans 42 6"
+  ],
+  "layout_regions": [
+    {
+      "label": "table",
+      "bbox": [
+        37.047149658203125,
+        38.2120361328125,
+        332.12872314453125,
+        497.83843994140625
+      ],
+      "text": "Table",
+      "metadata": {
+        "score": 0.9999455213546753,
+        "model_label": "table",
+        "table_backend": "hybrid_tatr"
+      }
+    }
+  ],
+  "table_regions": [
+    {
+      "label": "table",
+      "bbox": [
+        37.047149658203125,
+        38.2120361328125,
+        332.12872314453125,
+        497.83843994140625
+      ],
+      "text": "Table",
+      "metadata": {
+        "score": 0.9999455213546753,
+        "model_label": "table",
+        "table_backend": "hybrid_tatr"
+      }
+    }
+  ],
+  "table_cells": [
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        38.2120361328125,
+        97.0,
+        50.0
+      ],
+      "text": "Characteristic",
+      "confidence": 0.9998990297317505,
+      "source_boxes": [
+        [
+          35.0,
+          36.0,
+          97.0,
+          50.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Characteristic",
+          "bbox": [
+            35.0,
+            36.0,
+            97.0,
+            50.0
+          ],
+          "confidence": 0.9777957797050476,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        38.2120361328125,
+        181.2843475341797,
+        51.540937423706055
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        216.0,
+        38.2120361328125,
+        230.0,
+        51.0
+      ],
+      "text": "N",
+      "confidence": 0.9997997581958771,
+      "source_boxes": [
+        [
+          216.0,
+          36.0,
+          230.0,
+          51.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "N",
+          "bbox": [
+            216.0,
+            36.0,
+            230.0,
+            51.0
+          ],
+          "confidence": 0.9999426603317261,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        38.2120361328125,
+        278.5091247558594,
+        51.540937423706055
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        38.2120361328125,
+        329.0,
+        50.0
+      ],
+      "text": "%",
+      "confidence": 0.9999163150787354,
+      "source_boxes": [
+        [
+          314.0,
+          36.0,
+          329.0,
+          50.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "%",
+          "bbox": [
+            314.0,
+            36.0,
+            329.0,
+            50.0
+          ],
+          "confidence": 0.9993866682052612,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        38.2120361328125,
+        332.002685546875,
+        51.540937423706055
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        51.490285873413086,
+        75.0,
+        67.83967018127441
+      ],
+      "text": "All births",
+      "confidence": 0.9998822808265686,
+      "source_boxes": [
+        [
+          33.0,
+          51.0,
+          45.6,
+          68.0
+        ],
+        [
+          49.8,
+          51.0,
+          75.0,
+          68.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "All",
+          "bbox": [
+            33.0,
+            51.0,
+            45.6,
+            68.0
+          ],
+          "confidence": 0.9249833822250366,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "births",
+          "bbox": [
+            49.8,
+            51.0,
+            75.0,
+            68.0
+          ],
+          "confidence": 0.9249833822250366,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        51.490285873413086,
+        181.2843475341797,
+        67.83967018127441
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        216.0,
+        53.0,
+        240.0,
+        67.83967018127441
+      ],
+      "text": "691",
+      "confidence": 0.9997830092906952,
+      "source_boxes": [
+        [
+          216.0,
+          53.0,
+          240.0,
+          68.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "691",
+          "bbox": [
+            216.0,
+            53.0,
+            240.0,
+            68.0
+          ],
+          "confidence": 0.9997051358222961,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        51.490285873413086,
+        278.5091247558594,
+        67.83967018127441
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        53.0,
+        332.002685546875,
+        67.0
+      ],
+      "text": "100",
+      "confidence": 0.9998995661735535,
+      "source_boxes": [
+        [
+          315.0,
+          53.0,
+          335.0,
+          67.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "100",
+          "bbox": [
+            315.0,
+            53.0,
+            335.0,
+            67.0
+          ],
+          "confidence": 0.9998582005500793,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        51.490285873413086,
+        332.002685546875,
+        67.83967018127441
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        68.0,
+        74.0,
+        84.28670501708984
+      ],
+      "text": "All scans",
+      "confidence": 0.9999160170555115,
+      "source_boxes": [
+        [
+          33.0,
+          68.0,
+          46.666666666666664,
+          85.0
+        ],
+        [
+          51.22222222222222,
+          68.0,
+          74.0,
+          85.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "All",
+          "bbox": [
+            33.0,
+            68.0,
+            46.666666666666664,
+            85.0
+          ],
+          "confidence": 0.9979785084724426,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "scans",
+          "bbox": [
+            51.22222222222222,
+            68.0,
+            74.0,
+            85.0
+          ],
+          "confidence": 0.9979785084724426,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        67.79977035522461,
+        181.2843475341797,
+        84.28670501708984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 2,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        70.0,
+        246.0,
+        84.0
+      ],
+      "text": "2,848",
+      "confidence": 0.9998167455196381,
+      "source_boxes": [
+        [
+          217.0,
+          70.0,
+          246.0,
+          84.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "2,848",
+          "bbox": [
+            217.0,
+            70.0,
+            246.0,
+            84.0
+          ],
+          "confidence": 0.9377763867378235,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        67.79977035522461,
+        278.5091247558594,
+        84.28670501708984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 2,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        313.0,
+        68.0,
+        332.002685546875,
+        84.0
+      ],
+      "text": "100",
+      "confidence": 0.9999333024024963,
+      "source_boxes": [
+        [
+          313.0,
+          68.0,
+          335.0,
+          84.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "100",
+          "bbox": [
+            313.0,
+            68.0,
+            335.0,
+            84.0
+          ],
+          "confidence": 0.9999529719352722,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        67.79977035522461,
+        332.002685546875,
+        84.28670501708984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 2,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        84.34910202026367,
+        78.0,
+        101.0
+      ],
+      "text": "Infant sex",
+      "confidence": 0.9999051094055176,
+      "source_boxes": [
+        [
+          33.0,
+          84.0,
+          60.0,
+          101.0
+        ],
+        [
+          64.5,
+          84.0,
+          78.0,
+          101.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Infant",
+          "bbox": [
+            33.0,
+            84.0,
+            60.0,
+            101.0
+          ],
+          "confidence": 0.9994121789932251,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "sex",
+          "bbox": [
+            64.5,
+            84.0,
+            78.0,
+            101.0
+          ],
+          "confidence": 0.9994121789932251,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        84.34910202026367,
+        181.2843475341797,
+        101.06182098388672
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 3,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        181.0237579345703,
+        84.34910202026367,
+        278.5091247558594,
+        101.06182098388672
+      ],
+      "text": "",
+      "confidence": 0.9998058378696442,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        181.0237579345703,
+        84.34910202026367,
+        278.5091247558594,
+        101.06182098388672
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 3,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        278.6486511230469,
+        84.34910202026367,
+        332.002685546875,
+        101.06182098388672
+      ],
+      "text": "",
+      "confidence": 0.9999223947525024,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        278.6486511230469,
+        84.34910202026367,
+        332.002685546875,
+        101.06182098388672
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 3,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        102.0,
+        59.0,
+        117.0
+      ],
+      "text": "Male",
+      "confidence": 0.9999104738235474,
+      "source_boxes": [
+        [
+          34.0,
+          102.0,
+          59.0,
+          117.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Male",
+          "bbox": [
+            34.0,
+            102.0,
+            59.0,
+            117.0
+          ],
+          "confidence": 0.9986396431922913,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        100.97951889038086,
+        181.2843475341797,
+        117.91682434082031
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        102.0,
+        240.0,
+        117.0
+      ],
+      "text": "354",
+      "confidence": 0.999811202287674,
+      "source_boxes": [
+        [
+          217.0,
+          102.0,
+          240.0,
+          117.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "354",
+          "bbox": [
+            217.0,
+            102.0,
+            240.0,
+            117.0
+          ],
+          "confidence": 0.9998317360877991,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        100.97951889038086,
+        278.5091247558594,
+        117.91682434082031
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        313.0,
+        101.0,
+        331.0,
+        117.91682434082031
+      ],
+      "text": "51",
+      "confidence": 0.9999277591705322,
+      "source_boxes": [
+        [
+          313.0,
+          101.0,
+          331.0,
+          118.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "51",
+          "bbox": [
+            313.0,
+            101.0,
+            331.0,
+            118.0
+          ],
+          "confidence": 0.99847012758255,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        100.97951889038086,
+        332.002685546875,
+        117.91682434082031
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        117.93279266357422,
+        69.0,
+        134.0
+      ],
+      "text": "Female",
+      "confidence": 0.9998835325241089,
+      "source_boxes": [
+        [
+          32.0,
+          117.0,
+          69.0,
+          134.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Female",
+          "bbox": [
+            32.0,
+            117.0,
+            69.0,
+            134.0
+          ],
+          "confidence": 0.9986230731010437,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        117.93279266357422,
+        181.2843475341797,
+        134.5865249633789
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        120.0,
+        238.0,
+        134.0
+      ],
+      "text": "337",
+      "confidence": 0.9997842609882355,
+      "source_boxes": [
+        [
+          218.0,
+          120.0,
+          238.0,
+          134.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "337",
+          "bbox": [
+            218.0,
+            120.0,
+            238.0,
+            134.0
+          ],
+          "confidence": 0.999849796295166,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        117.93279266357422,
+        278.5091247558594,
+        134.5865249633789
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        119.0,
+        330.0,
+        133.0
+      ],
+      "text": "49",
+      "confidence": 0.9999008178710938,
+      "source_boxes": [
+        [
+          314.0,
+          119.0,
+          330.0,
+          133.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "49",
+          "bbox": [
+            314.0,
+            119.0,
+            330.0,
+            133.0
+          ],
+          "confidence": 0.9991515278816223,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        117.93279266357422,
+        332.002685546875,
+        134.5865249633789
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        135.0,
+        120.0,
+        150.0
+      ],
+      "text": "Maternal age (years)",
+      "confidence": 0.9998429715633392,
+      "source_boxes": [
+        [
+          34.0,
+          135.0,
+          68.4,
+          150.0
+        ],
+        [
+          72.7,
+          135.0,
+          85.6,
+          150.0
+        ],
+        [
+          89.9,
+          135.0,
+          120.0,
+          150.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Maternal",
+          "bbox": [
+            34.0,
+            135.0,
+            68.4,
+            150.0
+          ],
+          "confidence": 0.9564477801322937,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "age",
+          "bbox": [
+            72.7,
+            135.0,
+            85.6,
+            150.0
+          ],
+          "confidence": 0.9564477801322937,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "(years)",
+          "bbox": [
+            89.9,
+            135.0,
+            120.0,
+            150.0
+          ],
+          "confidence": 0.9564477801322937,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        134.44213104248047,
+        181.2843475341797,
+        151.2042465209961
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        181.0237579345703,
+        134.44213104248047,
+        278.5091247558594,
+        151.2042465209961
+      ],
+      "text": "",
+      "confidence": 0.9997437000274658,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        181.0237579345703,
+        134.44213104248047,
+        278.5091247558594,
+        151.2042465209961
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        278.6486511230469,
+        134.44213104248047,
+        332.002685546875,
+        151.2042465209961
+      ],
+      "text": "",
+      "confidence": 0.9998602569103241,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        278.6486511230469,
+        134.44213104248047,
+        332.002685546875,
+        151.2042465209961
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        151.23004913330078,
+        89.0,
+        165.0
+      ],
+      "text": "Less than 20",
+      "confidence": 0.9998616278171539,
+      "source_boxes": [
+        [
+          34.0,
+          151.0,
+          52.33333333333333,
+          165.0
+        ],
+        [
+          56.91666666666667,
+          151.0,
+          75.25,
+          165.0
+        ],
+        [
+          79.83333333333334,
+          151.0,
+          89.0,
+          165.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Less",
+          "bbox": [
+            34.0,
+            151.0,
+            52.33333333333333,
+            165.0
+          ],
+          "confidence": 0.9989180564880371,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "than",
+          "bbox": [
+            56.91666666666667,
+            151.0,
+            75.25,
+            165.0
+          ],
+          "confidence": 0.9989180564880371,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "20",
+          "bbox": [
+            79.83333333333334,
+            151.0,
+            89.0,
+            165.0
+          ],
+          "confidence": 0.9989180564880371,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        151.23004913330078,
+        181.2843475341797,
+        167.89295959472656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        152.0,
+        233.0,
+        166.0
+      ],
+      "text": "58",
+      "confidence": 0.9997623562812805,
+      "source_boxes": [
+        [
+          218.0,
+          152.0,
+          233.0,
+          166.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "58",
+          "bbox": [
+            218.0,
+            152.0,
+            233.0,
+            166.0
+          ],
+          "confidence": 0.9998370409011841,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        151.23004913330078,
+        278.5091247558594,
+        167.89295959472656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        313.0,
+        152.0,
+        327.0,
+        166.0
+      ],
+      "text": "8",
+      "confidence": 0.9998789131641388,
+      "source_boxes": [
+        [
+          313.0,
+          152.0,
+          327.0,
+          166.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "8",
+          "bbox": [
+            313.0,
+            152.0,
+            327.0,
+            166.0
+          ],
+          "confidence": 0.9999310970306396,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        151.23004913330078,
+        332.002685546875,
+        167.89295959472656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        169.0,
+        65.0,
+        183.0
+      ],
+      "text": "20-24",
+      "confidence": 0.9998752772808075,
+      "source_boxes": [
+        [
+          34.0,
+          169.0,
+          65.0,
+          183.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "20-24",
+          "bbox": [
+            34.0,
+            169.0,
+            65.0,
+            183.0
+          ],
+          "confidence": 0.9972651600837708,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        167.8050994873047,
+        181.2843475341797,
+        184.3692169189453
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        169.0,
+        239.0,
+        184.0
+      ],
+      "text": "132",
+      "confidence": 0.9997760057449341,
+      "source_boxes": [
+        [
+          217.0,
+          169.0,
+          239.0,
+          184.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "132",
+          "bbox": [
+            217.0,
+            169.0,
+            239.0,
+            184.0
+          ],
+          "confidence": 0.9995328783988953,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        167.8050994873047,
+        278.5091247558594,
+        184.3692169189453
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        169.0,
+        330.0,
+        183.0
+      ],
+      "text": "19",
+      "confidence": 0.9998925626277924,
+      "source_boxes": [
+        [
+          315.0,
+          169.0,
+          330.0,
+          183.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "19",
+          "bbox": [
+            315.0,
+            169.0,
+            330.0,
+            183.0
+          ],
+          "confidence": 0.9996550679206848,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        167.8050994873047,
+        332.002685546875,
+        184.3692169189453
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        185.0,
+        66.0,
+        200.9253692626953
+      ],
+      "text": "25-29",
+      "confidence": 0.9998545944690704,
+      "source_boxes": [
+        [
+          34.0,
+          185.0,
+          66.0,
+          202.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "25-29",
+          "bbox": [
+            34.0,
+            185.0,
+            66.0,
+            202.0
+          ],
+          "confidence": 0.9988147616386414,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        184.35179138183594,
+        181.2843475341797,
+        200.9253692626953
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        185.0,
+        238.0,
+        200.9253692626953
+      ],
+      "text": "210",
+      "confidence": 0.999755322933197,
+      "source_boxes": [
+        [
+          217.0,
+          185.0,
+          238.0,
+          201.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "210",
+          "bbox": [
+            217.0,
+            185.0,
+            238.0,
+            201.0
+          ],
+          "confidence": 0.9998049139976501,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        184.35179138183594,
+        278.5091247558594,
+        200.9253692626953
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        186.0,
+        330.0,
+        200.0
+      ],
+      "text": "30",
+      "confidence": 0.9998718798160553,
+      "source_boxes": [
+        [
+          315.0,
+          186.0,
+          330.0,
+          200.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "30",
+          "bbox": [
+            315.0,
+            186.0,
+            330.0,
+            200.0
+          ],
+          "confidence": 0.999865710735321,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        184.35179138183594,
+        332.002685546875,
+        200.9253692626953
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        202.0,
+        65.0,
+        216.0
+      ],
+      "text": "30-34",
+      "confidence": 0.9998691976070404,
+      "source_boxes": [
+        [
+          34.0,
+          202.0,
+          65.0,
+          216.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "30-34",
+          "bbox": [
+            34.0,
+            202.0,
+            65.0,
+            216.0
+          ],
+          "confidence": 0.998149037361145,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        200.9317169189453,
+        181.2843475341797,
+        217.58387756347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        204.0,
+        236.0,
+        216.0
+      ],
+      "text": "201",
+      "confidence": 0.999769926071167,
+      "source_boxes": [
+        [
+          218.0,
+          204.0,
+          236.0,
+          216.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "201",
+          "bbox": [
+            218.0,
+            204.0,
+            236.0,
+            216.0
+          ],
+          "confidence": 0.9956052303314209,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        200.9317169189453,
+        278.5091247558594,
+        217.58387756347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        202.0,
+        330.0,
+        215.0
+      ],
+      "text": "29",
+      "confidence": 0.9998864829540253,
+      "source_boxes": [
+        [
+          315.0,
+          202.0,
+          330.0,
+          215.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "29",
+          "bbox": [
+            315.0,
+            202.0,
+            330.0,
+            215.0
+          ],
+          "confidence": 0.999830961227417,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        200.9317169189453,
+        332.002685546875,
+        217.58387756347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        220.0,
+        79.0,
+        231.0
+      ],
+      "text": "35 or over",
+      "confidence": 0.9999024271965027,
+      "source_boxes": [
+        [
+          36.0,
+          220.0,
+          44.6,
+          231.0
+        ],
+        [
+          48.9,
+          220.0,
+          57.5,
+          231.0
+        ],
+        [
+          61.8,
+          220.0,
+          79.0,
+          231.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "35",
+          "bbox": [
+            36.0,
+            220.0,
+            44.6,
+            231.0
+          ],
+          "confidence": 0.9865174293518066,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "or",
+          "bbox": [
+            48.9,
+            220.0,
+            57.5,
+            231.0
+          ],
+          "confidence": 0.9865174293518066,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "over",
+          "bbox": [
+            61.8,
+            220.0,
+            79.0,
+            231.0
+          ],
+          "confidence": 0.9865174293518066,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        217.6375274658203,
+        181.2843475341797,
+        234.27098083496094
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 11,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        219.0,
+        233.0,
+        232.0
+      ],
+      "text": "90",
+      "confidence": 0.9998031556606293,
+      "source_boxes": [
+        [
+          218.0,
+          219.0,
+          233.0,
+          232.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "90",
+          "bbox": [
+            218.0,
+            219.0,
+            233.0,
+            232.0
+          ],
+          "confidence": 0.862438440322876,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        217.6375274658203,
+        278.5091247558594,
+        234.27098083496094
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 11,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        218.0,
+        330.0,
+        232.0
+      ],
+      "text": "13",
+      "confidence": 0.9999197125434875,
+      "source_boxes": [
+        [
+          315.0,
+          218.0,
+          330.0,
+          232.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "13",
+          "bbox": [
+            315.0,
+            218.0,
+            330.0,
+            232.0
+          ],
+          "confidence": 0.9999037384986877,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        217.6375274658203,
+        332.002685546875,
+        234.27098083496094
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 11,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        235.0,
+        82.0,
+        249.0
+      ],
+      "text": "Birth order",
+      "confidence": 0.9999027252197266,
+      "source_boxes": [
+        [
+          35.0,
+          235.0,
+          56.36363636363636,
+          249.0
+        ],
+        [
+          60.63636363636363,
+          235.0,
+          82.0,
+          249.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Birth",
+          "bbox": [
+            35.0,
+            235.0,
+            56.36363636363636,
+            249.0
+          ],
+          "confidence": 0.9795289635658264,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "order",
+          "bbox": [
+            60.63636363636363,
+            235.0,
+            82.0,
+            249.0
+          ],
+          "confidence": 0.9795289635658264,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        234.40150451660156,
+        181.2843475341797,
+        251.1322784423828
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        181.0237579345703,
+        234.40150451660156,
+        278.5091247558594,
+        251.1322784423828
+      ],
+      "text": "",
+      "confidence": 0.9998034536838531,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        181.0237579345703,
+        234.40150451660156,
+        278.5091247558594,
+        251.1322784423828
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        278.6486511230469,
+        234.40150451660156,
+        332.002685546875,
+        251.1322784423828
+      ],
+      "text": "",
+      "confidence": 0.9999200105667114,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        278.6486511230469,
+        234.40150451660156,
+        332.002685546875,
+        251.1322784423828
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        252.0,
+        78.0,
+        266.0
+      ],
+      "text": "First birth",
+      "confidence": 0.9998586475849152,
+      "source_boxes": [
+        [
+          35.0,
+          252.0,
+          54.54545454545455,
+          266.0
+        ],
+        [
+          58.45454545454545,
+          252.0,
+          78.0,
+          266.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "First",
+          "bbox": [
+            35.0,
+            252.0,
+            54.54545454545455,
+            266.0
+          ],
+          "confidence": 0.9279832243919373,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "birth",
+          "bbox": [
+            58.45454545454545,
+            252.0,
+            78.0,
+            266.0
+          ],
+          "confidence": 0.9279832243919373,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        250.70343017578125,
+        181.2843475341797,
+        267.2192687988281
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        216.0,
+        252.0,
+        239.0,
+        267.0
+      ],
+      "text": "308",
+      "confidence": 0.9997593760490417,
+      "source_boxes": [
+        [
+          216.0,
+          252.0,
+          239.0,
+          267.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "308",
+          "bbox": [
+            216.0,
+            252.0,
+            239.0,
+            267.0
+          ],
+          "confidence": 0.9997116923332214,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        250.70343017578125,
+        278.5091247558594,
+        267.2192687988281
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        252.0,
+        330.0,
+        266.0
+      ],
+      "text": "45",
+      "confidence": 0.9998759329319,
+      "source_boxes": [
+        [
+          315.0,
+          252.0,
+          330.0,
+          266.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "45",
+          "bbox": [
+            315.0,
+            252.0,
+            330.0,
+            266.0
+          ],
+          "confidence": 0.999696671962738,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        250.70343017578125,
+        332.002685546875,
+        267.2192687988281
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        269.0,
+        91.0,
+        280.0
+      ],
+      "text": "Second birth",
+      "confidence": 0.9989093244075775,
+      "source_boxes": [
+        [
+          36.0,
+          269.0,
+          63.5,
+          280.0
+        ],
+        [
+          68.08333333333334,
+          269.0,
+          91.0,
+          280.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Second",
+          "bbox": [
+            36.0,
+            269.0,
+            63.5,
+            280.0
+          ],
+          "confidence": 0.9985719323158264,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "birth",
+          "bbox": [
+            68.08333333333334,
+            269.0,
+            91.0,
+            280.0
+          ],
+          "confidence": 0.9985719323158264,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        267.0728302001953,
+        181.2843475341797,
+        283.6789093017578
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        269.0,
+        238.0,
+        281.0
+      ],
+      "text": "215",
+      "confidence": 0.9988100528717041,
+      "source_boxes": [
+        [
+          217.0,
+          269.0,
+          238.0,
+          281.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "215",
+          "bbox": [
+            217.0,
+            269.0,
+            238.0,
+            281.0
+          ],
+          "confidence": 0.9999715685844421,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        267.0728302001953,
+        278.5091247558594,
+        283.6789093017578
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        311.0,
+        267.0728302001953,
+        332.002685546875,
+        283.6789093017578
+      ],
+      "text": "31",
+      "confidence": 0.9989266097545624,
+      "source_boxes": [
+        [
+          311.0,
+          265.0,
+          333.0,
+          285.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "31",
+          "bbox": [
+            311.0,
+            265.0,
+            333.0,
+            285.0
+          ],
+          "confidence": 0.9979475736618042,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        267.0728302001953,
+        332.002685546875,
+        283.6789093017578
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        286.0,
+        80.0,
+        297.0
+      ],
+      "text": "Third birth",
+      "confidence": 0.9993840754032135,
+      "source_boxes": [
+        [
+          36.0,
+          286.0,
+          56.0,
+          297.0
+        ],
+        [
+          60.0,
+          286.0,
+          80.0,
+          297.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Third",
+          "bbox": [
+            36.0,
+            286.0,
+            56.0,
+            297.0
+          ],
+          "confidence": 0.9995119571685791,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "birth",
+          "bbox": [
+            60.0,
+            286.0,
+            80.0,
+            297.0
+          ],
+          "confidence": 0.9995119571685791,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        283.6603240966797,
+        181.2843475341797,
+        300.3002624511719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        286.0,
+        238.0,
+        300.0
+      ],
+      "text": "108",
+      "confidence": 0.9992848038673401,
+      "source_boxes": [
+        [
+          218.0,
+          286.0,
+          238.0,
+          300.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "108",
+          "bbox": [
+            218.0,
+            286.0,
+            238.0,
+            300.0
+          ],
+          "confidence": 0.9999616742134094,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        283.6603240966797,
+        278.5091247558594,
+        300.3002624511719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        285.0,
+        330.0,
+        299.0
+      ],
+      "text": "16",
+      "confidence": 0.9994013607501984,
+      "source_boxes": [
+        [
+          314.0,
+          285.0,
+          330.0,
+          299.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "16",
+          "bbox": [
+            314.0,
+            285.0,
+            330.0,
+            299.0
+          ],
+          "confidence": 0.9999317526817322,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        283.6603240966797,
+        332.002685546875,
+        300.3002624511719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        302.0,
+        122.0,
+        315.0
+      ],
+      "text": "Fourth birth or more",
+      "confidence": 0.9999450445175171,
+      "source_boxes": [
+        [
+          35.0,
+          302.0,
+          61.099999999999994,
+          315.0
+        ],
+        [
+          65.45,
+          302.0,
+          87.19999999999999,
+          315.0
+        ],
+        [
+          91.55000000000001,
+          302.0,
+          100.25,
+          315.0
+        ],
+        [
+          104.60000000000001,
+          302.0,
+          122.0,
+          315.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Fourth",
+          "bbox": [
+            35.0,
+            302.0,
+            61.099999999999994,
+            315.0
+          ],
+          "confidence": 0.983070969581604,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "birth",
+          "bbox": [
+            65.45,
+            302.0,
+            87.19999999999999,
+            315.0
+          ],
+          "confidence": 0.983070969581604,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "or",
+          "bbox": [
+            91.55000000000001,
+            302.0,
+            100.25,
+            315.0
+          ],
+          "confidence": 0.983070969581604,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "more",
+          "bbox": [
+            104.60000000000001,
+            302.0,
+            122.0,
+            315.0
+          ],
+          "confidence": 0.983070969581604,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        300.0147705078125,
+        181.2843475341797,
+        316.6776428222656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        302.0,
+        233.0,
+        316.0
+      ],
+      "text": "60",
+      "confidence": 0.9998457729816437,
+      "source_boxes": [
+        [
+          218.0,
+          302.0,
+          233.0,
+          316.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "60",
+          "bbox": [
+            218.0,
+            302.0,
+            233.0,
+            316.0
+          ],
+          "confidence": 0.9993525147438049,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        300.0147705078125,
+        278.5091247558594,
+        316.6776428222656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        301.0,
+        328.0,
+        316.0
+      ],
+      "text": "9",
+      "confidence": 0.999962329864502,
+      "source_boxes": [
+        [
+          314.0,
+          301.0,
+          328.0,
+          316.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "9",
+          "bbox": [
+            314.0,
+            301.0,
+            328.0,
+            316.0
+          ],
+          "confidence": 0.9984261989593506,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        300.0147705078125,
+        332.002685546875,
+        316.6776428222656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        319.0,
+        146.0,
+        331.0
+      ],
+      "text": "Scans per gestation period",
+      "confidence": 0.9999389052391052,
+      "source_boxes": [
+        [
+          36.0,
+          319.0,
+          57.15384615384615,
+          331.0
+        ],
+        [
+          61.38461538461539,
+          319.0,
+          74.07692307692307,
+          331.0
+        ],
+        [
+          78.3076923076923,
+          319.0,
+          116.38461538461539,
+          331.0
+        ],
+        [
+          120.61538461538461,
+          319.0,
+          146.0,
+          331.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Scans",
+          "bbox": [
+            36.0,
+            319.0,
+            57.15384615384615,
+            331.0
+          ],
+          "confidence": 0.9961335062980652,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "per",
+          "bbox": [
+            61.38461538461539,
+            319.0,
+            74.07692307692307,
+            331.0
+          ],
+          "confidence": 0.9961335062980652,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "gestation",
+          "bbox": [
+            78.3076923076923,
+            319.0,
+            116.38461538461539,
+            331.0
+          ],
+          "confidence": 0.9961335062980652,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "period",
+          "bbox": [
+            120.61538461538461,
+            319.0,
+            146.0,
+            331.0
+          ],
+          "confidence": 0.9961335062980652,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        316.385498046875,
+        181.2843475341797,
+        333.0340881347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 17,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        181.0237579345703,
+        316.385498046875,
+        278.5091247558594,
+        333.0340881347656
+      ],
+      "text": "",
+      "confidence": 0.9998396337032318,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        181.0237579345703,
+        316.385498046875,
+        278.5091247558594,
+        333.0340881347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 17,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        278.6486511230469,
+        316.385498046875,
+        332.002685546875,
+        333.0340881347656
+      ],
+      "text": "",
+      "confidence": 0.9999561905860901,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        278.6486511230469,
+        316.385498046875,
+        332.002685546875,
+        333.0340881347656
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 17,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        334.0,
+        92.0,
+        348.0
+      ],
+      "text": "14-17 weeks",
+      "confidence": 0.999886155128479,
+      "source_boxes": [
+        [
+          36.0,
+          334.0,
+          61.45454545454545,
+          348.0
+        ],
+        [
+          66.54545454545455,
+          334.0,
+          92.0,
+          348.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "14-17",
+          "bbox": [
+            36.0,
+            334.0,
+            61.45454545454545,
+            348.0
+          ],
+          "confidence": 0.9967408776283264,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            66.54545454545455,
+            334.0,
+            92.0,
+            348.0
+          ],
+          "confidence": 0.9967408776283264,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        333.3292236328125,
+        181.2843475341797,
+        349.8839111328125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        334.0,
+        240.0,
+        349.0
+      ],
+      "text": "147",
+      "confidence": 0.9997868835926056,
+      "source_boxes": [
+        [
+          217.0,
+          334.0,
+          240.0,
+          349.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "147",
+          "bbox": [
+            217.0,
+            334.0,
+            240.0,
+            349.0
+          ],
+          "confidence": 0.9999327659606934,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        333.3292236328125,
+        278.5091247558594,
+        349.8839111328125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        334.0,
+        327.0,
+        348.0
+      ],
+      "text": "5",
+      "confidence": 0.9999034404754639,
+      "source_boxes": [
+        [
+          314.0,
+          334.0,
+          327.0,
+          348.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "5",
+          "bbox": [
+            314.0,
+            334.0,
+            327.0,
+            348.0
+          ],
+          "confidence": 0.9998427629470825,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        333.3292236328125,
+        332.002685546875,
+        349.8839111328125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        352.0,
+        90.0,
+        363.0
+      ],
+      "text": "18-22 weeks",
+      "confidence": 0.99986132979393,
+      "source_boxes": [
+        [
+          36.0,
+          352.0,
+          60.54545454545455,
+          363.0
+        ],
+        [
+          65.45454545454545,
+          352.0,
+          90.0,
+          363.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "18-22",
+          "bbox": [
+            36.0,
+            352.0,
+            60.54545454545455,
+            363.0
+          ],
+          "confidence": 0.9995059967041016,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            65.45454545454545,
+            352.0,
+            90.0,
+            363.0
+          ],
+          "confidence": 0.9995059967041016,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        350.1936340332031,
+        181.2843475341797,
+        366.6973876953125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        351.0,
+        239.0,
+        366.6973876953125
+      ],
+      "text": "578",
+      "confidence": 0.9997620582580566,
+      "source_boxes": [
+        [
+          217.0,
+          351.0,
+          239.0,
+          367.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "578",
+          "bbox": [
+            217.0,
+            351.0,
+            239.0,
+            367.0
+          ],
+          "confidence": 0.9998412132263184,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        350.1936340332031,
+        278.5091247558594,
+        366.6973876953125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        351.0,
+        330.0,
+        365.0
+      ],
+      "text": "20",
+      "confidence": 0.9998786151409149,
+      "source_boxes": [
+        [
+          315.0,
+          351.0,
+          330.0,
+          365.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "20",
+          "bbox": [
+            315.0,
+            351.0,
+            330.0,
+            365.0
+          ],
+          "confidence": 0.9999433159828186,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        350.1936340332031,
+        332.002685546875,
+        366.6973876953125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        368.0,
+        91.0,
+        382.0
+      ],
+      "text": "23-27 weeks",
+      "confidence": 0.9998695552349091,
+      "source_boxes": [
+        [
+          35.0,
+          368.0,
+          60.45454545454545,
+          382.0
+        ],
+        [
+          65.54545454545455,
+          368.0,
+          91.0,
+          382.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "23-27",
+          "bbox": [
+            35.0,
+            368.0,
+            60.45454545454545,
+            382.0
+          ],
+          "confidence": 0.9986944198608398,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            65.54545454545455,
+            368.0,
+            91.0,
+            382.0
+          ],
+          "confidence": 0.9986944198608398,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        366.71063232421875,
+        181.2843475341797,
+        383.2319030761719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        219.0,
+        369.0,
+        236.0,
+        382.0
+      ],
+      "text": "561",
+      "confidence": 0.9997702836990356,
+      "source_boxes": [
+        [
+          219.0,
+          369.0,
+          236.0,
+          382.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "561",
+          "bbox": [
+            219.0,
+            369.0,
+            236.0,
+            382.0
+          ],
+          "confidence": 0.9996151328086853,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        366.71063232421875,
+        278.5091247558594,
+        383.2319030761719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        316.0,
+        368.0,
+        330.0,
+        382.0
+      ],
+      "text": "20",
+      "confidence": 0.9998868405818939,
+      "source_boxes": [
+        [
+          316.0,
+          368.0,
+          330.0,
+          382.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "20",
+          "bbox": [
+            316.0,
+            368.0,
+            330.0,
+            382.0
+          ],
+          "confidence": 0.9987610578536987,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        366.71063232421875,
+        332.002685546875,
+        383.2319030761719
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        386.0,
+        90.0,
+        396.0
+      ],
+      "text": "28-32 weeks",
+      "confidence": 0.9999098777770996,
+      "source_boxes": [
+        [
+          36.0,
+          386.0,
+          60.54545454545455,
+          396.0
+        ],
+        [
+          65.45454545454545,
+          386.0,
+          90.0,
+          396.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "28-32",
+          "bbox": [
+            36.0,
+            386.0,
+            60.54545454545455,
+            396.0
+          ],
+          "confidence": 0.9989896416664124,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            65.45454545454545,
+            386.0,
+            90.0,
+            396.0
+          ],
+          "confidence": 0.9989896416664124,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        383.3409118652344,
+        181.2843475341797,
+        399.8936767578125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        384.0,
+        240.0,
+        399.0
+      ],
+      "text": "550",
+      "confidence": 0.9998106062412262,
+      "source_boxes": [
+        [
+          218.0,
+          384.0,
+          240.0,
+          399.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "550",
+          "bbox": [
+            218.0,
+            384.0,
+            240.0,
+            399.0
+          ],
+          "confidence": 0.9995932579040527,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        383.3409118652344,
+        278.5091247558594,
+        399.8936767578125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        316.0,
+        384.0,
+        330.0,
+        398.0
+      ],
+      "text": "19",
+      "confidence": 0.9999271631240845,
+      "source_boxes": [
+        [
+          316.0,
+          384.0,
+          330.0,
+          398.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "19",
+          "bbox": [
+            316.0,
+            384.0,
+            330.0,
+            398.0
+          ],
+          "confidence": 0.999727189540863,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        383.3409118652344,
+        332.002685546875,
+        399.8936767578125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        402.0,
+        91.0,
+        413.0
+      ],
+      "text": "33-39 weeks",
+      "confidence": 0.9998796582221985,
+      "source_boxes": [
+        [
+          37.0,
+          402.0,
+          61.54545454545455,
+          413.0
+        ],
+        [
+          66.45454545454545,
+          402.0,
+          91.0,
+          413.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "33-39",
+          "bbox": [
+            37.0,
+            402.0,
+            61.54545454545455,
+            413.0
+          ],
+          "confidence": 0.9991906881332397,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            66.45454545454545,
+            402.0,
+            91.0,
+            413.0
+          ],
+          "confidence": 0.9991906881332397,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        400.0089111328125,
+        181.2843475341797,
+        416.6031799316406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        400.0089111328125,
+        240.0,
+        416.0
+      ],
+      "text": "991",
+      "confidence": 0.9997803866863251,
+      "source_boxes": [
+        [
+          217.0,
+          400.0,
+          240.0,
+          416.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "991",
+          "bbox": [
+            217.0,
+            400.0,
+            240.0,
+            416.0
+          ],
+          "confidence": 0.9991747736930847,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        400.0089111328125,
+        278.5091247558594,
+        416.6031799316406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        313.0,
+        400.0089111328125,
+        331.0,
+        416.0
+      ],
+      "text": "34",
+      "confidence": 0.9998969435691833,
+      "source_boxes": [
+        [
+          313.0,
+          399.0,
+          331.0,
+          416.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "34",
+          "bbox": [
+            313.0,
+            399.0,
+            331.0,
+            416.0
+          ],
+          "confidence": 0.9999321103096008,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        400.0089111328125,
+        332.002685546875,
+        416.6031799316406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        419.0,
+        90.0,
+        430.0
+      ],
+      "text": "40-42 weeks",
+      "confidence": 0.9999100565910339,
+      "source_boxes": [
+        [
+          36.0,
+          419.0,
+          60.54545454545455,
+          430.0
+        ],
+        [
+          65.45454545454545,
+          419.0,
+          90.0,
+          430.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "40-42",
+          "bbox": [
+            36.0,
+            419.0,
+            60.54545454545455,
+            430.0
+          ],
+          "confidence": 0.9672389626502991,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "weeks",
+          "bbox": [
+            65.45454545454545,
+            419.0,
+            90.0,
+            430.0
+          ],
+          "confidence": 0.9672389626502991,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        416.6990661621094,
+        181.2843475341797,
+        433.35601806640625
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        418.0,
+        232.0,
+        432.0
+      ],
+      "text": "21",
+      "confidence": 0.9998107850551605,
+      "source_boxes": [
+        [
+          218.0,
+          418.0,
+          232.0,
+          432.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "21",
+          "bbox": [
+            218.0,
+            418.0,
+            232.0,
+            432.0
+          ],
+          "confidence": 0.9998356103897095,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        416.6990661621094,
+        278.5091247558594,
+        433.35601806640625
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        418.0,
+        327.0,
+        432.0
+      ],
+      "text": "1",
+      "confidence": 0.9999273419380188,
+      "source_boxes": [
+        [
+          315.0,
+          418.0,
+          327.0,
+          432.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "1",
+          "bbox": [
+            315.0,
+            418.0,
+            327.0,
+            432.0
+          ],
+          "confidence": 0.9967030882835388,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        416.6990661621094,
+        332.002685546875,
+        433.35601806640625
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        435.0,
+        119.0,
+        447.0
+      ],
+      "text": "Scans per individual",
+      "confidence": 0.9998911023139954,
+      "source_boxes": [
+        [
+          35.0,
+          435.0,
+          56.0,
+          447.0
+        ],
+        [
+          60.2,
+          435.0,
+          72.80000000000001,
+          447.0
+        ],
+        [
+          77.0,
+          435.0,
+          119.0,
+          447.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "Scans",
+          "bbox": [
+            35.0,
+            435.0,
+            56.0,
+            447.0
+          ],
+          "confidence": 0.9897621870040894,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "per",
+          "bbox": [
+            60.2,
+            435.0,
+            72.80000000000001,
+            447.0
+          ],
+          "confidence": 0.9897621870040894,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "individual",
+          "bbox": [
+            77.0,
+            435.0,
+            119.0,
+            447.0
+          ],
+          "confidence": 0.9897621870040894,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        433.27587890625,
+        181.2843475341797,
+        449.90673828125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 24,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        181.0237579345703,
+        433.27587890625,
+        278.5091247558594,
+        449.90673828125
+      ],
+      "text": "",
+      "confidence": 0.999791830778122,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        181.0237579345703,
+        433.27587890625,
+        278.5091247558594,
+        449.90673828125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 24,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        278.6486511230469,
+        433.27587890625,
+        332.002685546875,
+        449.90673828125
+      ],
+      "text": "",
+      "confidence": 0.9999083876609802,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        278.6486511230469,
+        433.27587890625,
+        332.002685546875,
+        449.90673828125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 24,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        450.0,
+        80.0,
+        464.0
+      ],
+      "text": "2-3 scans",
+      "confidence": 0.9999111890792847,
+      "source_boxes": [
+        [
+          35.0,
+          450.0,
+          50.0,
+          464.0
+        ],
+        [
+          55.0,
+          450.0,
+          80.0,
+          464.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "2-3",
+          "bbox": [
+            35.0,
+            450.0,
+            50.0,
+            464.0
+          ],
+          "confidence": 0.9457762241363525,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "scans",
+          "bbox": [
+            55.0,
+            450.0,
+            80.0,
+            464.0
+          ],
+          "confidence": 0.9457762241363525,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        449.7375793457031,
+        181.2843475341797,
+        466.3907470703125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        218.0,
+        449.7375793457031,
+        239.0,
+        465.0
+      ],
+      "text": "190",
+      "confidence": 0.9998119175434113,
+      "source_boxes": [
+        [
+          218.0,
+          449.0,
+          239.0,
+          465.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "190",
+          "bbox": [
+            218.0,
+            449.0,
+            239.0,
+            465.0
+          ],
+          "confidence": 0.9997923374176025,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        449.7375793457031,
+        278.5091247558594,
+        466.3907470703125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        315.0,
+        450.0,
+        330.0,
+        464.0
+      ],
+      "text": "28",
+      "confidence": 0.9999284744262695,
+      "source_boxes": [
+        [
+          315.0,
+          450.0,
+          330.0,
+          464.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "28",
+          "bbox": [
+            315.0,
+            450.0,
+            330.0,
+            464.0
+          ],
+          "confidence": 0.9999561309814453,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        449.7375793457031,
+        332.002685546875,
+        466.3907470703125
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        467.0,
+        79.0,
+        481.0
+      ],
+      "text": "4-5 scans",
+      "confidence": 0.9999494552612305,
+      "source_boxes": [
+        [
+          34.0,
+          467.0,
+          49.0,
+          481.0
+        ],
+        [
+          54.0,
+          467.0,
+          79.0,
+          481.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "4-5",
+          "bbox": [
+            34.0,
+            467.0,
+            49.0,
+            481.0
+          ],
+          "confidence": 0.9971573352813721,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "scans",
+          "bbox": [
+            54.0,
+            467.0,
+            79.0,
+            481.0
+          ],
+          "confidence": 0.9971573352813721,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        466.3066101074219,
+        181.2843475341797,
+        483.0963439941406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 26,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        217.0,
+        467.0,
+        239.0,
+        483.0
+      ],
+      "text": "459",
+      "confidence": 0.9998501837253571,
+      "source_boxes": [
+        [
+          217.0,
+          467.0,
+          239.0,
+          483.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "459",
+          "bbox": [
+            217.0,
+            467.0,
+            239.0,
+            483.0
+          ],
+          "confidence": 0.9994655251502991,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        466.3066101074219,
+        278.5091247558594,
+        483.0963439941406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 26,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        312.0,
+        466.3066101074219,
+        331.0,
+        482.0
+      ],
+      "text": "66",
+      "confidence": 0.9999667406082153,
+      "source_boxes": [
+        [
+          312.0,
+          466.0,
+          331.0,
+          482.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "66",
+          "bbox": [
+            312.0,
+            466.0,
+            331.0,
+            482.0
+          ],
+          "confidence": 0.9999052882194519,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        466.3066101074219,
+        332.002685546875,
+        483.0963439941406
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 26,
+      "col": 2
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        37.047149658203125,
+        484.0,
+        79.0,
+        497.4092102050781
+      ],
+      "text": "6-8 scans",
+      "confidence": 0.9999262094497681,
+      "source_boxes": [
+        [
+          35.0,
+          484.0,
+          49.666666666666664,
+          498.0
+        ],
+        [
+          54.55555555555556,
+          484.0,
+          79.0,
+          498.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "6-8",
+          "bbox": [
+            35.0,
+            484.0,
+            49.666666666666664,
+            498.0
+          ],
+          "confidence": 0.9494882225990295,
+          "source": "paddleocr_line_words"
+        },
+        {
+          "text": "scans",
+          "bbox": [
+            54.55555555555556,
+            484.0,
+            79.0,
+            498.0
+          ],
+          "confidence": 0.9494882225990295,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        37.047149658203125,
+        483.1357116699219,
+        181.2843475341797,
+        497.4092102050781
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        214.0,
+        484.0,
+        234.0,
+        497.4092102050781
+      ],
+      "text": "42",
+      "confidence": 0.9998269379138947,
+      "source_boxes": [
+        [
+          214.0,
+          484.0,
+          234.0,
+          500.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "42",
+          "bbox": [
+            214.0,
+            484.0,
+            234.0,
+            500.0
+          ],
+          "confidence": 0.9998555183410645,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        181.0237579345703,
+        483.1357116699219,
+        278.5091247558594,
+        497.4092102050781
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        314.0,
+        484.0,
+        327.0,
+        497.4092102050781
+      ],
+      "text": "6",
+      "confidence": 0.9999434947967529,
+      "source_boxes": [
+        [
+          314.0,
+          484.0,
+          327.0,
+          499.0
+        ]
+      ],
+      "source_words": [
+        {
+          "text": "6",
+          "bbox": [
+            314.0,
+            484.0,
+            327.0,
+            499.0
+          ],
+          "confidence": 0.9994375109672546,
+          "source": "paddleocr_line_words"
+        }
+      ],
+      "grid_bbox": [
+        278.6486511230469,
+        483.1357116699219,
+        332.002685546875,
+        497.4092102050781
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 2
+    }
+  ],
+  "table_html": "<table>\n  <tr><th>Characteristic</th><th>N</th><th>%</th></tr>\n  <tr><td>All births</td><td>691</td><td>100</td></tr>\n  <tr><td>All scans</td><td>2,848</td><td>100</td></tr>\n  <tr><td>Infant sex</td><td></td><td></td></tr>\n  <tr><td>Male</td><td>354</td><td>51</td></tr>\n  <tr><td>Female</td><td>337</td><td>49</td></tr>\n  <tr><td>Maternal age (years)</td><td></td><td></td></tr>\n  <tr><td>Less than 20</td><td>58</td><td>8</td></tr>\n  <tr><td>20-24</td><td>132</td><td>19</td></tr>\n  <tr><td>25-29</td><td>210</td><td>30</td></tr>\n  <tr><td>30-34</td><td>201</td><td>29</td></tr>\n  <tr><td>35 or over</td><td>90</td><td>13</td></tr>\n  <tr><td>Birth order</td><td></td><td></td></tr>\n  <tr><td>First birth</td><td>308</td><td>45</td></tr>\n  <tr><td>Second birth</td><td>215</td><td>31</td></tr>\n  <tr><td>Third birth</td><td>108</td><td>16</td></tr>\n  <tr><td>Fourth birth or more</td><td>60</td><td>9</td></tr>\n  <tr><td>Scans per gestation period</td><td></td><td></td></tr>\n  <tr><td>14-17 weeks</td><td>147</td><td>5</td></tr>\n  <tr><td>18-22 weeks</td><td>578</td><td>20</td></tr>\n  <tr><td>23-27 weeks</td><td>561</td><td>20</td></tr>\n  <tr><td>28-32 weeks</td><td>550</td><td>19</td></tr>\n  <tr><td>33-39 weeks</td><td>991</td><td>34</td></tr>\n  <tr><td>40-42 weeks</td><td>21</td><td>1</td></tr>\n  <tr><td>Scans per individual</td><td></td><td></td></tr>\n  <tr><td>2-3 scans</td><td>190</td><td>28</td></tr>\n  <tr><td>4-5 scans</td><td>459</td><td>66</td></tr>\n  <tr><td>6-8 scans</td><td>42</td><td>6</td></tr>\n</table>",
+  "table_csv": "Characteristic,N,%\nAll births,691,100\nAll scans,\"2,848\",100\nInfant sex,,\nMale,354,51\nFemale,337,49\nMaternal age (years),,\nLess than 20,58,8\n20-24,132,19\n25-29,210,30\n30-34,201,29\n35 or over,90,13\nBirth order,,\nFirst birth,308,45\nSecond birth,215,31\nThird birth,108,16\nFourth birth or more,60,9\nScans per gestation period,,\n14-17 weeks,147,5\n18-22 weeks,578,20\n23-27 weeks,561,20\n28-32 weeks,550,19\n33-39 weeks,991,34\n40-42 weeks,21,1\nScans per individual,,\n2-3 scans,190,28\n4-5 scans,459,66\n6-8 scans,42,6",
+  "backend": "hybrid_tatr",
+  "latency_sec": 40.20962380000856,
+  "success": true,
+  "error": null,
+  "metadata": {
+    "direct_component_benchmark": true,
+    "table_backend": "hybrid_tatr",
+    "source_model_name": {
+      "detection": "microsoft/table-transformer-detection",
+      "structure": "microsoft/table-transformer-structure-recognition-v1.1-all"
+    },
+    "spanning_cell_count": 0,
+    "text_source": "paddleocr_line_words",
+    "text_source_missing_count": 0,
+    "warnings": [],
+    "tatr_rows": [
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          38.2120361328125,
+          332.12872314453125,
+          51.540937423706055
+        ],
+        "score": 0.9998706579208374
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          51.490285873413086,
+          332.12872314453125,
+          67.83967018127441
+        ],
+        "score": 0.9998371601104736
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          67.79977035522461,
+          332.12872314453125,
+          84.28670501708984
+        ],
+        "score": 0.9999046325683594
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          84.34910202026367,
+          332.12872314453125,
+          101.06182098388672
+        ],
+        "score": 0.9998828172683716
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          100.97951889038086,
+          332.12872314453125,
+          117.91682434082031
+        ],
+        "score": 0.9998935461044312
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          117.93279266357422,
+          332.12872314453125,
+          134.5865249633789
+        ],
+        "score": 0.9998396635055542
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          134.44213104248047,
+          332.12872314453125,
+          151.2042465209961
+        ],
+        "score": 0.9997585415840149
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          151.23004913330078,
+          332.12872314453125,
+          167.89295959472656
+        ],
+        "score": 0.9997958540916443
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          167.8050994873047,
+          332.12872314453125,
+          184.3692169189453
+        ],
+        "score": 0.9998231530189514
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          184.35179138183594,
+          332.12872314453125,
+          200.9253692626953
+        ],
+        "score": 0.9997817873954773
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          200.9317169189453,
+          332.12872314453125,
+          217.58387756347656
+        ],
+        "score": 0.9998109936714172
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          217.6375274658203,
+          332.12872314453125,
+          234.27098083496094
+        ],
+        "score": 0.9998774528503418
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          234.40150451660156,
+          332.12872314453125,
+          251.1322784423828
+        ],
+        "score": 0.9998780488967896
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          250.70343017578125,
+          332.12872314453125,
+          267.2192687988281
+        ],
+        "score": 0.9997898936271667
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          267.0728302001953,
+          332.12872314453125,
+          283.6789093017578
+        ],
+        "score": 0.9978912472724915
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          283.6603240966797,
+          332.12872314453125,
+          300.3002624511719
+        ],
+        "score": 0.9988407492637634
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          300.0147705078125,
+          332.12872314453125,
+          316.6776428222656
+        ],
+        "score": 0.9999626874923706
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          316.385498046875,
+          332.12872314453125,
+          333.0340881347656
+        ],
+        "score": 0.9999504089355469
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          333.3292236328125,
+          332.12872314453125,
+          349.8839111328125
+        ],
+        "score": 0.9998449087142944
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          350.1936340332031,
+          332.12872314453125,
+          366.6973876953125
+        ],
+        "score": 0.9997952580451965
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          366.71063232421875,
+          332.12872314453125,
+          383.2319030761719
+        ],
+        "score": 0.9998117089271545
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          383.3409118652344,
+          332.12872314453125,
+          399.8936767578125
+        ],
+        "score": 0.9998923540115356
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          400.0089111328125,
+          332.12872314453125,
+          416.6031799316406
+        ],
+        "score": 0.9998319149017334
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          416.6990661621094,
+          332.12872314453125,
+          433.35601806640625
+        ],
+        "score": 0.9998927116394043
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          433.27587890625,
+          332.12872314453125,
+          449.90673828125
+        ],
+        "score": 0.9998548030853271
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          449.7375793457031,
+          332.12872314453125,
+          466.3907470703125
+        ],
+        "score": 0.9998949766159058
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          466.3066101074219,
+          332.12872314453125,
+          483.0963439941406
+        ],
+        "score": 0.9999715089797974
+      },
+      {
+        "label": "table row",
+        "bbox": [
+          37.047149658203125,
+          483.1357116699219,
+          332.12872314453125,
+          497.4092102050781
+        ],
+        "score": 0.9999250173568726
+      }
+    ],
+    "tatr_columns": [
+      {
+        "label": "table column",
+        "bbox": [
+          37.047149658203125,
+          38.2120361328125,
+          181.2843475341797,
+          497.83843994140625
+        ],
+        "score": 0.9999274015426636
+      },
+      {
+        "label": "table column",
+        "bbox": [
+          181.0237579345703,
+          38.2120361328125,
+          278.5091247558594,
+          497.83843994140625
+        ],
+        "score": 0.9997288584709167
+      },
+      {
+        "label": "table column",
+        "bbox": [
+          278.6486511230469,
+          38.2120361328125,
+          332.002685546875,
+          497.83843994140625
+        ],
+        "score": 0.9999619722366333
+      }
+    ],
+    "tatr_spanning_cells": [],
+    "assigned_words_per_cell": [
+      {
+        "table_id": "tatr_table_0",
+        "row": 0,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          38.2120361328125,
+          97.0,
+          50.0
+        ],
+        "text": "Characteristic",
+        "source_words": [
+          {
+            "text": "Characteristic",
+            "bbox": [
+              35.0,
+              36.0,
+              97.0,
+              50.0
+            ],
+            "confidence": 0.9777957797050476,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 0,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          216.0,
+          38.2120361328125,
+          230.0,
+          51.0
+        ],
+        "text": "N",
+        "source_words": [
+          {
+            "text": "N",
+            "bbox": [
+              216.0,
+              36.0,
+              230.0,
+              51.0
+            ],
+            "confidence": 0.9999426603317261,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 0,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          38.2120361328125,
+          329.0,
+          50.0
+        ],
+        "text": "%",
+        "source_words": [
+          {
+            "text": "%",
+            "bbox": [
+              314.0,
+              36.0,
+              329.0,
+              50.0
+            ],
+            "confidence": 0.9993866682052612,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 1,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          51.490285873413086,
+          75.0,
+          67.83967018127441
+        ],
+        "text": "All births",
+        "source_words": [
+          {
+            "text": "All",
+            "bbox": [
+              33.0,
+              51.0,
+              45.6,
+              68.0
+            ],
+            "confidence": 0.9249833822250366,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "births",
+            "bbox": [
+              49.8,
+              51.0,
+              75.0,
+              68.0
+            ],
+            "confidence": 0.9249833822250366,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 1,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          216.0,
+          53.0,
+          240.0,
+          67.83967018127441
+        ],
+        "text": "691",
+        "source_words": [
+          {
+            "text": "691",
+            "bbox": [
+              216.0,
+              53.0,
+              240.0,
+              68.0
+            ],
+            "confidence": 0.9997051358222961,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 1,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          53.0,
+          332.002685546875,
+          67.0
+        ],
+        "text": "100",
+        "source_words": [
+          {
+            "text": "100",
+            "bbox": [
+              315.0,
+              53.0,
+              335.0,
+              67.0
+            ],
+            "confidence": 0.9998582005500793,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 2,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          68.0,
+          74.0,
+          84.28670501708984
+        ],
+        "text": "All scans",
+        "source_words": [
+          {
+            "text": "All",
+            "bbox": [
+              33.0,
+              68.0,
+              46.666666666666664,
+              85.0
+            ],
+            "confidence": 0.9979785084724426,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "scans",
+            "bbox": [
+              51.22222222222222,
+              68.0,
+              74.0,
+              85.0
+            ],
+            "confidence": 0.9979785084724426,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 2,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          70.0,
+          246.0,
+          84.0
+        ],
+        "text": "2,848",
+        "source_words": [
+          {
+            "text": "2,848",
+            "bbox": [
+              217.0,
+              70.0,
+              246.0,
+              84.0
+            ],
+            "confidence": 0.9377763867378235,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 2,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          313.0,
+          68.0,
+          332.002685546875,
+          84.0
+        ],
+        "text": "100",
+        "source_words": [
+          {
+            "text": "100",
+            "bbox": [
+              313.0,
+              68.0,
+              335.0,
+              84.0
+            ],
+            "confidence": 0.9999529719352722,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 3,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          84.34910202026367,
+          78.0,
+          101.0
+        ],
+        "text": "Infant sex",
+        "source_words": [
+          {
+            "text": "Infant",
+            "bbox": [
+              33.0,
+              84.0,
+              60.0,
+              101.0
+            ],
+            "confidence": 0.9994121789932251,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "sex",
+            "bbox": [
+              64.5,
+              84.0,
+              78.0,
+              101.0
+            ],
+            "confidence": 0.9994121789932251,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 3,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          181.0237579345703,
+          84.34910202026367,
+          278.5091247558594,
+          101.06182098388672
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 3,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          278.6486511230469,
+          84.34910202026367,
+          332.002685546875,
+          101.06182098388672
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 4,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          102.0,
+          59.0,
+          117.0
+        ],
+        "text": "Male",
+        "source_words": [
+          {
+            "text": "Male",
+            "bbox": [
+              34.0,
+              102.0,
+              59.0,
+              117.0
+            ],
+            "confidence": 0.9986396431922913,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 4,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          102.0,
+          240.0,
+          117.0
+        ],
+        "text": "354",
+        "source_words": [
+          {
+            "text": "354",
+            "bbox": [
+              217.0,
+              102.0,
+              240.0,
+              117.0
+            ],
+            "confidence": 0.9998317360877991,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 4,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          313.0,
+          101.0,
+          331.0,
+          117.91682434082031
+        ],
+        "text": "51",
+        "source_words": [
+          {
+            "text": "51",
+            "bbox": [
+              313.0,
+              101.0,
+              331.0,
+              118.0
+            ],
+            "confidence": 0.99847012758255,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 5,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          117.93279266357422,
+          69.0,
+          134.0
+        ],
+        "text": "Female",
+        "source_words": [
+          {
+            "text": "Female",
+            "bbox": [
+              32.0,
+              117.0,
+              69.0,
+              134.0
+            ],
+            "confidence": 0.9986230731010437,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 5,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          120.0,
+          238.0,
+          134.0
+        ],
+        "text": "337",
+        "source_words": [
+          {
+            "text": "337",
+            "bbox": [
+              218.0,
+              120.0,
+              238.0,
+              134.0
+            ],
+            "confidence": 0.999849796295166,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 5,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          119.0,
+          330.0,
+          133.0
+        ],
+        "text": "49",
+        "source_words": [
+          {
+            "text": "49",
+            "bbox": [
+              314.0,
+              119.0,
+              330.0,
+              133.0
+            ],
+            "confidence": 0.9991515278816223,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 6,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          135.0,
+          120.0,
+          150.0
+        ],
+        "text": "Maternal age (years)",
+        "source_words": [
+          {
+            "text": "Maternal",
+            "bbox": [
+              34.0,
+              135.0,
+              68.4,
+              150.0
+            ],
+            "confidence": 0.9564477801322937,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "age",
+            "bbox": [
+              72.7,
+              135.0,
+              85.6,
+              150.0
+            ],
+            "confidence": 0.9564477801322937,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "(years)",
+            "bbox": [
+              89.9,
+              135.0,
+              120.0,
+              150.0
+            ],
+            "confidence": 0.9564477801322937,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 6,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          181.0237579345703,
+          134.44213104248047,
+          278.5091247558594,
+          151.2042465209961
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 6,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          278.6486511230469,
+          134.44213104248047,
+          332.002685546875,
+          151.2042465209961
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 7,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          151.23004913330078,
+          89.0,
+          165.0
+        ],
+        "text": "Less than 20",
+        "source_words": [
+          {
+            "text": "Less",
+            "bbox": [
+              34.0,
+              151.0,
+              52.33333333333333,
+              165.0
+            ],
+            "confidence": 0.9989180564880371,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "than",
+            "bbox": [
+              56.91666666666667,
+              151.0,
+              75.25,
+              165.0
+            ],
+            "confidence": 0.9989180564880371,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "20",
+            "bbox": [
+              79.83333333333334,
+              151.0,
+              89.0,
+              165.0
+            ],
+            "confidence": 0.9989180564880371,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 7,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          152.0,
+          233.0,
+          166.0
+        ],
+        "text": "58",
+        "source_words": [
+          {
+            "text": "58",
+            "bbox": [
+              218.0,
+              152.0,
+              233.0,
+              166.0
+            ],
+            "confidence": 0.9998370409011841,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 7,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          313.0,
+          152.0,
+          327.0,
+          166.0
+        ],
+        "text": "8",
+        "source_words": [
+          {
+            "text": "8",
+            "bbox": [
+              313.0,
+              152.0,
+              327.0,
+              166.0
+            ],
+            "confidence": 0.9999310970306396,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 8,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          169.0,
+          65.0,
+          183.0
+        ],
+        "text": "20-24",
+        "source_words": [
+          {
+            "text": "20-24",
+            "bbox": [
+              34.0,
+              169.0,
+              65.0,
+              183.0
+            ],
+            "confidence": 0.9972651600837708,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 8,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          169.0,
+          239.0,
+          184.0
+        ],
+        "text": "132",
+        "source_words": [
+          {
+            "text": "132",
+            "bbox": [
+              217.0,
+              169.0,
+              239.0,
+              184.0
+            ],
+            "confidence": 0.9995328783988953,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 8,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          169.0,
+          330.0,
+          183.0
+        ],
+        "text": "19",
+        "source_words": [
+          {
+            "text": "19",
+            "bbox": [
+              315.0,
+              169.0,
+              330.0,
+              183.0
+            ],
+            "confidence": 0.9996550679206848,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 9,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          185.0,
+          66.0,
+          200.9253692626953
+        ],
+        "text": "25-29",
+        "source_words": [
+          {
+            "text": "25-29",
+            "bbox": [
+              34.0,
+              185.0,
+              66.0,
+              202.0
+            ],
+            "confidence": 0.9988147616386414,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 9,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          185.0,
+          238.0,
+          200.9253692626953
+        ],
+        "text": "210",
+        "source_words": [
+          {
+            "text": "210",
+            "bbox": [
+              217.0,
+              185.0,
+              238.0,
+              201.0
+            ],
+            "confidence": 0.9998049139976501,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 9,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          186.0,
+          330.0,
+          200.0
+        ],
+        "text": "30",
+        "source_words": [
+          {
+            "text": "30",
+            "bbox": [
+              315.0,
+              186.0,
+              330.0,
+              200.0
+            ],
+            "confidence": 0.999865710735321,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 10,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          202.0,
+          65.0,
+          216.0
+        ],
+        "text": "30-34",
+        "source_words": [
+          {
+            "text": "30-34",
+            "bbox": [
+              34.0,
+              202.0,
+              65.0,
+              216.0
+            ],
+            "confidence": 0.998149037361145,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 10,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          204.0,
+          236.0,
+          216.0
+        ],
+        "text": "201",
+        "source_words": [
+          {
+            "text": "201",
+            "bbox": [
+              218.0,
+              204.0,
+              236.0,
+              216.0
+            ],
+            "confidence": 0.9956052303314209,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 10,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          202.0,
+          330.0,
+          215.0
+        ],
+        "text": "29",
+        "source_words": [
+          {
+            "text": "29",
+            "bbox": [
+              315.0,
+              202.0,
+              330.0,
+              215.0
+            ],
+            "confidence": 0.999830961227417,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 11,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          220.0,
+          79.0,
+          231.0
+        ],
+        "text": "35 or over",
+        "source_words": [
+          {
+            "text": "35",
+            "bbox": [
+              36.0,
+              220.0,
+              44.6,
+              231.0
+            ],
+            "confidence": 0.9865174293518066,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "or",
+            "bbox": [
+              48.9,
+              220.0,
+              57.5,
+              231.0
+            ],
+            "confidence": 0.9865174293518066,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "over",
+            "bbox": [
+              61.8,
+              220.0,
+              79.0,
+              231.0
+            ],
+            "confidence": 0.9865174293518066,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 11,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          219.0,
+          233.0,
+          232.0
+        ],
+        "text": "90",
+        "source_words": [
+          {
+            "text": "90",
+            "bbox": [
+              218.0,
+              219.0,
+              233.0,
+              232.0
+            ],
+            "confidence": 0.862438440322876,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 11,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          218.0,
+          330.0,
+          232.0
+        ],
+        "text": "13",
+        "source_words": [
+          {
+            "text": "13",
+            "bbox": [
+              315.0,
+              218.0,
+              330.0,
+              232.0
+            ],
+            "confidence": 0.9999037384986877,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 12,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          235.0,
+          82.0,
+          249.0
+        ],
+        "text": "Birth order",
+        "source_words": [
+          {
+            "text": "Birth",
+            "bbox": [
+              35.0,
+              235.0,
+              56.36363636363636,
+              249.0
+            ],
+            "confidence": 0.9795289635658264,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "order",
+            "bbox": [
+              60.63636363636363,
+              235.0,
+              82.0,
+              249.0
+            ],
+            "confidence": 0.9795289635658264,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 12,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          181.0237579345703,
+          234.40150451660156,
+          278.5091247558594,
+          251.1322784423828
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 12,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          278.6486511230469,
+          234.40150451660156,
+          332.002685546875,
+          251.1322784423828
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 13,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          252.0,
+          78.0,
+          266.0
+        ],
+        "text": "First birth",
+        "source_words": [
+          {
+            "text": "First",
+            "bbox": [
+              35.0,
+              252.0,
+              54.54545454545455,
+              266.0
+            ],
+            "confidence": 0.9279832243919373,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "birth",
+            "bbox": [
+              58.45454545454545,
+              252.0,
+              78.0,
+              266.0
+            ],
+            "confidence": 0.9279832243919373,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 13,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          216.0,
+          252.0,
+          239.0,
+          267.0
+        ],
+        "text": "308",
+        "source_words": [
+          {
+            "text": "308",
+            "bbox": [
+              216.0,
+              252.0,
+              239.0,
+              267.0
+            ],
+            "confidence": 0.9997116923332214,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 13,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          252.0,
+          330.0,
+          266.0
+        ],
+        "text": "45",
+        "source_words": [
+          {
+            "text": "45",
+            "bbox": [
+              315.0,
+              252.0,
+              330.0,
+              266.0
+            ],
+            "confidence": 0.999696671962738,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 14,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          269.0,
+          91.0,
+          280.0
+        ],
+        "text": "Second birth",
+        "source_words": [
+          {
+            "text": "Second",
+            "bbox": [
+              36.0,
+              269.0,
+              63.5,
+              280.0
+            ],
+            "confidence": 0.9985719323158264,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "birth",
+            "bbox": [
+              68.08333333333334,
+              269.0,
+              91.0,
+              280.0
+            ],
+            "confidence": 0.9985719323158264,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 14,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          269.0,
+          238.0,
+          281.0
+        ],
+        "text": "215",
+        "source_words": [
+          {
+            "text": "215",
+            "bbox": [
+              217.0,
+              269.0,
+              238.0,
+              281.0
+            ],
+            "confidence": 0.9999715685844421,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 14,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          311.0,
+          267.0728302001953,
+          332.002685546875,
+          283.6789093017578
+        ],
+        "text": "31",
+        "source_words": [
+          {
+            "text": "31",
+            "bbox": [
+              311.0,
+              265.0,
+              333.0,
+              285.0
+            ],
+            "confidence": 0.9979475736618042,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 15,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          286.0,
+          80.0,
+          297.0
+        ],
+        "text": "Third birth",
+        "source_words": [
+          {
+            "text": "Third",
+            "bbox": [
+              36.0,
+              286.0,
+              56.0,
+              297.0
+            ],
+            "confidence": 0.9995119571685791,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "birth",
+            "bbox": [
+              60.0,
+              286.0,
+              80.0,
+              297.0
+            ],
+            "confidence": 0.9995119571685791,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 15,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          286.0,
+          238.0,
+          300.0
+        ],
+        "text": "108",
+        "source_words": [
+          {
+            "text": "108",
+            "bbox": [
+              218.0,
+              286.0,
+              238.0,
+              300.0
+            ],
+            "confidence": 0.9999616742134094,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 15,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          285.0,
+          330.0,
+          299.0
+        ],
+        "text": "16",
+        "source_words": [
+          {
+            "text": "16",
+            "bbox": [
+              314.0,
+              285.0,
+              330.0,
+              299.0
+            ],
+            "confidence": 0.9999317526817322,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 16,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          302.0,
+          122.0,
+          315.0
+        ],
+        "text": "Fourth birth or more",
+        "source_words": [
+          {
+            "text": "Fourth",
+            "bbox": [
+              35.0,
+              302.0,
+              61.099999999999994,
+              315.0
+            ],
+            "confidence": 0.983070969581604,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "birth",
+            "bbox": [
+              65.45,
+              302.0,
+              87.19999999999999,
+              315.0
+            ],
+            "confidence": 0.983070969581604,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "or",
+            "bbox": [
+              91.55000000000001,
+              302.0,
+              100.25,
+              315.0
+            ],
+            "confidence": 0.983070969581604,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "more",
+            "bbox": [
+              104.60000000000001,
+              302.0,
+              122.0,
+              315.0
+            ],
+            "confidence": 0.983070969581604,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 16,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          302.0,
+          233.0,
+          316.0
+        ],
+        "text": "60",
+        "source_words": [
+          {
+            "text": "60",
+            "bbox": [
+              218.0,
+              302.0,
+              233.0,
+              316.0
+            ],
+            "confidence": 0.9993525147438049,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 16,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          301.0,
+          328.0,
+          316.0
+        ],
+        "text": "9",
+        "source_words": [
+          {
+            "text": "9",
+            "bbox": [
+              314.0,
+              301.0,
+              328.0,
+              316.0
+            ],
+            "confidence": 0.9984261989593506,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 17,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          319.0,
+          146.0,
+          331.0
+        ],
+        "text": "Scans per gestation period",
+        "source_words": [
+          {
+            "text": "Scans",
+            "bbox": [
+              36.0,
+              319.0,
+              57.15384615384615,
+              331.0
+            ],
+            "confidence": 0.9961335062980652,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "per",
+            "bbox": [
+              61.38461538461539,
+              319.0,
+              74.07692307692307,
+              331.0
+            ],
+            "confidence": 0.9961335062980652,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "gestation",
+            "bbox": [
+              78.3076923076923,
+              319.0,
+              116.38461538461539,
+              331.0
+            ],
+            "confidence": 0.9961335062980652,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "period",
+            "bbox": [
+              120.61538461538461,
+              319.0,
+              146.0,
+              331.0
+            ],
+            "confidence": 0.9961335062980652,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 17,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          181.0237579345703,
+          316.385498046875,
+          278.5091247558594,
+          333.0340881347656
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 17,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          278.6486511230469,
+          316.385498046875,
+          332.002685546875,
+          333.0340881347656
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 18,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          334.0,
+          92.0,
+          348.0
+        ],
+        "text": "14-17 weeks",
+        "source_words": [
+          {
+            "text": "14-17",
+            "bbox": [
+              36.0,
+              334.0,
+              61.45454545454545,
+              348.0
+            ],
+            "confidence": 0.9967408776283264,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              66.54545454545455,
+              334.0,
+              92.0,
+              348.0
+            ],
+            "confidence": 0.9967408776283264,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 18,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          334.0,
+          240.0,
+          349.0
+        ],
+        "text": "147",
+        "source_words": [
+          {
+            "text": "147",
+            "bbox": [
+              217.0,
+              334.0,
+              240.0,
+              349.0
+            ],
+            "confidence": 0.9999327659606934,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 18,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          334.0,
+          327.0,
+          348.0
+        ],
+        "text": "5",
+        "source_words": [
+          {
+            "text": "5",
+            "bbox": [
+              314.0,
+              334.0,
+              327.0,
+              348.0
+            ],
+            "confidence": 0.9998427629470825,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 19,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          352.0,
+          90.0,
+          363.0
+        ],
+        "text": "18-22 weeks",
+        "source_words": [
+          {
+            "text": "18-22",
+            "bbox": [
+              36.0,
+              352.0,
+              60.54545454545455,
+              363.0
+            ],
+            "confidence": 0.9995059967041016,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              65.45454545454545,
+              352.0,
+              90.0,
+              363.0
+            ],
+            "confidence": 0.9995059967041016,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 19,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          351.0,
+          239.0,
+          366.6973876953125
+        ],
+        "text": "578",
+        "source_words": [
+          {
+            "text": "578",
+            "bbox": [
+              217.0,
+              351.0,
+              239.0,
+              367.0
+            ],
+            "confidence": 0.9998412132263184,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 19,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          351.0,
+          330.0,
+          365.0
+        ],
+        "text": "20",
+        "source_words": [
+          {
+            "text": "20",
+            "bbox": [
+              315.0,
+              351.0,
+              330.0,
+              365.0
+            ],
+            "confidence": 0.9999433159828186,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 20,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          368.0,
+          91.0,
+          382.0
+        ],
+        "text": "23-27 weeks",
+        "source_words": [
+          {
+            "text": "23-27",
+            "bbox": [
+              35.0,
+              368.0,
+              60.45454545454545,
+              382.0
+            ],
+            "confidence": 0.9986944198608398,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              65.54545454545455,
+              368.0,
+              91.0,
+              382.0
+            ],
+            "confidence": 0.9986944198608398,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 20,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          219.0,
+          369.0,
+          236.0,
+          382.0
+        ],
+        "text": "561",
+        "source_words": [
+          {
+            "text": "561",
+            "bbox": [
+              219.0,
+              369.0,
+              236.0,
+              382.0
+            ],
+            "confidence": 0.9996151328086853,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 20,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          316.0,
+          368.0,
+          330.0,
+          382.0
+        ],
+        "text": "20",
+        "source_words": [
+          {
+            "text": "20",
+            "bbox": [
+              316.0,
+              368.0,
+              330.0,
+              382.0
+            ],
+            "confidence": 0.9987610578536987,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 21,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          386.0,
+          90.0,
+          396.0
+        ],
+        "text": "28-32 weeks",
+        "source_words": [
+          {
+            "text": "28-32",
+            "bbox": [
+              36.0,
+              386.0,
+              60.54545454545455,
+              396.0
+            ],
+            "confidence": 0.9989896416664124,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              65.45454545454545,
+              386.0,
+              90.0,
+              396.0
+            ],
+            "confidence": 0.9989896416664124,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 21,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          384.0,
+          240.0,
+          399.0
+        ],
+        "text": "550",
+        "source_words": [
+          {
+            "text": "550",
+            "bbox": [
+              218.0,
+              384.0,
+              240.0,
+              399.0
+            ],
+            "confidence": 0.9995932579040527,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 21,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          316.0,
+          384.0,
+          330.0,
+          398.0
+        ],
+        "text": "19",
+        "source_words": [
+          {
+            "text": "19",
+            "bbox": [
+              316.0,
+              384.0,
+              330.0,
+              398.0
+            ],
+            "confidence": 0.999727189540863,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 22,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          402.0,
+          91.0,
+          413.0
+        ],
+        "text": "33-39 weeks",
+        "source_words": [
+          {
+            "text": "33-39",
+            "bbox": [
+              37.0,
+              402.0,
+              61.54545454545455,
+              413.0
+            ],
+            "confidence": 0.9991906881332397,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              66.45454545454545,
+              402.0,
+              91.0,
+              413.0
+            ],
+            "confidence": 0.9991906881332397,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 22,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          400.0089111328125,
+          240.0,
+          416.0
+        ],
+        "text": "991",
+        "source_words": [
+          {
+            "text": "991",
+            "bbox": [
+              217.0,
+              400.0,
+              240.0,
+              416.0
+            ],
+            "confidence": 0.9991747736930847,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 22,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          313.0,
+          400.0089111328125,
+          331.0,
+          416.0
+        ],
+        "text": "34",
+        "source_words": [
+          {
+            "text": "34",
+            "bbox": [
+              313.0,
+              399.0,
+              331.0,
+              416.0
+            ],
+            "confidence": 0.9999321103096008,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 23,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          419.0,
+          90.0,
+          430.0
+        ],
+        "text": "40-42 weeks",
+        "source_words": [
+          {
+            "text": "40-42",
+            "bbox": [
+              36.0,
+              419.0,
+              60.54545454545455,
+              430.0
+            ],
+            "confidence": 0.9672389626502991,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "weeks",
+            "bbox": [
+              65.45454545454545,
+              419.0,
+              90.0,
+              430.0
+            ],
+            "confidence": 0.9672389626502991,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 23,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          418.0,
+          232.0,
+          432.0
+        ],
+        "text": "21",
+        "source_words": [
+          {
+            "text": "21",
+            "bbox": [
+              218.0,
+              418.0,
+              232.0,
+              432.0
+            ],
+            "confidence": 0.9998356103897095,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 23,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          418.0,
+          327.0,
+          432.0
+        ],
+        "text": "1",
+        "source_words": [
+          {
+            "text": "1",
+            "bbox": [
+              315.0,
+              418.0,
+              327.0,
+              432.0
+            ],
+            "confidence": 0.9967030882835388,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 24,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          435.0,
+          119.0,
+          447.0
+        ],
+        "text": "Scans per individual",
+        "source_words": [
+          {
+            "text": "Scans",
+            "bbox": [
+              35.0,
+              435.0,
+              56.0,
+              447.0
+            ],
+            "confidence": 0.9897621870040894,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "per",
+            "bbox": [
+              60.2,
+              435.0,
+              72.80000000000001,
+              447.0
+            ],
+            "confidence": 0.9897621870040894,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "individual",
+            "bbox": [
+              77.0,
+              435.0,
+              119.0,
+              447.0
+            ],
+            "confidence": 0.9897621870040894,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 24,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          181.0237579345703,
+          433.27587890625,
+          278.5091247558594,
+          449.90673828125
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 24,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          278.6486511230469,
+          433.27587890625,
+          332.002685546875,
+          449.90673828125
+        ],
+        "text": "",
+        "source_words": []
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 25,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          450.0,
+          80.0,
+          464.0
+        ],
+        "text": "2-3 scans",
+        "source_words": [
+          {
+            "text": "2-3",
+            "bbox": [
+              35.0,
+              450.0,
+              50.0,
+              464.0
+            ],
+            "confidence": 0.9457762241363525,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "scans",
+            "bbox": [
+              55.0,
+              450.0,
+              80.0,
+              464.0
+            ],
+            "confidence": 0.9457762241363525,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 25,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          218.0,
+          449.7375793457031,
+          239.0,
+          465.0
+        ],
+        "text": "190",
+        "source_words": [
+          {
+            "text": "190",
+            "bbox": [
+              218.0,
+              449.0,
+              239.0,
+              465.0
+            ],
+            "confidence": 0.9997923374176025,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 25,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          315.0,
+          450.0,
+          330.0,
+          464.0
+        ],
+        "text": "28",
+        "source_words": [
+          {
+            "text": "28",
+            "bbox": [
+              315.0,
+              450.0,
+              330.0,
+              464.0
+            ],
+            "confidence": 0.9999561309814453,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 26,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          467.0,
+          79.0,
+          481.0
+        ],
+        "text": "4-5 scans",
+        "source_words": [
+          {
+            "text": "4-5",
+            "bbox": [
+              34.0,
+              467.0,
+              49.0,
+              481.0
+            ],
+            "confidence": 0.9971573352813721,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "scans",
+            "bbox": [
+              54.0,
+              467.0,
+              79.0,
+              481.0
+            ],
+            "confidence": 0.9971573352813721,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 26,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          217.0,
+          467.0,
+          239.0,
+          483.0
+        ],
+        "text": "459",
+        "source_words": [
+          {
+            "text": "459",
+            "bbox": [
+              217.0,
+              467.0,
+              239.0,
+              483.0
+            ],
+            "confidence": 0.9994655251502991,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 26,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          312.0,
+          466.3066101074219,
+          331.0,
+          482.0
+        ],
+        "text": "66",
+        "source_words": [
+          {
+            "text": "66",
+            "bbox": [
+              312.0,
+              466.0,
+              331.0,
+              482.0
+            ],
+            "confidence": 0.9999052882194519,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 27,
+        "col": 0,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          37.047149658203125,
+          484.0,
+          79.0,
+          497.4092102050781
+        ],
+        "text": "6-8 scans",
+        "source_words": [
+          {
+            "text": "6-8",
+            "bbox": [
+              35.0,
+              484.0,
+              49.666666666666664,
+              498.0
+            ],
+            "confidence": 0.9494882225990295,
+            "source": "paddleocr_line_words"
+          },
+          {
+            "text": "scans",
+            "bbox": [
+              54.55555555555556,
+              484.0,
+              79.0,
+              498.0
+            ],
+            "confidence": 0.9494882225990295,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 27,
+        "col": 1,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          214.0,
+          484.0,
+          234.0,
+          497.4092102050781
+        ],
+        "text": "42",
+        "source_words": [
+          {
+            "text": "42",
+            "bbox": [
+              214.0,
+              484.0,
+              234.0,
+              500.0
+            ],
+            "confidence": 0.9998555183410645,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      },
+      {
+        "table_id": "tatr_table_0",
+        "row": 27,
+        "col": 2,
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          314.0,
+          484.0,
+          327.0,
+          497.4092102050781
+        ],
+        "text": "6",
+        "source_words": [
+          {
+            "text": "6",
+            "bbox": [
+              314.0,
+              484.0,
+              327.0,
+              499.0
+            ],
+            "confidence": 0.9994375109672546,
+            "source": "paddleocr_line_words"
+          }
+        ]
+      }
+    ],
+    "coordinate_space": "page_image",
+    "generated_image": null,
+    "text_box_count": 142,
+    "cuda_memory_allocated_mb": 315.5712890625
+  }
+}

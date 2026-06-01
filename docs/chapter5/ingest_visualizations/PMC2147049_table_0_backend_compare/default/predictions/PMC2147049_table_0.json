@@ -1,0 +1,2850 @@
+{
+  "text": "Table 1. Features of the Arcobacter butzleri RM4018 genome\nGeneral features\nChromosome size (bp)\nG+C content\nCDS numbers\nAssigned function\nPseudogenes\nGeneral function\nConserved hypothetical/hypothetical\nProphage\nGenetic islands\nRibosomal RNA operons\nPlasmids\nIS elements\nPoly GC tracts\nGene classes\nChemotaxis proteins\nChe/Mot proteins\nMethyl-accepting chemotaxis proteins\nRedox-sensing PAS domain proteins\nCyclic diguanylic acid proteins\nRestriction/modification systems\nType I\nType II/IS\nType III\nTranscriptional regulators\nRegulatory proteins\nNon-ECF family o factors\nECF family a/anti-a factor pairs\nTwo-component systems\nResponse regulator\nSensor histidine kinase\nTaxon-specific genes\nA. butzleri proteins found:\nWithin e-Proteobacterial taxa\nCampylobacter only\nHelicobacter only\nS. denitrificans or W. succinogenes only\nSulfurovum or Nitratiruptor only\nOnly in non z-Proteobacterial taxa\nUnique A. butzleri proteins\nTotal does not include pseudagenes.\nNumber or % of total\n2,341,251\n27.05%\n2259\n1011 (45%)\n505 (22%)\n743 (33%)\n1754 (77.6%)\n98 (4.3%)\n10 (0.4%)\n133 (5.9%)\n56 (24.8%)\n190 (8.4%)\n315 (13.9%)\n\"One hsdM pseudogene and an hsdS/hsdM pair are present but no complete",
+  "ordered_text": [
+    "Table 1. Features of the Arcobacter butzleri RM4018 genome",
+    "General features",
+    "Chromosome size (bp)",
+    "G+C content",
+    "CDS numbers",
+    "Assigned function",
+    "Pseudogenes",
+    "General function",
+    "Conserved hypothetical/hypothetical",
+    "Prophage",
+    "Genetic islands",
+    "Ribosomal RNA operons",
+    "Plasmids",
+    "IS elements",
+    "Poly GC tracts",
+    "Gene classes",
+    "Chemotaxis proteins",
+    "Che/Mot proteins",
+    "Methyl-accepting chemotaxis proteins\nRedox-sensing PAS domain proteins\nCyclic diguanylic acid proteins",
+    "Restriction/modification systems",
+    "Type I",
+    "Type II/IS",
+    "Type III",
+    "Transcriptional regulators",
+    "Regulatory proteins",
+    "Non-ECF family o factors",
+    "ECF family a/anti-a factor pairs",
+    "Two-component systems",
+    "Response regulator",
+    "Sensor histidine kinase",
+    "Taxon-specific genes",
+    "A. butzleri proteins found:",
+    "Within e-Proteobacterial taxa",
+    "Campylobacter only",
+    "Helicobacter only",
+    "S. denitrificans or W. succinogenes only",
+    "Sulfurovum or Nitratiruptor only\nOnly in non z-Proteobacterial taxa\nUnique A. butzleri proteins\nTotal does not include pseudagenes.",
+    "Number or % of total",
+    "2,341,251",
+    "27.05%",
+    "2259",
+    "1011 (45%)",
+    "505 (22%)",
+    "743 (33%)",
+    "1754 (77.6%)",
+    "98 (4.3%)",
+    "10 (0.4%)",
+    "133 (5.9%)",
+    "56 (24.8%)",
+    "190 (8.4%)",
+    "315 (13.9%)",
+    "\"One hsdM pseudogene and an hsdS/hsdM pair are present but no complete"
+  ],
+  "layout_regions": [
+    {
+      "label": "caption",
+      "bbox": [
+        34.666666666666664,
+        3.3333333333333335,
+        333.3333333333333,
+        17.333333333333332
+      ],
+      "text": "Table 1. Features of the Arcobacter butzleri RM4018 genome",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        35.333333333333336,
+        33.333333333333336,
+        104.0,
+        46.666666666666664
+      ],
+      "text": "General features",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        43.333333333333336,
+        52.666666666666664,
+        132.66666666666666,
+        66.0
+      ],
+      "text": "Chromosome size (bp)",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        44.0,
+        69.33333333333333,
+        96.0,
+        80.66666666666667
+      ],
+      "text": "G+C content",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        43.333333333333336,
+        84.66666666666667,
+        102.0,
+        96.0
+      ],
+      "text": "CDS numbers",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        44.0,
+        100.0,
+        114.66666666666667,
+        111.33333333333333
+      ],
+      "text": "Assigned function",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.666666666666664,
+        116.0,
+        106.66666666666667,
+        128.0
+      ],
+      "text": "Pseudogenes",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        53.333333333333336,
+        132.0,
+        119.33333333333333,
+        143.33333333333334
+      ],
+      "text": "General function",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.666666666666664,
+        146.0,
+        194.66666666666666,
+        160.0
+      ],
+      "text": "Conserved hypothetical/hypothetical",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        42.666666666666664,
+        162.66666666666666,
+        85.33333333333333,
+        176.66666666666666
+      ],
+      "text": "Prophage",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        44.0,
+        178.66666666666666,
+        104.0,
+        190.66666666666666
+      ],
+      "text": "Genetic islands",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        43.333333333333336,
+        194.0,
+        138.66666666666666,
+        207.33333333333334
+      ],
+      "text": "Ribosomal RNA operons",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        42.666666666666664,
+        209.33333333333334,
+        81.33333333333333,
+        224.0
+      ],
+      "text": "Plasmids",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        41.333333333333336,
+        224.66666666666666,
+        92.0,
+        240.0
+      ],
+      "text": "IS elements",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        40.666666666666664,
+        241.33333333333334,
+        102.0,
+        255.33333333333334
+      ],
+      "text": "Poly GC tracts",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        36.0,
+        258.0,
+        88.66666666666667,
+        269.3333333333333
+      ],
+      "text": "Gene classes",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        42.0,
+        271.3333333333333,
+        125.33333333333333,
+        286.6666666666667
+      ],
+      "text": "Chemotaxis proteins",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.666666666666664,
+        288.0,
+        123.33333333333333,
+        301.3333333333333
+      ],
+      "text": "Che/Mot proteins",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        43.333333333333336,
+        305.3333333333333,
+        198.66666666666666,
+        349.3333333333333
+      ],
+      "text": "Methyl-accepting chemotaxis proteins\nRedox-sensing PAS domain proteins\nCyclic diguanylic acid proteins",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        44.0,
+        353.3333333333333,
+        168.0,
+        364.6666666666667
+      ],
+      "text": "Restriction/modification systems",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.0,
+        366.6666666666667,
+        82.66666666666667,
+        382.0
+      ],
+      "text": "Type I",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.666666666666664,
+        382.6666666666667,
+        95.33333333333333,
+        397.3333333333333
+      ],
+      "text": "Type II/IS",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.0,
+        398.0,
+        86.66666666666667,
+        413.3333333333333
+      ],
+      "text": "Type III",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        43.333333333333336,
+        414.6666666666667,
+        142.66666666666666,
+        428.0
+      ],
+      "text": "Transcriptional regulators",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        53.333333333333336,
+        430.6666666666667,
+        131.33333333333334,
+        443.3333333333333
+      ],
+      "text": "Regulatory proteins",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        53.333333333333336,
+        446.6666666666667,
+        149.33333333333334,
+        458.0
+      ],
+      "text": "Non-ECF family o factors",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        54.666666666666664,
+        462.6666666666667,
+        174.0,
+        474.0
+      ],
+      "text": "ECF family a/anti-a factor pairs",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        44.0,
+        478.6666666666667,
+        141.33333333333334,
+        490.0
+      ],
+      "text": "Two-component systems",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        52.666666666666664,
+        492.6666666666667,
+        129.33333333333334,
+        506.6666666666667
+      ],
+      "text": "Response regulator",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        54.0,
+        510.0,
+        142.0,
+        521.3333333333334
+      ],
+      "text": "Sensor histidine kinase",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        36.666666666666664,
+        524.6666666666666,
+        120.66666666666667,
+        538.0
+      ],
+      "text": "Taxon-specific genes",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        44.0,
+        541.3333333333334,
+        144.0,
+        552.6666666666666
+      ],
+      "text": "A. butzleri proteins found:",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        54.0,
+        557.3333333333334,
+        165.33333333333334,
+        568.6666666666666
+      ],
+      "text": "Within e-Proteobacterial taxa",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        62.666666666666664,
+        572.6666666666666,
+        138.66666666666666,
+        586.0
+      ],
+      "text": "Campylobacter only",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        62.666666666666664,
+        588.6666666666666,
+        128.0,
+        600.6666666666666
+      ],
+      "text": "Helicobacter only",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        61.333333333333336,
+        604.0,
+        208.0,
+        616.6666666666666
+      ],
+      "text": "S. denitrificans or W. succinogenes only",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        35.333333333333336,
+        620.0,
+        184.0,
+        685.3333333333334
+      ],
+      "text": "Sulfurovum or Nitratiruptor only\nOnly in non z-Proteobacterial taxa\nUnique A. butzleri proteins\nTotal does not include pseudagenes.",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        245.33333333333334,
+        34.666666666666664,
+        333.3333333333333,
+        46.0
+      ],
+      "text": "Number or % of total",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        244.66666666666666,
+        53.333333333333336,
+        284.0,
+        65.33333333333333
+      ],
+      "text": "2,341,251",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        244.0,
+        69.33333333333333,
+        277.3333333333333,
+        81.33333333333333
+      ],
+      "text": "27.05%",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        244.0,
+        84.66666666666667,
+        267.3333333333333,
+        96.66666666666667
+      ],
+      "text": "2259",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        98.66666666666667,
+        291.3333333333333,
+        113.33333333333333
+      ],
+      "text": "1011 (45%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        132.0,
+        288.0,
+        144.0
+      ],
+      "text": "505 (22%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        242.66666666666666,
+        145.33333333333334,
+        287.3333333333333,
+        161.33333333333334
+      ],
+      "text": "743 (33%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.66666666666666,
+        557.3333333333334,
+        296.6666666666667,
+        569.3333333333334
+      ],
+      "text": "1754 (77.6%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        243.33333333333334,
+        572.0,
+        283.3333333333333,
+        586.0
+      ],
+      "text": "98 (4.3%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        588.0,
+        283.3333333333333,
+        602.0
+      ],
+      "text": "10 (0.4%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.66666666666666,
+        604.6666666666666,
+        288.0,
+        616.0
+      ],
+      "text": "133 (5.9%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        618.6666666666666,
+        288.6666666666667,
+        632.6666666666666
+      ],
+      "text": "56 (24.8%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        634.6666666666666,
+        288.6666666666667,
+        648.6666666666666
+      ],
+      "text": "190 (8.4%)",
+      "metadata": {}
+    },
+    {
+      "label": "list_item",
+      "bbox": [
+        244.0,
+        650.0,
+        292.6666666666667,
+        664.0
+      ],
+      "text": "315 (13.9%)",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        34.666666666666664,
+        682.6666666666666,
+        331.3333333333333,
+        697.3333333333334
+      ],
+      "text": "\"One hsdM pseudogene and an hsdS/hsdM pair are present but no complete",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        35.333333333333336,
+        69.33333333333333,
+        333.3333333333333,
+        648.6666666666666
+      ],
+      "text": "G+C content | 27.05% CDS numbers | 2259 Assigned function | 1011 (45%) Pseudogenes | 5 General function | 505 (22%) Conserved hypothetical/hypothetical | 743 (33%) Prophage | 1 Genetic islands | 3 Ribosomal RNA operons Plasmids | 5 IS elements | 0 Poly GC tracts | 0 Gene classes | Chemotaxis proteins | 46 Che/Mot proteins | 11 Methyl-accepting chemotaxis proteins | 29 Redox-sensing PAS domain proteins | 3 Cyclic diguanylic acid proteins | 25 Restriction/modification systems Type I | Type II/IS | 0 Type III Transcriptional regulators | 0 Regulatory proteins | 36 Non-ECF family o factors | 1 ECF family a/anti-a factor pairs | 7 Two-component systems | Response regulator | 42 Sensor histidine kinase | 37 Taxon-specific genes | A. butzleri proteins found: | Within e-Proteobacterial taxa | 1754 (77.6%) Campylobacter only | 98 (4.3%) Helicobacter only | 10 (0.4%) S. denitrificans or W. succinogenes only | 133 (5.9%) Sulfurovum or Nitratiruptor only | 56 (24.8%) Only in non z-Proteobacterial taxa | 190 (8.4%)",
+      "metadata": {}
+    }
+  ],
+  "table_regions": [
+    {
+      "label": "table",
+      "bbox": [
+        43.333333333333336,
+        305.3333333333333,
+        198.66666666666666,
+        349.3333333333333
+      ],
+      "text": "Methyl-accepting chemotaxis proteins\nRedox-sensing PAS domain proteins\nCyclic diguanylic acid proteins",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        35.333333333333336,
+        620.0,
+        184.0,
+        685.3333333333334
+      ],
+      "text": "Sulfurovum or Nitratiruptor only\nOnly in non z-Proteobacterial taxa\nUnique A. butzleri proteins\nTotal does not include pseudagenes.",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        35.333333333333336,
+        69.33333333333333,
+        333.3333333333333,
+        648.6666666666666
+      ],
+      "text": "G+C content | 27.05% CDS numbers | 2259 Assigned function | 1011 (45%) Pseudogenes | 5 General function | 505 (22%) Conserved hypothetical/hypothetical | 743 (33%) Prophage | 1 Genetic islands | 3 Ribosomal RNA operons Plasmids | 5 IS elements | 0 Poly GC tracts | 0 Gene classes | Chemotaxis proteins | 46 Che/Mot proteins | 11 Methyl-accepting chemotaxis proteins | 29 Redox-sensing PAS domain proteins | 3 Cyclic diguanylic acid proteins | 25 Restriction/modification systems Type I | Type II/IS | 0 Type III Transcriptional regulators | 0 Regulatory proteins | 36 Non-ECF family o factors | 1 ECF family a/anti-a factor pairs | 7 Two-component systems | Response regulator | 42 Sensor histidine kinase | 37 Taxon-specific genes | A. butzleri proteins found: | Within e-Proteobacterial taxa | 1754 (77.6%) Campylobacter only | 98 (4.3%) Helicobacter only | 10 (0.4%) S. denitrificans or W. succinogenes only | 133 (5.9%) Sulfurovum or Nitratiruptor only | 56 (24.8%) Only in non z-Proteobacterial taxa | 190 (8.4%)",
+      "metadata": {}
+    }
+  ],
+  "table_cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Methyl-accepting",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "Methyl-accepting"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "chemotaxis",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "chemotaxis"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "proteins",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "proteins"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Redox-sensing PAS",
+      "is_header": false,
+      "row_header": "Redox-sensing PAS",
+      "col_header": "Methyl-accepting"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "domain",
+      "is_header": false,
+      "row_header": "Redox-sensing PAS",
+      "col_header": "chemotaxis"
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "proteins",
+      "is_header": false,
+      "row_header": "Redox-sensing PAS",
+      "col_header": "proteins"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Cyclic diguanylic",
+      "is_header": false,
+      "row_header": "Cyclic diguanylic",
+      "col_header": "Methyl-accepting"
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "acid",
+      "is_header": false,
+      "row_header": "Cyclic diguanylic",
+      "col_header": "chemotaxis"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "proteins",
+      "is_header": false,
+      "row_header": "Cyclic diguanylic",
+      "col_header": "proteins"
+    },
+    {
+      "row": 0,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Sulfurovum",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "Sulfurovum"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "or",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "or"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Nitratiruptor",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "Nitratiruptor"
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "only",
+      "is_header": true,
+      "row_header": null,
+      "col_header": "only"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Only",
+      "is_header": false,
+      "row_header": "Only",
+      "col_header": "Sulfurovum"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "in",
+      "is_header": false,
+      "row_header": "Only",
+      "col_header": "or"
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "non",
+      "is_header": false,
+      "row_header": "Only",
+      "col_header": "Nitratiruptor"
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "z-Proteobacterial taxa",
+      "is_header": false,
+      "row_header": "Only",
+      "col_header": "only"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Unique",
+      "is_header": false,
+      "row_header": "Unique",
+      "col_header": "Sulfurovum"
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "A.",
+      "is_header": false,
+      "row_header": "Unique",
+      "col_header": "or"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "butzleri",
+      "is_header": false,
+      "row_header": "Unique",
+      "col_header": "Nitratiruptor"
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "proteins",
+      "is_header": false,
+      "row_header": "Unique",
+      "col_header": "only"
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "Total",
+      "is_header": false,
+      "row_header": "Total",
+      "col_header": "Sulfurovum"
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "does",
+      "is_header": false,
+      "row_header": "Total",
+      "col_header": "or"
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "not",
+      "is_header": false,
+      "row_header": "Total",
+      "col_header": "Nitratiruptor"
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "row_span": 1,
+      "col_span": 1,
+      "text": "include pseudagenes.",
+      "is_header": false,
+      "row_header": "Total",
+      "col_header": "only"
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        69.33333333333333,
+        184.0,
+        81.33333333333333
+      ],
+      "text": "G+C content",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          69.33333333333333,
+          96.0,
+          80.66666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": null,
+      "col_header": "G+C content",
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        69.33333333333333,
+        333.3333333333333,
+        81.33333333333333
+      ],
+      "text": "27.05%",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          69.33333333333333,
+          277.3333333333333,
+          81.33333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": null,
+      "col_header": "27.05%",
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        84.66666666666667,
+        184.0,
+        96.66666666666667
+      ],
+      "text": "CDS numbers",
+      "confidence": null,
+      "source_boxes": [
+        [
+          43.333333333333336,
+          84.66666666666667,
+          102.0,
+          96.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "CDS numbers",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        84.66666666666667,
+        333.3333333333333,
+        96.66666666666667
+      ],
+      "text": "2259",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          84.66666666666667,
+          267.3333333333333,
+          96.66666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "CDS numbers",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        98.66666666666667,
+        184.0,
+        113.33333333333333
+      ],
+      "text": "Assigned function",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          100.0,
+          114.66666666666667,
+          111.33333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Assigned function",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 2,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        98.66666666666667,
+        333.3333333333333,
+        113.33333333333333
+      ],
+      "text": "1011 (45%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          98.66666666666667,
+          291.3333333333333,
+          113.33333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Assigned function",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 2,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        116.0,
+        184.0,
+        128.0
+      ],
+      "text": "Pseudogenes",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          116.0,
+          106.66666666666667,
+          128.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Pseudogenes",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 3,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        116.0,
+        333.3333333333333,
+        128.0
+      ],
+      "text": "5",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          116.0,
+          256.6666666666667,
+          127.33333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Pseudogenes",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 3,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        132.0,
+        184.0,
+        144.0
+      ],
+      "text": "General function",
+      "confidence": null,
+      "source_boxes": [
+        [
+          53.333333333333336,
+          132.0,
+          119.33333333333333,
+          143.33333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "General function",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        132.0,
+        333.3333333333333,
+        144.0
+      ],
+      "text": "505 (22%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          132.0,
+          288.0,
+          144.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "General function",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        145.33333333333334,
+        194.66666666666666,
+        161.33333333333334
+      ],
+      "text": "Conserved hypothetical/hypothetical",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          146.0,
+          194.66666666666666,
+          160.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Conserved hypothetical/hypothetical",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        145.33333333333334,
+        333.3333333333333,
+        161.33333333333334
+      ],
+      "text": "743 (33%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          242.66666666666666,
+          145.33333333333334,
+          287.3333333333333,
+          161.33333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Conserved hypothetical/hypothetical",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        162.66666666666666,
+        184.0,
+        176.66666666666666
+      ],
+      "text": "Prophage",
+      "confidence": null,
+      "source_boxes": [
+        [
+          42.666666666666664,
+          162.66666666666666,
+          85.33333333333333,
+          176.66666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Prophage",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        162.66666666666666,
+        333.3333333333333,
+        176.66666666666666
+      ],
+      "text": "1",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          164.66666666666666,
+          254.0,
+          174.66666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Prophage",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        178.66666666666666,
+        184.0,
+        190.66666666666666
+      ],
+      "text": "Genetic islands",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          178.66666666666666,
+          104.0,
+          190.66666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Genetic islands",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        178.66666666666666,
+        333.3333333333333,
+        190.66666666666666
+      ],
+      "text": "3",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          180.0,
+          254.0,
+          190.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Genetic islands",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        194.0,
+        184.0,
+        224.0
+      ],
+      "text": "Ribosomal RNA operons Plasmids",
+      "confidence": null,
+      "source_boxes": [
+        [
+          43.333333333333336,
+          194.0,
+          138.66666666666666,
+          207.33333333333334
+        ],
+        [
+          42.666666666666664,
+          209.33333333333334,
+          81.33333333333333,
+          224.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Ribosomal RNA operons Plasmids",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        194.0,
+        333.3333333333333,
+        224.0
+      ],
+      "text": "5",
+      "confidence": null,
+      "source_boxes": [
+        [
+          245.33333333333334,
+          198.0,
+          252.66666666666666,
+          205.33333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Ribosomal RNA operons Plasmids",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        224.66666666666666,
+        184.0,
+        240.0
+      ],
+      "text": "IS elements",
+      "confidence": null,
+      "source_boxes": [
+        [
+          41.333333333333336,
+          224.66666666666666,
+          92.0,
+          240.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "IS elements",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        224.66666666666666,
+        333.3333333333333,
+        240.0
+      ],
+      "text": "0",
+      "confidence": null,
+      "source_boxes": [
+        [
+          246.0,
+          229.33333333333334,
+          252.66666666666666,
+          236.66666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "IS elements",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        241.33333333333334,
+        184.0,
+        255.33333333333334
+      ],
+      "text": "Poly GC tracts",
+      "confidence": null,
+      "source_boxes": [
+        [
+          40.666666666666664,
+          241.33333333333334,
+          102.0,
+          255.33333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Poly GC tracts",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        241.33333333333334,
+        333.3333333333333,
+        255.33333333333334
+      ],
+      "text": "0",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          243.33333333333334,
+          254.0,
+          254.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Poly GC tracts",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        258.0,
+        184.0,
+        269.3333333333333
+      ],
+      "text": "Gene classes",
+      "confidence": null,
+      "source_boxes": [
+        [
+          36.0,
+          258.0,
+          88.66666666666667,
+          269.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Gene classes",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 11,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        271.3333333333333,
+        184.0,
+        286.6666666666667
+      ],
+      "text": "Chemotaxis proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          42.0,
+          271.3333333333333,
+          125.33333333333333,
+          286.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Chemotaxis proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        271.3333333333333,
+        333.3333333333333,
+        286.6666666666667
+      ],
+      "text": "46",
+      "confidence": null,
+      "source_boxes": [
+        [
+          243.33333333333334,
+          272.0,
+          259.3333333333333,
+          286.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Chemotaxis proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        288.0,
+        184.0,
+        301.3333333333333
+      ],
+      "text": "Che/Mot proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          288.0,
+          123.33333333333333,
+          301.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Che/Mot proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        288.0,
+        333.3333333333333,
+        301.3333333333333
+      ],
+      "text": "11",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          288.6666666666667,
+          257.3333333333333,
+          301.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Che/Mot proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        304.6666666666667,
+        198.66666666666666,
+        317.3333333333333
+      ],
+      "text": "Methyl-accepting chemotaxis proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          54.0,
+          305.3333333333333,
+          198.66666666666666,
+          316.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Methyl-accepting chemotaxis proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        304.6666666666667,
+        333.3333333333333,
+        317.3333333333333
+      ],
+      "text": "29",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          304.6666666666667,
+          258.0,
+          317.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Methyl-accepting chemotaxis proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        320.0,
+        191.33333333333334,
+        333.3333333333333
+      ],
+      "text": "Redox-sensing PAS domain proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          320.0,
+          191.33333333333334,
+          332.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Redox-sensing PAS domain proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        320.0,
+        333.3333333333333,
+        333.3333333333333
+      ],
+      "text": "3",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          320.0,
+          256.0,
+          333.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Redox-sensing PAS domain proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        335.3333333333333,
+        184.0,
+        350.0
+      ],
+      "text": "Cyclic diguanylic acid proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          43.333333333333336,
+          336.0,
+          161.33333333333334,
+          349.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Cyclic diguanylic acid proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        335.3333333333333,
+        333.3333333333333,
+        350.0
+      ],
+      "text": "25",
+      "confidence": null,
+      "source_boxes": [
+        [
+          243.33333333333334,
+          335.3333333333333,
+          259.3333333333333,
+          350.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Cyclic diguanylic acid proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        353.3333333333333,
+        184.0,
+        382.0
+      ],
+      "text": "Restriction/modification systems Type I",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          353.3333333333333,
+          168.0,
+          364.6666666666667
+        ],
+        [
+          52.0,
+          366.6666666666667,
+          82.66666666666667,
+          382.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Restriction/modification systems Type I",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 17,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        382.6666666666667,
+        184.0,
+        397.3333333333333
+      ],
+      "text": "Type II/IS",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          382.6666666666667,
+          95.33333333333333,
+          397.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Type II/IS",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        382.6666666666667,
+        333.3333333333333,
+        397.3333333333333
+      ],
+      "text": "0",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          385.3333333333333,
+          254.0,
+          395.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Type II/IS",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        398.0,
+        184.0,
+        428.0
+      ],
+      "text": "Type III Transcriptional regulators",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.0,
+          398.0,
+          86.66666666666667,
+          413.3333333333333
+        ],
+        [
+          43.333333333333336,
+          414.6666666666667,
+          142.66666666666666,
+          428.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Type III Transcriptional regulators",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        398.0,
+        333.3333333333333,
+        428.0
+      ],
+      "text": "0",
+      "confidence": null,
+      "source_boxes": [
+        [
+          242.66666666666666,
+          400.0,
+          254.66666666666666,
+          412.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Type III Transcriptional regulators",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        430.0,
+        184.0,
+        444.0
+      ],
+      "text": "Regulatory proteins",
+      "confidence": null,
+      "source_boxes": [
+        [
+          53.333333333333336,
+          430.6666666666667,
+          131.33333333333334,
+          443.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Regulatory proteins",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        430.0,
+        333.3333333333333,
+        444.0
+      ],
+      "text": "36",
+      "confidence": null,
+      "source_boxes": [
+        [
+          243.33333333333334,
+          430.0,
+          259.3333333333333,
+          444.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Regulatory proteins",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        446.6666666666667,
+        184.0,
+        458.6666666666667
+      ],
+      "text": "Non-ECF family o factors",
+      "confidence": null,
+      "source_boxes": [
+        [
+          53.333333333333336,
+          446.6666666666667,
+          149.33333333333334,
+          458.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Non-ECF family o factors",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        446.6666666666667,
+        333.3333333333333,
+        458.6666666666667
+      ],
+      "text": "1",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          447.3333333333333,
+          253.33333333333334,
+          458.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Non-ECF family o factors",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        461.3333333333333,
+        184.0,
+        474.6666666666667
+      ],
+      "text": "ECF family a/anti-a factor pairs",
+      "confidence": null,
+      "source_boxes": [
+        [
+          54.666666666666664,
+          462.6666666666667,
+          174.0,
+          474.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "ECF family a/anti-a factor pairs",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        461.3333333333333,
+        333.3333333333333,
+        474.6666666666667
+      ],
+      "text": "7",
+      "confidence": null,
+      "source_boxes": [
+        [
+          242.66666666666666,
+          461.3333333333333,
+          254.0,
+          474.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "ECF family a/anti-a factor pairs",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        478.6666666666667,
+        184.0,
+        490.0
+      ],
+      "text": "Two-component systems",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          478.6666666666667,
+          141.33333333333334,
+          490.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Two-component systems",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        492.6666666666667,
+        184.0,
+        507.3333333333333
+      ],
+      "text": "Response regulator",
+      "confidence": null,
+      "source_boxes": [
+        [
+          52.666666666666664,
+          492.6666666666667,
+          129.33333333333334,
+          506.6666666666667
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Response regulator",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 24,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        492.6666666666667,
+        333.3333333333333,
+        507.3333333333333
+      ],
+      "text": "42",
+      "confidence": null,
+      "source_boxes": [
+        [
+          242.66666666666666,
+          493.3333333333333,
+          259.3333333333333,
+          507.3333333333333
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Response regulator",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 24,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        509.3333333333333,
+        184.0,
+        522.0
+      ],
+      "text": "Sensor histidine kinase",
+      "confidence": null,
+      "source_boxes": [
+        [
+          54.0,
+          510.0,
+          142.0,
+          521.3333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Sensor histidine kinase",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        509.3333333333333,
+        333.3333333333333,
+        522.0
+      ],
+      "text": "37",
+      "confidence": null,
+      "source_boxes": [
+        [
+          243.33333333333334,
+          509.3333333333333,
+          258.0,
+          522.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Sensor histidine kinase",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        524.6666666666666,
+        184.0,
+        538.0
+      ],
+      "text": "Taxon-specific genes",
+      "confidence": null,
+      "source_boxes": [
+        [
+          36.666666666666664,
+          524.6666666666666,
+          120.66666666666667,
+          538.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Taxon-specific genes",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 26,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        541.3333333333334,
+        184.0,
+        552.6666666666666
+      ],
+      "text": "A. butzleri proteins found:",
+      "confidence": null,
+      "source_boxes": [
+        [
+          44.0,
+          541.3333333333334,
+          144.0,
+          552.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "A. butzleri proteins found:",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        557.3333333333334,
+        184.0,
+        569.3333333333334
+      ],
+      "text": "Within e-Proteobacterial taxa",
+      "confidence": null,
+      "source_boxes": [
+        [
+          54.0,
+          557.3333333333334,
+          165.33333333333334,
+          568.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Within e-Proteobacterial taxa",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 28,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        557.3333333333334,
+        333.3333333333333,
+        569.3333333333334
+      ],
+      "text": "1754 (77.6%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          557.3333333333334,
+          296.6666666666667,
+          569.3333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Within e-Proteobacterial taxa",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 28,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        572.0,
+        184.0,
+        586.0
+      ],
+      "text": "Campylobacter only",
+      "confidence": null,
+      "source_boxes": [
+        [
+          62.666666666666664,
+          572.6666666666666,
+          138.66666666666666,
+          586.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Campylobacter only",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 29,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        572.0,
+        333.3333333333333,
+        586.0
+      ],
+      "text": "98 (4.3%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          243.33333333333334,
+          572.0,
+          283.3333333333333,
+          586.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Campylobacter only",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 29,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        588.0,
+        184.0,
+        602.0
+      ],
+      "text": "Helicobacter only",
+      "confidence": null,
+      "source_boxes": [
+        [
+          62.666666666666664,
+          588.6666666666666,
+          128.0,
+          600.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Helicobacter only",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 30,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        588.0,
+        333.3333333333333,
+        602.0
+      ],
+      "text": "10 (0.4%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          588.0,
+          283.3333333333333,
+          602.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Helicobacter only",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 30,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        604.0,
+        208.0,
+        616.6666666666666
+      ],
+      "text": "S. denitrificans or W. succinogenes only",
+      "confidence": null,
+      "source_boxes": [
+        [
+          61.333333333333336,
+          604.0,
+          208.0,
+          616.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "S. denitrificans or W. succinogenes only",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 31,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        604.0,
+        333.3333333333333,
+        616.6666666666666
+      ],
+      "text": "133 (5.9%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.66666666666666,
+          604.6666666666666,
+          288.0,
+          616.0
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "S. denitrificans or W. succinogenes only",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 31,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        618.6666666666666,
+        184.0,
+        632.6666666666666
+      ],
+      "text": "Sulfurovum or Nitratiruptor only",
+      "confidence": null,
+      "source_boxes": [
+        [
+          63.333333333333336,
+          620.0,
+          182.0,
+          631.3333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Sulfurovum or Nitratiruptor only",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 32,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        618.6666666666666,
+        333.3333333333333,
+        632.6666666666666
+      ],
+      "text": "56 (24.8%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          618.6666666666666,
+          288.6666666666667,
+          632.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Sulfurovum or Nitratiruptor only",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 32,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        35.333333333333336,
+        634.6666666666666,
+        184.0,
+        648.6666666666666
+      ],
+      "text": "Only in non z-Proteobacterial taxa",
+      "confidence": null,
+      "source_boxes": [
+        [
+          54.666666666666664,
+          636.0,
+          184.0,
+          647.3333333333334
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Only in non z-Proteobacterial taxa",
+      "col_header": "G+C content",
+      "is_header": false,
+      "metadata": {},
+      "row": 33,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        242.66666666666666,
+        634.6666666666666,
+        333.3333333333333,
+        648.6666666666666
+      ],
+      "text": "190 (8.4%)",
+      "confidence": null,
+      "source_boxes": [
+        [
+          244.0,
+          634.6666666666666,
+          288.6666666666667,
+          648.6666666666666
+        ]
+      ],
+      "source_words": [],
+      "grid_bbox": null,
+      "page": 0,
+      "table_id": "p0000_t0075",
+      "row_header": "Only in non z-Proteobacterial taxa",
+      "col_header": "27.05%",
+      "is_header": false,
+      "metadata": {},
+      "row": 33,
+      "col": 1
+    }
+  ],
+  "table_html": "<table>\n  <tr><th>Methyl-accepting</th><th>chemotaxis</th><th>proteins</th></tr>\n  <tr><td>Redox-sensing PAS</td><td>domain</td><td>proteins</td></tr>\n  <tr><td>Cyclic diguanylic</td><td>acid</td><td>proteins</td></tr>\n</table>\n<table>\n  <tr><th>Sulfurovum</th><th>or</th><th>Nitratiruptor</th><th>only</th></tr>\n  <tr><td>Only</td><td>in</td><td>non</td><td>z-Proteobacterial taxa</td></tr>\n  <tr><td>Unique</td><td>A.</td><td>butzleri</td><td>proteins</td></tr>\n  <tr><td>Total</td><td>does</td><td>not</td><td>include pseudagenes.</td></tr>\n</table>\n<table>\n  <tr><th>G+C content</th><th>27.05%</th></tr>\n  <tr><td>CDS numbers</td><td>2259</td></tr>\n  <tr><td>Assigned function</td><td>1011 (45%)</td></tr>\n  <tr><td>Pseudogenes</td><td>5</td></tr>\n  <tr><td>General function</td><td>505 (22%)</td></tr>\n  <tr><td>Conserved hypothetical/hypothetical</td><td>743 (33%)</td></tr>\n  <tr><td>Prophage</td><td>1</td></tr>\n  <tr><td>Genetic islands</td><td>3</td></tr>\n  <tr><td>Ribosomal RNA operons Plasmids</td><td>5</td></tr>\n  <tr><td>IS elements</td><td>0</td></tr>\n  <tr><td>Poly GC tracts</td><td>0</td></tr>\n  <tr><td>Gene classes</td></tr>\n  <tr><td>Chemotaxis proteins</td><td>46</td></tr>\n  <tr><td>Che/Mot proteins</td><td>11</td></tr>\n  <tr><td>Methyl-accepting chemotaxis proteins</td><td>29</td></tr>\n  <tr><td>Redox-sensing PAS domain proteins</td><td>3</td></tr>\n  <tr><td>Cyclic diguanylic acid proteins</td><td>25</td></tr>\n  <tr><td>Restriction/modification systems Type I</td></tr>\n  <tr><td>Type II/IS</td><td>0</td></tr>\n  <tr><td>Type III Transcriptional regulators</td><td>0</td></tr>\n  <tr><td>Regulatory proteins</td><td>36</td></tr>\n  <tr><td>Non-ECF family o factors</td><td>1</td></tr>\n  <tr><td>ECF family a/anti-a factor pairs</td><td>7</td></tr>\n  <tr><td>Two-component systems</td></tr>\n  <tr><td>Response regulator</td><td>42</td></tr>\n  <tr><td>Sensor histidine kinase</td><td>37</td></tr>\n  <tr><td>Taxon-specific genes</td></tr>\n  <tr><td>A. butzleri proteins found:</td></tr>\n  <tr><td>Within e-Proteobacterial taxa</td><td>1754 (77.6%)</td></tr>\n  <tr><td>Campylobacter only</td><td>98 (4.3%)</td></tr>\n  <tr><td>Helicobacter only</td><td>10 (0.4%)</td></tr>\n  <tr><td>S. denitrificans or W. succinogenes only</td><td>133 (5.9%)</td></tr>\n  <tr><td>Sulfurovum or Nitratiruptor only</td><td>56 (24.8%)</td></tr>\n  <tr><td>Only in non z-Proteobacterial taxa</td><td>190 (8.4%)</td></tr>\n</table>",
+  "table_csv": "Methyl-accepting,chemotaxis,proteins\nRedox-sensing PAS,domain,proteins\nCyclic diguanylic,acid,proteins\n\nSulfurovum,or,Nitratiruptor,only\nOnly,in,non,z-Proteobacterial taxa\nUnique,A.,butzleri,proteins\nTotal,does,not,include pseudagenes.\n\nG+C content,27.05%\nCDS numbers,2259\nAssigned function,1011 (45%)\nPseudogenes,5\nGeneral function,505 (22%)\nConserved hypothetical/hypothetical,743 (33%)\nProphage,1\nGenetic islands,3\nRibosomal RNA operons Plasmids,5\nIS elements,0\nPoly GC tracts,0\nGene classes,\nChemotaxis proteins,46\nChe/Mot proteins,11\nMethyl-accepting chemotaxis proteins,29\nRedox-sensing PAS domain proteins,3\nCyclic diguanylic acid proteins,25\nRestriction/modification systems Type I,\nType II/IS,0\nType III Transcriptional regulators,0\nRegulatory proteins,36\nNon-ECF family o factors,1\nECF family a/anti-a factor pairs,7\nTwo-component systems,\nResponse regulator,42\nSensor histidine kinase,37\nTaxon-specific genes,\nA. butzleri proteins found:,\nWithin e-Proteobacterial taxa,1754 (77.6%)\nCampylobacter only,98 (4.3%)\nHelicobacter only,10 (0.4%)\nS. denitrificans or W. succinogenes only,133 (5.9%)\nSulfurovum or Nitratiruptor only,56 (24.8%)\nOnly in non z-Proteobacterial taxa,190 (8.4%)",
+  "backend": "ocr",
+  "latency_sec": 38.830377999984194,
+  "success": true,
+  "error": null,
+  "metadata": {
+    "page_count": 1,
+    "block_count": 53,
+    "text_block_count": 52,
+    "chunk_count": 40,
+    "generated_pdf": null
+  }
+}

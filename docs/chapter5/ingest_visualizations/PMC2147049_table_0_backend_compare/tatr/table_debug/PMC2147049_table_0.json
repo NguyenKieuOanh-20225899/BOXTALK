@@ -1,0 +1,7124 @@
+{
+  "predicted": {
+    "row_count": 46,
+    "col_count": 2,
+    "cell_count": 92,
+    "cells": [
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          37.141197204589844,
+          226.67390060424805,
+          49.97433948516846
+        ],
+        "text": "",
+        "confidence": 0.9999080300331116,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          37.141197204589844,
+          226.67390060424805,
+          49.97433948516846
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": true,
+        "metadata": {},
+        "row": 0,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          37.141197204589844,
+          331.61220932006836,
+          49.97433948516846
+        ],
+        "text": "",
+        "confidence": 0.9997554421424866,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          37.141197204589844,
+          331.61220932006836,
+          49.97433948516846
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": true,
+        "metadata": {},
+        "row": 0,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          50.141252517700195,
+          226.67390060424805,
+          67.62088012695312
+        ],
+        "text": "",
+        "confidence": 0.9998739063739777,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          50.141252517700195,
+          226.67390060424805,
+          67.62088012695312
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 1,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          50.141252517700195,
+          331.61220932006836,
+          67.62088012695312
+        ],
+        "text": "",
+        "confidence": 0.9997213184833527,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          50.141252517700195,
+          331.61220932006836,
+          67.62088012695312
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 1,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          67.29350280761719,
+          226.67390060424805,
+          83.23229217529297
+        ],
+        "text": "",
+        "confidence": 0.9998822510242462,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          67.29350280761719,
+          226.67390060424805,
+          83.23229217529297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 2,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          67.29350280761719,
+          331.61220932006836,
+          83.23229217529297
+        ],
+        "text": "",
+        "confidence": 0.9997296631336212,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          67.29350280761719,
+          331.61220932006836,
+          83.23229217529297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 2,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          82.90806579589844,
+          226.67390060424805,
+          98.61217498779297
+        ],
+        "text": "",
+        "confidence": 0.9999255537986755,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          82.90806579589844,
+          226.67390060424805,
+          98.61217498779297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 3,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          82.90806579589844,
+          331.61220932006836,
+          98.61217498779297
+        ],
+        "text": "",
+        "confidence": 0.9997729659080505,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          82.90806579589844,
+          331.61220932006836,
+          98.61217498779297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 3,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          98.78742599487305,
+          226.67390060424805,
+          114.53287506103516
+        ],
+        "text": "",
+        "confidence": 0.9999021291732788,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          98.78742599487305,
+          226.67390060424805,
+          114.53287506103516
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 4,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          98.78742599487305,
+          331.61220932006836,
+          114.53287506103516
+        ],
+        "text": "",
+        "confidence": 0.9997495412826538,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          98.78742599487305,
+          331.61220932006836,
+          114.53287506103516
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 4,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          114.82588195800781,
+          226.67390060424805,
+          130.60224151611328
+        ],
+        "text": "",
+        "confidence": 0.9998985528945923,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          114.82588195800781,
+          226.67390060424805,
+          130.60224151611328
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 5,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          114.82588195800781,
+          331.61220932006836,
+          130.60224151611328
+        ],
+        "text": "",
+        "confidence": 0.9997459650039673,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          114.82588195800781,
+          331.61220932006836,
+          130.60224151611328
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 5,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          130.4396209716797,
+          226.67390060424805,
+          146.0743179321289
+        ],
+        "text": "",
+        "confidence": 0.999841183423996,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          130.4396209716797,
+          226.67390060424805,
+          146.0743179321289
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 6,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          130.4396209716797,
+          331.61220932006836,
+          146.0743179321289
+        ],
+        "text": "",
+        "confidence": 0.999688595533371,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          130.4396209716797,
+          331.61220932006836,
+          146.0743179321289
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 6,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          146.26929473876953,
+          226.67390060424805,
+          161.98385620117188
+        ],
+        "text": "",
+        "confidence": 0.9998171329498291,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          146.26929473876953,
+          226.67390060424805,
+          161.98385620117188
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 7,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          146.26929473876953,
+          331.61220932006836,
+          161.98385620117188
+        ],
+        "text": "",
+        "confidence": 0.9996645450592041,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          146.26929473876953,
+          331.61220932006836,
+          161.98385620117188
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 7,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          161.86122131347656,
+          226.67390060424805,
+          177.53661346435547
+        ],
+        "text": "",
+        "confidence": 0.9997666776180267,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          161.86122131347656,
+          226.67390060424805,
+          177.53661346435547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 8,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          161.86122131347656,
+          331.61220932006836,
+          177.53661346435547
+        ],
+        "text": "",
+        "confidence": 0.9996140897274017,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          161.86122131347656,
+          331.61220932006836,
+          177.53661346435547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 8,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          177.5982437133789,
+          226.67390060424805,
+          193.28392791748047
+        ],
+        "text": "",
+        "confidence": 0.9997865259647369,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          177.5982437133789,
+          226.67390060424805,
+          193.28392791748047
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 9,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          177.5982437133789,
+          331.61220932006836,
+          193.28392791748047
+        ],
+        "text": "",
+        "confidence": 0.9996339380741119,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          177.5982437133789,
+          331.61220932006836,
+          193.28392791748047
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 9,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          193.2762222290039,
+          226.67390060424805,
+          208.95955657958984
+        ],
+        "text": "",
+        "confidence": 0.9996926784515381,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          193.2762222290039,
+          226.67390060424805,
+          208.95955657958984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 10,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          193.2762222290039,
+          331.61220932006836,
+          208.95955657958984
+        ],
+        "text": "",
+        "confidence": 0.9995400905609131,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          193.2762222290039,
+          331.61220932006836,
+          208.95955657958984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 10,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          208.91680145263672,
+          226.67390060424805,
+          224.5859603881836
+        ],
+        "text": "",
+        "confidence": 0.9996224939823151,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          208.91680145263672,
+          226.67390060424805,
+          224.5859603881836
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 11,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          208.91680145263672,
+          331.61220932006836,
+          224.5859603881836
+        ],
+        "text": "",
+        "confidence": 0.9994699060916901,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          208.91680145263672,
+          331.61220932006836,
+          224.5859603881836
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 11,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          224.72058868408203,
+          226.67390060424805,
+          240.4732437133789
+        ],
+        "text": "",
+        "confidence": 0.99969682097435,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          224.72058868408203,
+          226.67390060424805,
+          240.4732437133789
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 12,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          224.72058868408203,
+          331.61220932006836,
+          240.4732437133789
+        ],
+        "text": "",
+        "confidence": 0.999544233083725,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          224.72058868408203,
+          331.61220932006836,
+          240.4732437133789
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 12,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          240.35773468017578,
+          226.67390060424805,
+          256.05806732177734
+        ],
+        "text": "",
+        "confidence": 0.9997076690196991,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          240.35773468017578,
+          226.67390060424805,
+          256.05806732177734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 13,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          240.35773468017578,
+          331.61220932006836,
+          256.05806732177734
+        ],
+        "text": "",
+        "confidence": 0.9995550811290741,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          240.35773468017578,
+          331.61220932006836,
+          256.05806732177734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 13,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          256.0846481323242,
+          226.67390060424805,
+          271.81778717041016
+        ],
+        "text": "",
+        "confidence": 0.999775618314743,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          256.0846481323242,
+          226.67390060424805,
+          271.81778717041016
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 14,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          256.0846481323242,
+          331.61220932006836,
+          271.81778717041016
+        ],
+        "text": "",
+        "confidence": 0.999623030424118,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          256.0846481323242,
+          331.61220932006836,
+          271.81778717041016
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 14,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          271.96297454833984,
+          226.67390060424805,
+          287.71813201904297
+        ],
+        "text": "",
+        "confidence": 0.9991917610168457,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          271.96297454833984,
+          226.67390060424805,
+          287.71813201904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 15,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          271.96297454833984,
+          331.61220932006836,
+          287.71813201904297
+        ],
+        "text": "",
+        "confidence": 0.9990391731262207,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          271.96297454833984,
+          331.61220932006836,
+          287.71813201904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 15,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          287.47391510009766,
+          226.67390060424805,
+          303.26805877685547
+        ],
+        "text": "",
+        "confidence": 0.9994598627090454,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          287.47391510009766,
+          226.67390060424805,
+          303.26805877685547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 16,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          287.47391510009766,
+          331.61220932006836,
+          303.26805877685547
+        ],
+        "text": "",
+        "confidence": 0.9993072748184204,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          287.47391510009766,
+          331.61220932006836,
+          303.26805877685547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 16,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          302.7772445678711,
+          226.67390060424805,
+          318.82955169677734
+        ],
+        "text": "",
+        "confidence": 0.8420495986938477,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          302.7772445678711,
+          226.67390060424805,
+          318.82955169677734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 17,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          302.7772445678711,
+          331.61220932006836,
+          318.82955169677734
+        ],
+        "text": "",
+        "confidence": 0.8418970108032227,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          302.7772445678711,
+          331.61220932006836,
+          318.82955169677734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 17,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          314.71923065185547,
+          226.67390060424805,
+          330.7799606323242
+        ],
+        "text": "",
+        "confidence": 0.9688447117805481,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          314.71923065185547,
+          226.67390060424805,
+          330.7799606323242
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 18,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          314.71923065185547,
+          331.61220932006836,
+          330.7799606323242
+        ],
+        "text": "",
+        "confidence": 0.9686921238899231,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          314.71923065185547,
+          331.61220932006836,
+          330.7799606323242
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 18,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          323.69286346435547,
+          226.67390060424805,
+          339.7228317260742
+        ],
+        "text": "",
+        "confidence": 0.8484256267547607,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          323.69286346435547,
+          226.67390060424805,
+          339.7228317260742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 19,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          323.69286346435547,
+          331.61220932006836,
+          339.7228317260742
+        ],
+        "text": "",
+        "confidence": 0.8482730388641357,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          323.69286346435547,
+          331.61220932006836,
+          339.7228317260742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 19,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          334.6451950073242,
+          226.67390060424805,
+          350.6023483276367
+        ],
+        "text": "",
+        "confidence": 0.8352209031581879,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          334.6451950073242,
+          226.67390060424805,
+          350.6023483276367
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 20,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          334.6451950073242,
+          331.61220932006836,
+          350.6023483276367
+        ],
+        "text": "",
+        "confidence": 0.8350683152675629,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          334.6451950073242,
+          331.61220932006836,
+          350.6023483276367
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 20,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          342.6654586791992,
+          226.67390060424805,
+          358.31884002685547
+        ],
+        "text": "",
+        "confidence": 0.8607949912548065,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          342.6654586791992,
+          226.67390060424805,
+          358.31884002685547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 21,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          342.6654586791992,
+          331.61220932006836,
+          358.31884002685547
+        ],
+        "text": "",
+        "confidence": 0.8606424033641815,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          342.6654586791992,
+          331.61220932006836,
+          358.31884002685547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 21,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          350.49691009521484,
+          226.67390060424805,
+          366.02449798583984
+        ],
+        "text": "",
+        "confidence": 0.8481781482696533,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          350.49691009521484,
+          226.67390060424805,
+          366.02449798583984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 22,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          350.49691009521484,
+          331.61220932006836,
+          366.02449798583984
+        ],
+        "text": "",
+        "confidence": 0.8480255603790283,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          350.49691009521484,
+          331.61220932006836,
+          366.02449798583984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 22,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          358.2535629272461,
+          226.67390060424805,
+          373.8834762573242
+        ],
+        "text": "",
+        "confidence": 0.8474236130714417,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          358.2535629272461,
+          226.67390060424805,
+          373.8834762573242
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 23,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          358.2535629272461,
+          331.61220932006836,
+          373.8834762573242
+        ],
+        "text": "",
+        "confidence": 0.8472710251808167,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          358.2535629272461,
+          331.61220932006836,
+          373.8834762573242
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 23,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          366.30245208740234,
+          226.67390060424805,
+          382.0747604370117
+        ],
+        "text": "",
+        "confidence": 0.8375072777271271,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          366.30245208740234,
+          226.67390060424805,
+          382.0747604370117
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 24,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          366.30245208740234,
+          331.61220932006836,
+          382.0747604370117
+        ],
+        "text": "",
+        "confidence": 0.8373546898365021,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          366.30245208740234,
+          331.61220932006836,
+          382.0747604370117
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 24,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          374.10811614990234,
+          226.67390060424805,
+          389.89498138427734
+        ],
+        "text": "",
+        "confidence": 0.869078129529953,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          374.10811614990234,
+          226.67390060424805,
+          389.89498138427734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 25,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          374.10811614990234,
+          331.61220932006836,
+          389.89498138427734
+        ],
+        "text": "",
+        "confidence": 0.868925541639328,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          374.10811614990234,
+          331.61220932006836,
+          389.89498138427734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 25,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          381.9684371948242,
+          226.67390060424805,
+          397.72594451904297
+        ],
+        "text": "",
+        "confidence": 0.8334647417068481,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          381.9684371948242,
+          226.67390060424805,
+          397.72594451904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 26,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          381.9684371948242,
+          331.61220932006836,
+          397.72594451904297
+        ],
+        "text": "",
+        "confidence": 0.8333121538162231,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          381.9684371948242,
+          331.61220932006836,
+          397.72594451904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 26,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          389.89904022216797,
+          226.67390060424805,
+          405.60652923583984
+        ],
+        "text": "",
+        "confidence": 0.8624383211135864,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          389.89904022216797,
+          226.67390060424805,
+          405.60652923583984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 27,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          389.89904022216797,
+          331.61220932006836,
+          405.60652923583984
+        ],
+        "text": "",
+        "confidence": 0.8622857332229614,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          389.89904022216797,
+          331.61220932006836,
+          405.60652923583984
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 27,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          397.5582504272461,
+          226.67390060424805,
+          413.2080612182617
+        ],
+        "text": "",
+        "confidence": 0.8532861769199371,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          397.5582504272461,
+          226.67390060424805,
+          413.2080612182617
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 28,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          397.5582504272461,
+          331.61220932006836,
+          413.2080612182617
+        ],
+        "text": "",
+        "confidence": 0.8531335890293121,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          397.5582504272461,
+          331.61220932006836,
+          413.2080612182617
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 28,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          408.5558395385742,
+          226.67390060424805,
+          424.42455291748047
+        ],
+        "text": "",
+        "confidence": 0.8750468790531158,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          408.5558395385742,
+          226.67390060424805,
+          424.42455291748047
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 29,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          408.5558395385742,
+          331.61220932006836,
+          424.42455291748047
+        ],
+        "text": "",
+        "confidence": 0.8748942911624908,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          408.5558395385742,
+          331.61220932006836,
+          424.42455291748047
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 29,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          419.66158294677734,
+          226.67390060424805,
+          435.8148422241211
+        ],
+        "text": "",
+        "confidence": 0.9269054532051086,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          419.66158294677734,
+          226.67390060424805,
+          435.8148422241211
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 30,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          419.66158294677734,
+          331.61220932006836,
+          435.8148422241211
+        ],
+        "text": "",
+        "confidence": 0.9267528653144836,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          419.66158294677734,
+          331.61220932006836,
+          435.8148422241211
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 30,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          434.00768280029297,
+          226.67390060424805,
+          450.1251754760742
+        ],
+        "text": "",
+        "confidence": 0.9777225852012634,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          434.00768280029297,
+          226.67390060424805,
+          450.1251754760742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 31,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          434.00768280029297,
+          331.61220932006836,
+          450.1251754760742
+        ],
+        "text": "",
+        "confidence": 0.9775699973106384,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          434.00768280029297,
+          331.61220932006836,
+          450.1251754760742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 31,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          445.0721664428711,
+          226.67390060424805,
+          460.8165817260742
+        ],
+        "text": "",
+        "confidence": 0.9444207847118378,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          445.0721664428711,
+          226.67390060424805,
+          460.8165817260742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 32,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          445.0721664428711,
+          331.61220932006836,
+          460.8165817260742
+        ],
+        "text": "",
+        "confidence": 0.9442681968212128,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          445.0721664428711,
+          331.61220932006836,
+          460.8165817260742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 32,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          461.4745407104492,
+          226.67390060424805,
+          477.25096893310547
+        ],
+        "text": "",
+        "confidence": 0.9997976422309875,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          461.4745407104492,
+          226.67390060424805,
+          477.25096893310547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 33,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          461.4745407104492,
+          331.61220932006836,
+          477.25096893310547
+        ],
+        "text": "",
+        "confidence": 0.9996450543403625,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          461.4745407104492,
+          331.61220932006836,
+          477.25096893310547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 33,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          477.1368637084961,
+          226.67390060424805,
+          492.86312103271484
+        ],
+        "text": "",
+        "confidence": 0.9990740716457367,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          477.1368637084961,
+          226.67390060424805,
+          492.86312103271484
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 34,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          477.1368637084961,
+          331.61220932006836,
+          492.86312103271484
+        ],
+        "text": "",
+        "confidence": 0.9989214837551117,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          477.1368637084961,
+          331.61220932006836,
+          492.86312103271484
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 34,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          492.38741302490234,
+          226.67390060424805,
+          508.0471420288086
+        ],
+        "text": "",
+        "confidence": 0.9990091025829315,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          492.38741302490234,
+          226.67390060424805,
+          508.0471420288086
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 35,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          492.38741302490234,
+          331.61220932006836,
+          508.0471420288086
+        ],
+        "text": "",
+        "confidence": 0.9988565146923065,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          492.38741302490234,
+          331.61220932006836,
+          508.0471420288086
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 35,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          508.33946990966797,
+          226.67390060424805,
+          524.1098251342773
+        ],
+        "text": "",
+        "confidence": 0.9995827972888947,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          508.33946990966797,
+          226.67390060424805,
+          524.1098251342773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 36,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          508.33946990966797,
+          331.61220932006836,
+          524.1098251342773
+        ],
+        "text": "",
+        "confidence": 0.9994302093982697,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          508.33946990966797,
+          331.61220932006836,
+          524.1098251342773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 36,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          524.2265853881836,
+          226.67390060424805,
+          539.896110534668
+        ],
+        "text": "",
+        "confidence": 0.9997760951519012,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          524.2265853881836,
+          226.67390060424805,
+          539.896110534668
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 37,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          524.2265853881836,
+          331.61220932006836,
+          539.896110534668
+        ],
+        "text": "",
+        "confidence": 0.9996235072612762,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          524.2265853881836,
+          331.61220932006836,
+          539.896110534668
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 37,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          539.9938888549805,
+          226.67390060424805,
+          555.5242538452148
+        ],
+        "text": "",
+        "confidence": 0.9995772540569305,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          539.9938888549805,
+          226.67390060424805,
+          555.5242538452148
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 38,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          539.9938888549805,
+          331.61220932006836,
+          555.5242538452148
+        ],
+        "text": "",
+        "confidence": 0.9994246661663055,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          539.9938888549805,
+          331.61220932006836,
+          555.5242538452148
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 38,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          555.7122421264648,
+          226.67390060424805,
+          571.2952499389648
+        ],
+        "text": "",
+        "confidence": 0.9995990991592407,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          555.7122421264648,
+          226.67390060424805,
+          571.2952499389648
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 39,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          555.7122421264648,
+          331.61220932006836,
+          571.2952499389648
+        ],
+        "text": "",
+        "confidence": 0.9994465112686157,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          555.7122421264648,
+          331.61220932006836,
+          571.2952499389648
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 39,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          571.7239608764648,
+          226.67390060424805,
+          587.3054428100586
+        ],
+        "text": "",
+        "confidence": 0.999824583530426,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          571.7239608764648,
+          226.67390060424805,
+          587.3054428100586
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 40,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          571.7239608764648,
+          331.61220932006836,
+          587.3054428100586
+        ],
+        "text": "",
+        "confidence": 0.999671995639801,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          571.7239608764648,
+          331.61220932006836,
+          587.3054428100586
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 40,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          587.3452987670898,
+          226.67390060424805,
+          602.9522323608398
+        ],
+        "text": "",
+        "confidence": 0.9998424351215363,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          587.3452987670898,
+          226.67390060424805,
+          602.9522323608398
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 41,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          587.3452987670898,
+          331.61220932006836,
+          602.9522323608398
+        ],
+        "text": "",
+        "confidence": 0.9996898472309113,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          587.3452987670898,
+          331.61220932006836,
+          602.9522323608398
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 41,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          603.2383041381836,
+          226.67390060424805,
+          618.7416000366211
+        ],
+        "text": "",
+        "confidence": 0.9998814165592194,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          603.2383041381836,
+          226.67390060424805,
+          618.7416000366211
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 42,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          603.2383041381836,
+          331.61220932006836,
+          618.7416000366211
+        ],
+        "text": "",
+        "confidence": 0.9997288286685944,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          603.2383041381836,
+          331.61220932006836,
+          618.7416000366211
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 42,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          618.5860824584961,
+          226.67390060424805,
+          634.1454696655273
+        ],
+        "text": "",
+        "confidence": 0.9997629225254059,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          618.5860824584961,
+          226.67390060424805,
+          634.1454696655273
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 43,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          618.5860824584961,
+          331.61220932006836,
+          634.1454696655273
+        ],
+        "text": "",
+        "confidence": 0.9996103346347809,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          618.5860824584961,
+          331.61220932006836,
+          634.1454696655273
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 43,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          633.9712142944336,
+          226.67390060424805,
+          649.4311141967773
+        ],
+        "text": "",
+        "confidence": 0.9999053478240967,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          633.9712142944336,
+          226.67390060424805,
+          649.4311141967773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 44,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          633.9712142944336,
+          331.61220932006836,
+          649.4311141967773
+        ],
+        "text": "",
+        "confidence": 0.9997527599334717,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          633.9712142944336,
+          331.61220932006836,
+          649.4311141967773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 44,
+        "col": 1
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          649.3740463256836,
+          226.67390060424805,
+          662.1339950561523
+        ],
+        "text": "",
+        "confidence": 0.9997471570968628,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          649.3740463256836,
+          226.67390060424805,
+          662.1339950561523
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 45,
+        "col": 0
+      },
+      {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          649.3740463256836,
+          331.61220932006836,
+          662.1339950561523
+        ],
+        "text": "",
+        "confidence": 0.9995945692062378,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          649.3740463256836,
+          331.61220932006836,
+          662.1339950561523
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 45,
+        "col": 1
+      }
+    ]
+  },
+  "ground_truth": {
+    "row_count": 40,
+    "col_count": 2,
+    "cell_count": 74,
+    "cells": [
+      {
+        "row": 0,
+        "col": 0,
+        "text": "General features",
+        "is_header": true,
+        "bbox": [
+          37.0,
+          36.0,
+          208.0,
+          45.0
+        ]
+      },
+      {
+        "row": 0,
+        "col": 1,
+        "text": "Number or % of total",
+        "is_header": true,
+        "bbox": [
+          246.0,
+          36.0,
+          330.0,
+          45.0
+        ]
+      },
+      {
+        "row": 1,
+        "col": 0,
+        "text": "Chromosome size (bp)",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          55.0,
+          208.0,
+          64.0
+        ]
+      },
+      {
+        "row": 1,
+        "col": 1,
+        "text": "2,341,251",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          55.0,
+          330.0,
+          64.0
+        ]
+      },
+      {
+        "row": 2,
+        "col": 0,
+        "text": "G+C content",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          68.0,
+          208.0,
+          80.0
+        ]
+      },
+      {
+        "row": 2,
+        "col": 1,
+        "text": "27.05%",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          68.0,
+          330.0,
+          80.0
+        ]
+      },
+      {
+        "row": 3,
+        "col": 0,
+        "text": "CDS numbersa",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          85.0,
+          208.0,
+          95.0
+        ]
+      },
+      {
+        "row": 3,
+        "col": 1,
+        "text": "2259",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          85.0,
+          330.0,
+          95.0
+        ]
+      },
+      {
+        "row": 4,
+        "col": 0,
+        "text": "Assigned function",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          102.0,
+          208.0,
+          111.0
+        ]
+      },
+      {
+        "row": 4,
+        "col": 1,
+        "text": "1011 (45%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          102.0,
+          330.0,
+          111.0
+        ]
+      },
+      {
+        "row": 5,
+        "col": 0,
+        "text": "Pseudogenes",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          118.0,
+          208.0,
+          127.0
+        ]
+      },
+      {
+        "row": 5,
+        "col": 1,
+        "text": "5",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          118.0,
+          330.0,
+          127.0
+        ]
+      },
+      {
+        "row": 6,
+        "col": 0,
+        "text": "General function",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          134.0,
+          208.0,
+          142.0
+        ]
+      },
+      {
+        "row": 6,
+        "col": 1,
+        "text": "505 (22%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          134.0,
+          330.0,
+          142.0
+        ]
+      },
+      {
+        "row": 7,
+        "col": 0,
+        "text": "Conserved hypothetical/hypothetical",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          149.0,
+          208.0,
+          158.0
+        ]
+      },
+      {
+        "row": 7,
+        "col": 1,
+        "text": "743 (33%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          149.0,
+          330.0,
+          158.0
+        ]
+      },
+      {
+        "row": 8,
+        "col": 0,
+        "text": "Prophage",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          165.0,
+          208.0,
+          174.0
+        ]
+      },
+      {
+        "row": 8,
+        "col": 1,
+        "text": "1",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          165.0,
+          330.0,
+          174.0
+        ]
+      },
+      {
+        "row": 9,
+        "col": 0,
+        "text": "Genetic islands",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          181.0,
+          208.0,
+          190.0
+        ]
+      },
+      {
+        "row": 9,
+        "col": 1,
+        "text": "3",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          181.0,
+          330.0,
+          190.0
+        ]
+      },
+      {
+        "row": 10,
+        "col": 0,
+        "text": "Ribosomal RNA operons",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          197.0,
+          208.0,
+          205.0
+        ]
+      },
+      {
+        "row": 10,
+        "col": 1,
+        "text": "5",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          197.0,
+          330.0,
+          205.0
+        ]
+      },
+      {
+        "row": 11,
+        "col": 0,
+        "text": "Plasmids",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          212.0,
+          208.0,
+          221.0
+        ]
+      },
+      {
+        "row": 11,
+        "col": 1,
+        "text": "0",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          212.0,
+          330.0,
+          221.0
+        ]
+      },
+      {
+        "row": 12,
+        "col": 0,
+        "text": "IS elements",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          228.0,
+          208.0,
+          237.0
+        ]
+      },
+      {
+        "row": 12,
+        "col": 1,
+        "text": "0",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          228.0,
+          330.0,
+          237.0
+        ]
+      },
+      {
+        "row": 13,
+        "col": 0,
+        "text": "Poly GC tracts",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          244.0,
+          208.0,
+          252.0
+        ]
+      },
+      {
+        "row": 13,
+        "col": 1,
+        "text": "0",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          244.0,
+          330.0,
+          252.0
+        ]
+      },
+      {
+        "row": 14,
+        "col": 0,
+        "text": "Gene classes",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          260.0,
+          330.0,
+          268.0
+        ]
+      },
+      {
+        "row": 15,
+        "col": 0,
+        "text": "Chemotaxis proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          275.0,
+          208.0,
+          284.0
+        ]
+      },
+      {
+        "row": 15,
+        "col": 1,
+        "text": "46",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          275.0,
+          330.0,
+          284.0
+        ]
+      },
+      {
+        "row": 16,
+        "col": 0,
+        "text": "Che/Mot proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          291.0,
+          208.0,
+          300.0
+        ]
+      },
+      {
+        "row": 16,
+        "col": 1,
+        "text": "11",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          291.0,
+          330.0,
+          300.0
+        ]
+      },
+      {
+        "row": 17,
+        "col": 0,
+        "text": "Methyl-accepting chemotaxis proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          307.0,
+          208.0,
+          316.0
+        ]
+      },
+      {
+        "row": 17,
+        "col": 1,
+        "text": "29",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          307.0,
+          330.0,
+          316.0
+        ]
+      },
+      {
+        "row": 18,
+        "col": 0,
+        "text": "Redox-sensing PAS domain proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          322.0,
+          208.0,
+          331.0
+        ]
+      },
+      {
+        "row": 18,
+        "col": 1,
+        "text": "3",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          322.0,
+          330.0,
+          331.0
+        ]
+      },
+      {
+        "row": 19,
+        "col": 0,
+        "text": "Cyclic diguanylic acid proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          338.0,
+          208.0,
+          347.0
+        ]
+      },
+      {
+        "row": 19,
+        "col": 1,
+        "text": "25",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          338.0,
+          330.0,
+          347.0
+        ]
+      },
+      {
+        "row": 20,
+        "col": 0,
+        "text": "Restriction/modification systems",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          354.0,
+          330.0,
+          363.0
+        ]
+      },
+      {
+        "row": 21,
+        "col": 0,
+        "text": "Type I",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          368.0,
+          208.0,
+          378.0
+        ]
+      },
+      {
+        "row": 21,
+        "col": 1,
+        "text": "0b",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          368.0,
+          330.0,
+          378.0
+        ]
+      },
+      {
+        "row": 22,
+        "col": 0,
+        "text": "Type II/IIS",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          385.0,
+          208.0,
+          394.0
+        ]
+      },
+      {
+        "row": 22,
+        "col": 1,
+        "text": "0",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          385.0,
+          330.0,
+          394.0
+        ]
+      },
+      {
+        "row": 23,
+        "col": 0,
+        "text": "Type III",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          401.0,
+          208.0,
+          410.0
+        ]
+      },
+      {
+        "row": 23,
+        "col": 1,
+        "text": "0",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          401.0,
+          330.0,
+          410.0
+        ]
+      },
+      {
+        "row": 24,
+        "col": 0,
+        "text": "Transcriptional regulators",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          417.0,
+          330.0,
+          426.0
+        ]
+      },
+      {
+        "row": 25,
+        "col": 0,
+        "text": "Regulatory proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          433.0,
+          208.0,
+          441.0
+        ]
+      },
+      {
+        "row": 25,
+        "col": 1,
+        "text": "36",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          433.0,
+          330.0,
+          441.0
+        ]
+      },
+      {
+        "row": 26,
+        "col": 0,
+        "text": "Non-ECF family s factors",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          448.0,
+          208.0,
+          457.0
+        ]
+      },
+      {
+        "row": 26,
+        "col": 1,
+        "text": "1",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          448.0,
+          330.0,
+          457.0
+        ]
+      },
+      {
+        "row": 27,
+        "col": 0,
+        "text": "ECF family s/anti-s factor pairs",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          464.0,
+          208.0,
+          473.0
+        ]
+      },
+      {
+        "row": 27,
+        "col": 1,
+        "text": "7",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          464.0,
+          330.0,
+          473.0
+        ]
+      },
+      {
+        "row": 28,
+        "col": 0,
+        "text": "Two-component systems",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          480.0,
+          330.0,
+          489.0
+        ]
+      },
+      {
+        "row": 29,
+        "col": 0,
+        "text": "Response regulator",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          496.0,
+          208.0,
+          504.0
+        ]
+      },
+      {
+        "row": 29,
+        "col": 1,
+        "text": "42",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          496.0,
+          330.0,
+          504.0
+        ]
+      },
+      {
+        "row": 30,
+        "col": 0,
+        "text": "Sensor histidine kinase",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          511.0,
+          208.0,
+          520.0
+        ]
+      },
+      {
+        "row": 30,
+        "col": 1,
+        "text": "37",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          511.0,
+          330.0,
+          520.0
+        ]
+      },
+      {
+        "row": 31,
+        "col": 0,
+        "text": "Taxon-specific genes",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          527.0,
+          330.0,
+          536.0
+        ]
+      },
+      {
+        "row": 32,
+        "col": 0,
+        "text": "A. butzleri proteins found:",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          543.0,
+          330.0,
+          552.0
+        ]
+      },
+      {
+        "row": 33,
+        "col": 0,
+        "text": "Within e-Proteobacterial taxa",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          559.0,
+          208.0,
+          567.0
+        ]
+      },
+      {
+        "row": 33,
+        "col": 1,
+        "text": "1754 (77.6%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          559.0,
+          330.0,
+          567.0
+        ]
+      },
+      {
+        "row": 34,
+        "col": 0,
+        "text": "Campylobacter only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          574.0,
+          208.0,
+          583.0
+        ]
+      },
+      {
+        "row": 34,
+        "col": 1,
+        "text": "98 (4.3%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          574.0,
+          330.0,
+          583.0
+        ]
+      },
+      {
+        "row": 35,
+        "col": 0,
+        "text": "Helicobacter only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          590.0,
+          208.0,
+          599.0
+        ]
+      },
+      {
+        "row": 35,
+        "col": 1,
+        "text": "10 (0.4%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          590.0,
+          330.0,
+          599.0
+        ]
+      },
+      {
+        "row": 36,
+        "col": 0,
+        "text": "S. denitrificans or W. succinogenes only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          606.0,
+          208.0,
+          615.0
+        ]
+      },
+      {
+        "row": 36,
+        "col": 1,
+        "text": "133 (5.9%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          606.0,
+          330.0,
+          615.0
+        ]
+      },
+      {
+        "row": 37,
+        "col": 0,
+        "text": "Sulfurovum or Nitratiruptor only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          622.0,
+          208.0,
+          630.0
+        ]
+      },
+      {
+        "row": 37,
+        "col": 1,
+        "text": "56 (24.8%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          622.0,
+          330.0,
+          630.0
+        ]
+      },
+      {
+        "row": 38,
+        "col": 0,
+        "text": "Only in non e-Proteobacterial taxa",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          637.0,
+          208.0,
+          646.0
+        ]
+      },
+      {
+        "row": 38,
+        "col": 1,
+        "text": "190 (8.4%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          637.0,
+          330.0,
+          646.0
+        ]
+      },
+      {
+        "row": 39,
+        "col": 0,
+        "text": "Unique A. butzleri proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          653.0,
+          208.0,
+          662.0
+        ]
+      },
+      {
+        "row": 39,
+        "col": 1,
+        "text": "315 (13.9%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          653.0,
+          330.0,
+          662.0
+        ]
+      }
+    ]
+  },
+  "matched_cells": [
+    {
+      "pred_index": 4,
+      "gt_index": 4,
+      "iou": 0.6715141941742103,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          67.29350280761719,
+          226.67390060424805,
+          83.23229217529297
+        ],
+        "text": "",
+        "confidence": 0.9998822510242462,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          67.29350280761719,
+          226.67390060424805,
+          83.23229217529297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 2,
+        "col": 0
+      },
+      "gt": {
+        "row": 2,
+        "col": 0,
+        "text": "G+C content",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          68.0,
+          208.0,
+          80.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 90,
+      "gt_index": 72,
+      "iou": 0.6294750852201134,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          649.3740463256836,
+          226.67390060424805,
+          662.1339950561523
+        ],
+        "text": "",
+        "confidence": 0.9997471570968628,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          649.3740463256836,
+          226.67390060424805,
+          662.1339950561523
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 45,
+        "col": 0
+      },
+      "gt": {
+        "row": 39,
+        "col": 0,
+        "text": "Unique A. butzleri proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          653.0,
+          208.0,
+          662.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 5,
+      "gt_index": 5,
+      "iou": 0.6130254420151776,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          67.29350280761719,
+          331.61220932006836,
+          83.23229217529297
+        ],
+        "text": "",
+        "confidence": 0.9997296631336212,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          67.29350280761719,
+          331.61220932006836,
+          83.23229217529297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 2,
+        "col": 1
+      },
+      "gt": {
+        "row": 2,
+        "col": 1,
+        "text": "27.05%",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          68.0,
+          330.0,
+          80.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 91,
+      "gt_index": 73,
+      "iou": 0.574309717286026,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          649.3740463256836,
+          331.61220932006836,
+          662.1339950561523
+        ],
+        "text": "",
+        "confidence": 0.9995945692062378,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          649.3740463256836,
+          331.61220932006836,
+          662.1339950561523
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 45,
+        "col": 1
+      },
+      "gt": {
+        "row": 39,
+        "col": 1,
+        "text": "315 (13.9%)",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          653.0,
+          330.0,
+          662.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 6,
+      "gt_index": 6,
+      "iou": 0.568775095889912,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          82.90806579589844,
+          226.67390060424805,
+          98.61217498779297
+        ],
+        "text": "",
+        "confidence": 0.9999255537986755,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          82.90806579589844,
+          226.67390060424805,
+          98.61217498779297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 3,
+        "col": 0
+      },
+      "gt": {
+        "row": 3,
+        "col": 0,
+        "text": "CDS numbersa",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          85.0,
+          208.0,
+          95.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 48,
+      "gt_index": 40,
+      "iou": 0.5663350529339847,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          366.30245208740234,
+          226.67390060424805,
+          382.0747604370117
+        ],
+        "text": "",
+        "confidence": 0.8375072777271271,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          366.30245208740234,
+          226.67390060424805,
+          382.0747604370117
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 24,
+        "col": 0
+      },
+      "gt": {
+        "row": 21,
+        "col": 0,
+        "text": "Type I",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          368.0,
+          208.0,
+          378.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 88,
+      "gt_index": 70,
+      "iou": 0.520336009027332,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          633.9712142944336,
+          226.67390060424805,
+          649.4311141967773
+        ],
+        "text": "",
+        "confidence": 0.9999053478240967,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          633.9712142944336,
+          226.67390060424805,
+          649.4311141967773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 44,
+        "col": 0
+      },
+      "gt": {
+        "row": 38,
+        "col": 0,
+        "text": "Only in non e-Proteobacterial taxa",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          637.0,
+          208.0,
+          646.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 84,
+      "gt_index": 66,
+      "iou": 0.5188900007428364,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          603.2383041381836,
+          226.67390060424805,
+          618.7416000366211
+        ],
+        "text": "",
+        "confidence": 0.9998814165592194,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          603.2383041381836,
+          226.67390060424805,
+          618.7416000366211
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 42,
+        "col": 0
+      },
+      "gt": {
+        "row": 36,
+        "col": 0,
+        "text": "S. denitrificans or W. succinogenes only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          606.0,
+          208.0,
+          615.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 7,
+      "gt_index": 7,
+      "iou": 0.5184886790835066,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          82.90806579589844,
+          331.61220932006836,
+          98.61217498779297
+        ],
+        "text": "",
+        "confidence": 0.9997729659080505,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          82.90806579589844,
+          331.61220932006836,
+          98.61217498779297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 3,
+        "col": 1
+      },
+      "gt": {
+        "row": 3,
+        "col": 1,
+        "text": "2259",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          85.0,
+          330.0,
+          95.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 80,
+      "gt_index": 62,
+      "iou": 0.5163049284122914,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          571.7239608764648,
+          226.67390060424805,
+          587.3054428100586
+        ],
+        "text": "",
+        "confidence": 0.999824583530426,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          571.7239608764648,
+          226.67390060424805,
+          587.3054428100586
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 40,
+        "col": 0
+      },
+      "gt": {
+        "row": 34,
+        "col": 0,
+        "text": "Campylobacter only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          574.0,
+          208.0,
+          583.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 49,
+      "gt_index": 41,
+      "iou": 0.5162467440151338,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          228.44855880737305,
+          366.30245208740234,
+          331.61220932006836,
+          382.0747604370117
+        ],
+        "text": "",
+        "confidence": 0.8373546898365021,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          228.44855880737305,
+          366.30245208740234,
+          331.61220932006836,
+          382.0747604370117
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 24,
+        "col": 1
+      },
+      "gt": {
+        "row": 21,
+        "col": 1,
+        "text": "0b",
+        "is_header": false,
+        "bbox": [
+          246.0,
+          368.0,
+          330.0,
+          378.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 82,
+      "gt_index": 64,
+      "iou": 0.5154689658160213,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          587.3452987670898,
+          226.67390060424805,
+          602.9522323608398
+        ],
+        "text": "",
+        "confidence": 0.9998424351215363,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          587.3452987670898,
+          226.67390060424805,
+          602.9522323608398
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 41,
+        "col": 0
+      },
+      "gt": {
+        "row": 35,
+        "col": 0,
+        "text": "Helicobacter only",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          590.0,
+          208.0,
+          599.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 56,
+      "gt_index": 44,
+      "iou": 0.5140667644826002,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          397.5582504272461,
+          226.67390060424805,
+          413.2080612182617
+        ],
+        "text": "",
+        "confidence": 0.8532861769199371,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          397.5582504272461,
+          226.67390060424805,
+          413.2080612182617
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 28,
+        "col": 0
+      },
+      "gt": {
+        "row": 23,
+        "col": 0,
+        "text": "Type III",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          401.0,
+          208.0,
+          410.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 22,
+      "gt_index": 22,
+      "iou": 0.5134365221888907,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          208.91680145263672,
+          226.67390060424805,
+          224.5859603881836
+        ],
+        "text": "",
+        "confidence": 0.9996224939823151,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          208.91680145263672,
+          226.67390060424805,
+          224.5859603881836
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 11,
+        "col": 0
+      },
+      "gt": {
+        "row": 11,
+        "col": 0,
+        "text": "Plasmids",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          212.0,
+          208.0,
+          221.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 16,
+      "gt_index": 16,
+      "iou": 0.5132338117637151,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          161.86122131347656,
+          226.67390060424805,
+          177.53661346435547
+        ],
+        "text": "",
+        "confidence": 0.9997666776180267,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          161.86122131347656,
+          226.67390060424805,
+          177.53661346435547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 8,
+        "col": 0
+      },
+      "gt": {
+        "row": 8,
+        "col": 0,
+        "text": "Prophage",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          165.0,
+          208.0,
+          174.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 18,
+      "gt_index": 18,
+      "iou": 0.512899453965733,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          177.5982437133789,
+          226.67390060424805,
+          193.28392791748047
+        ],
+        "text": "",
+        "confidence": 0.9997865259647369,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          177.5982437133789,
+          226.67390060424805,
+          193.28392791748047
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 9,
+        "col": 0
+      },
+      "gt": {
+        "row": 9,
+        "col": 0,
+        "text": "Genetic islands",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          181.0,
+          208.0,
+          190.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 14,
+      "gt_index": 14,
+      "iou": 0.5119636405878563,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          146.26929473876953,
+          226.67390060424805,
+          161.98385620117188
+        ],
+        "text": "",
+        "confidence": 0.9998171329498291,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          146.26929473876953,
+          226.67390060424805,
+          161.98385620117188
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 7,
+        "col": 0
+      },
+      "gt": {
+        "row": 7,
+        "col": 0,
+        "text": "Conserved hypothetical/hypothetical",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          149.0,
+          208.0,
+          158.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 64,
+      "gt_index": 49,
+      "iou": 0.5109997634579946,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          445.0721664428711,
+          226.67390060424805,
+          460.8165817260742
+        ],
+        "text": "",
+        "confidence": 0.9444207847118378,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          445.0721664428711,
+          226.67390060424805,
+          460.8165817260742
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 32,
+        "col": 0
+      },
+      "gt": {
+        "row": 26,
+        "col": 0,
+        "text": "Non-ECF family s factors",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          448.0,
+          208.0,
+          457.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 8,
+      "gt_index": 8,
+      "iou": 0.5109664511754994,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          98.78742599487305,
+          226.67390060424805,
+          114.53287506103516
+        ],
+        "text": "",
+        "confidence": 0.9999021291732788,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          98.78742599487305,
+          226.67390060424805,
+          114.53287506103516
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 4,
+        "col": 0
+      },
+      "gt": {
+        "row": 4,
+        "col": 0,
+        "text": "Assigned function",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          102.0,
+          208.0,
+          111.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 24,
+      "gt_index": 24,
+      "iou": 0.5107343691838365,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          224.72058868408203,
+          226.67390060424805,
+          240.4732437133789
+        ],
+        "text": "",
+        "confidence": 0.99969682097435,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          224.72058868408203,
+          226.67390060424805,
+          240.4732437133789
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 12,
+        "col": 0
+      },
+      "gt": {
+        "row": 12,
+        "col": 0,
+        "text": "IS elements",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          228.0,
+          208.0,
+          237.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 30,
+      "gt_index": 29,
+      "iou": 0.5106538225259298,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          271.96297454833984,
+          226.67390060424805,
+          287.71813201904297
+        ],
+        "text": "",
+        "confidence": 0.9991917610168457,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          271.96297454833984,
+          226.67390060424805,
+          287.71813201904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 15,
+        "col": 0
+      },
+      "gt": {
+        "row": 15,
+        "col": 0,
+        "text": "Chemotaxis proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          275.0,
+          208.0,
+          284.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 52,
+      "gt_index": 42,
+      "iou": 0.5105782103753513,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          381.9684371948242,
+          226.67390060424805,
+          397.72594451904297
+        ],
+        "text": "",
+        "confidence": 0.8334647417068481,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          381.9684371948242,
+          226.67390060424805,
+          397.72594451904297
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 26,
+        "col": 0
+      },
+      "gt": {
+        "row": 22,
+        "col": 0,
+        "text": "Type II/IIS",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          385.0,
+          208.0,
+          394.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 72,
+      "gt_index": 56,
+      "iou": 0.5101651940678568,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          508.33946990966797,
+          226.67390060424805,
+          524.1098251342773
+        ],
+        "text": "",
+        "confidence": 0.9995827972888947,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          508.33946990966797,
+          226.67390060424805,
+          524.1098251342773
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 36,
+        "col": 0
+      },
+      "gt": {
+        "row": 30,
+        "col": 0,
+        "text": "Sensor histidine kinase",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          511.0,
+          208.0,
+          520.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 10,
+      "gt_index": 10,
+      "iou": 0.5099724041829319,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          114.82588195800781,
+          226.67390060424805,
+          130.60224151611328
+        ],
+        "text": "",
+        "confidence": 0.9998985528945923,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          114.82588195800781,
+          226.67390060424805,
+          130.60224151611328
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 5,
+        "col": 0
+      },
+      "gt": {
+        "row": 5,
+        "col": 0,
+        "text": "Pseudogenes",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          118.0,
+          208.0,
+          127.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 66,
+      "gt_index": 51,
+      "iou": 0.5099702003128223,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          461.4745407104492,
+          226.67390060424805,
+          477.25096893310547
+        ],
+        "text": "",
+        "confidence": 0.9997976422309875,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          461.4745407104492,
+          226.67390060424805,
+          477.25096893310547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 33,
+        "col": 0
+      },
+      "gt": {
+        "row": 27,
+        "col": 0,
+        "text": "ECF family s/anti-s factor pairs",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          464.0,
+          208.0,
+          473.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 32,
+      "gt_index": 31,
+      "iou": 0.5094022375371283,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          287.47391510009766,
+          226.67390060424805,
+          303.26805877685547
+        ],
+        "text": "",
+        "confidence": 0.9994598627090454,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          287.47391510009766,
+          226.67390060424805,
+          303.26805877685547
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 16,
+        "col": 0
+      },
+      "gt": {
+        "row": 16,
+        "col": 0,
+        "text": "Che/Mot proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          291.0,
+          208.0,
+          300.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 0,
+      "gt_index": 0,
+      "iou": 0.5063621869666027,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          37.141197204589844,
+          226.67390060424805,
+          49.97433948516846
+        ],
+        "text": "",
+        "confidence": 0.9999080300331116,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          37.141197204589844,
+          226.67390060424805,
+          49.97433948516846
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": true,
+        "metadata": {},
+        "row": 0,
+        "col": 0
+      },
+      "gt": {
+        "row": 0,
+        "col": 0,
+        "text": "General features",
+        "is_header": true,
+        "bbox": [
+          37.0,
+          36.0,
+          208.0,
+          45.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 40,
+      "gt_index": 37,
+      "iou": 0.5042348746450938,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          334.6451950073242,
+          226.67390060424805,
+          350.6023483276367
+        ],
+        "text": "",
+        "confidence": 0.8352209031581879,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          334.6451950073242,
+          226.67390060424805,
+          350.6023483276367
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 20,
+        "col": 0
+      },
+      "gt": {
+        "row": 19,
+        "col": 0,
+        "text": "Cyclic diguanylic acid proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          338.0,
+          208.0,
+          347.0
+        ]
+      },
+      "text_f1": 0.0
+    },
+    {
+      "pred_index": 34,
+      "gt_index": 33,
+      "iou": 0.5012666973113485,
+      "pred": {
+        "row_span": 1,
+        "col_span": 1,
+        "bbox": [
+          39.34064620733261,
+          302.7772445678711,
+          226.67390060424805,
+          318.82955169677734
+        ],
+        "text": "",
+        "confidence": 0.8420495986938477,
+        "source_boxes": [],
+        "source_words": [],
+        "grid_bbox": [
+          39.34064620733261,
+          302.7772445678711,
+          226.67390060424805,
+          318.82955169677734
+        ],
+        "page": null,
+        "table_id": "tatr_table_0",
+        "row_header": null,
+        "col_header": null,
+        "is_header": false,
+        "metadata": {},
+        "row": 17,
+        "col": 0
+      },
+      "gt": {
+        "row": 17,
+        "col": 0,
+        "text": "Methyl-accepting chemotaxis proteins",
+        "is_header": false,
+        "bbox": [
+          37.0,
+          307.0,
+          208.0,
+          316.0
+        ]
+      },
+      "text_f1": 0.0
+    }
+  ],
+  "unmatched_predicted": [
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        37.141197204589844,
+        331.61220932006836,
+        49.97433948516846
+      ],
+      "text": "",
+      "confidence": 0.9997554421424866,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        37.141197204589844,
+        331.61220932006836,
+        49.97433948516846
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": true,
+      "metadata": {},
+      "row": 0,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        50.141252517700195,
+        226.67390060424805,
+        67.62088012695312
+      ],
+      "text": "",
+      "confidence": 0.9998739063739777,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        50.141252517700195,
+        226.67390060424805,
+        67.62088012695312
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        50.141252517700195,
+        331.61220932006836,
+        67.62088012695312
+      ],
+      "text": "",
+      "confidence": 0.9997213184833527,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        50.141252517700195,
+        331.61220932006836,
+        67.62088012695312
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 1,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        98.78742599487305,
+        331.61220932006836,
+        114.53287506103516
+      ],
+      "text": "",
+      "confidence": 0.9997495412826538,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        98.78742599487305,
+        331.61220932006836,
+        114.53287506103516
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 4,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        114.82588195800781,
+        331.61220932006836,
+        130.60224151611328
+      ],
+      "text": "",
+      "confidence": 0.9997459650039673,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        114.82588195800781,
+        331.61220932006836,
+        130.60224151611328
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 5,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        130.4396209716797,
+        226.67390060424805,
+        146.0743179321289
+      ],
+      "text": "",
+      "confidence": 0.999841183423996,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        130.4396209716797,
+        226.67390060424805,
+        146.0743179321289
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        130.4396209716797,
+        331.61220932006836,
+        146.0743179321289
+      ],
+      "text": "",
+      "confidence": 0.999688595533371,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        130.4396209716797,
+        331.61220932006836,
+        146.0743179321289
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 6,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        146.26929473876953,
+        331.61220932006836,
+        161.98385620117188
+      ],
+      "text": "",
+      "confidence": 0.9996645450592041,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        146.26929473876953,
+        331.61220932006836,
+        161.98385620117188
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 7,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        161.86122131347656,
+        331.61220932006836,
+        177.53661346435547
+      ],
+      "text": "",
+      "confidence": 0.9996140897274017,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        161.86122131347656,
+        331.61220932006836,
+        177.53661346435547
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 8,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        177.5982437133789,
+        331.61220932006836,
+        193.28392791748047
+      ],
+      "text": "",
+      "confidence": 0.9996339380741119,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        177.5982437133789,
+        331.61220932006836,
+        193.28392791748047
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 9,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        193.2762222290039,
+        226.67390060424805,
+        208.95955657958984
+      ],
+      "text": "",
+      "confidence": 0.9996926784515381,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        193.2762222290039,
+        226.67390060424805,
+        208.95955657958984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        193.2762222290039,
+        331.61220932006836,
+        208.95955657958984
+      ],
+      "text": "",
+      "confidence": 0.9995400905609131,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        193.2762222290039,
+        331.61220932006836,
+        208.95955657958984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 10,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        208.91680145263672,
+        331.61220932006836,
+        224.5859603881836
+      ],
+      "text": "",
+      "confidence": 0.9994699060916901,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        208.91680145263672,
+        331.61220932006836,
+        224.5859603881836
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 11,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        224.72058868408203,
+        331.61220932006836,
+        240.4732437133789
+      ],
+      "text": "",
+      "confidence": 0.999544233083725,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        224.72058868408203,
+        331.61220932006836,
+        240.4732437133789
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 12,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        240.35773468017578,
+        226.67390060424805,
+        256.05806732177734
+      ],
+      "text": "",
+      "confidence": 0.9997076690196991,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        240.35773468017578,
+        226.67390060424805,
+        256.05806732177734
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        240.35773468017578,
+        331.61220932006836,
+        256.05806732177734
+      ],
+      "text": "",
+      "confidence": 0.9995550811290741,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        240.35773468017578,
+        331.61220932006836,
+        256.05806732177734
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 13,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        256.0846481323242,
+        226.67390060424805,
+        271.81778717041016
+      ],
+      "text": "",
+      "confidence": 0.999775618314743,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        256.0846481323242,
+        226.67390060424805,
+        271.81778717041016
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        256.0846481323242,
+        331.61220932006836,
+        271.81778717041016
+      ],
+      "text": "",
+      "confidence": 0.999623030424118,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        256.0846481323242,
+        331.61220932006836,
+        271.81778717041016
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 14,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        271.96297454833984,
+        331.61220932006836,
+        287.71813201904297
+      ],
+      "text": "",
+      "confidence": 0.9990391731262207,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        271.96297454833984,
+        331.61220932006836,
+        287.71813201904297
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 15,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        287.47391510009766,
+        331.61220932006836,
+        303.26805877685547
+      ],
+      "text": "",
+      "confidence": 0.9993072748184204,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        287.47391510009766,
+        331.61220932006836,
+        303.26805877685547
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 16,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        302.7772445678711,
+        331.61220932006836,
+        318.82955169677734
+      ],
+      "text": "",
+      "confidence": 0.8418970108032227,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        302.7772445678711,
+        331.61220932006836,
+        318.82955169677734
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 17,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        314.71923065185547,
+        226.67390060424805,
+        330.7799606323242
+      ],
+      "text": "",
+      "confidence": 0.9688447117805481,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        314.71923065185547,
+        226.67390060424805,
+        330.7799606323242
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        314.71923065185547,
+        331.61220932006836,
+        330.7799606323242
+      ],
+      "text": "",
+      "confidence": 0.9686921238899231,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        314.71923065185547,
+        331.61220932006836,
+        330.7799606323242
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 18,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        323.69286346435547,
+        226.67390060424805,
+        339.7228317260742
+      ],
+      "text": "",
+      "confidence": 0.8484256267547607,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        323.69286346435547,
+        226.67390060424805,
+        339.7228317260742
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        323.69286346435547,
+        331.61220932006836,
+        339.7228317260742
+      ],
+      "text": "",
+      "confidence": 0.8482730388641357,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        323.69286346435547,
+        331.61220932006836,
+        339.7228317260742
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 19,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        334.6451950073242,
+        331.61220932006836,
+        350.6023483276367
+      ],
+      "text": "",
+      "confidence": 0.8350683152675629,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        334.6451950073242,
+        331.61220932006836,
+        350.6023483276367
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 20,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        342.6654586791992,
+        226.67390060424805,
+        358.31884002685547
+      ],
+      "text": "",
+      "confidence": 0.8607949912548065,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        342.6654586791992,
+        226.67390060424805,
+        358.31884002685547
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        342.6654586791992,
+        331.61220932006836,
+        358.31884002685547
+      ],
+      "text": "",
+      "confidence": 0.8606424033641815,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        342.6654586791992,
+        331.61220932006836,
+        358.31884002685547
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 21,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        350.49691009521484,
+        226.67390060424805,
+        366.02449798583984
+      ],
+      "text": "",
+      "confidence": 0.8481781482696533,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        350.49691009521484,
+        226.67390060424805,
+        366.02449798583984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        350.49691009521484,
+        331.61220932006836,
+        366.02449798583984
+      ],
+      "text": "",
+      "confidence": 0.8480255603790283,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        350.49691009521484,
+        331.61220932006836,
+        366.02449798583984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 22,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        358.2535629272461,
+        226.67390060424805,
+        373.8834762573242
+      ],
+      "text": "",
+      "confidence": 0.8474236130714417,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        358.2535629272461,
+        226.67390060424805,
+        373.8834762573242
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        358.2535629272461,
+        331.61220932006836,
+        373.8834762573242
+      ],
+      "text": "",
+      "confidence": 0.8472710251808167,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        358.2535629272461,
+        331.61220932006836,
+        373.8834762573242
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 23,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        374.10811614990234,
+        226.67390060424805,
+        389.89498138427734
+      ],
+      "text": "",
+      "confidence": 0.869078129529953,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        374.10811614990234,
+        226.67390060424805,
+        389.89498138427734
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        374.10811614990234,
+        331.61220932006836,
+        389.89498138427734
+      ],
+      "text": "",
+      "confidence": 0.868925541639328,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        374.10811614990234,
+        331.61220932006836,
+        389.89498138427734
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 25,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        381.9684371948242,
+        331.61220932006836,
+        397.72594451904297
+      ],
+      "text": "",
+      "confidence": 0.8333121538162231,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        381.9684371948242,
+        331.61220932006836,
+        397.72594451904297
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 26,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        389.89904022216797,
+        226.67390060424805,
+        405.60652923583984
+      ],
+      "text": "",
+      "confidence": 0.8624383211135864,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        389.89904022216797,
+        226.67390060424805,
+        405.60652923583984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        389.89904022216797,
+        331.61220932006836,
+        405.60652923583984
+      ],
+      "text": "",
+      "confidence": 0.8622857332229614,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        389.89904022216797,
+        331.61220932006836,
+        405.60652923583984
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 27,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        397.5582504272461,
+        331.61220932006836,
+        413.2080612182617
+      ],
+      "text": "",
+      "confidence": 0.8531335890293121,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        397.5582504272461,
+        331.61220932006836,
+        413.2080612182617
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 28,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        408.5558395385742,
+        226.67390060424805,
+        424.42455291748047
+      ],
+      "text": "",
+      "confidence": 0.8750468790531158,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        408.5558395385742,
+        226.67390060424805,
+        424.42455291748047
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 29,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        408.5558395385742,
+        331.61220932006836,
+        424.42455291748047
+      ],
+      "text": "",
+      "confidence": 0.8748942911624908,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        408.5558395385742,
+        331.61220932006836,
+        424.42455291748047
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 29,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        419.66158294677734,
+        226.67390060424805,
+        435.8148422241211
+      ],
+      "text": "",
+      "confidence": 0.9269054532051086,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        419.66158294677734,
+        226.67390060424805,
+        435.8148422241211
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 30,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        419.66158294677734,
+        331.61220932006836,
+        435.8148422241211
+      ],
+      "text": "",
+      "confidence": 0.9267528653144836,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        419.66158294677734,
+        331.61220932006836,
+        435.8148422241211
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 30,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        434.00768280029297,
+        226.67390060424805,
+        450.1251754760742
+      ],
+      "text": "",
+      "confidence": 0.9777225852012634,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        434.00768280029297,
+        226.67390060424805,
+        450.1251754760742
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 31,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        434.00768280029297,
+        331.61220932006836,
+        450.1251754760742
+      ],
+      "text": "",
+      "confidence": 0.9775699973106384,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        434.00768280029297,
+        331.61220932006836,
+        450.1251754760742
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 31,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        445.0721664428711,
+        331.61220932006836,
+        460.8165817260742
+      ],
+      "text": "",
+      "confidence": 0.9442681968212128,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        445.0721664428711,
+        331.61220932006836,
+        460.8165817260742
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 32,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        461.4745407104492,
+        331.61220932006836,
+        477.25096893310547
+      ],
+      "text": "",
+      "confidence": 0.9996450543403625,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        461.4745407104492,
+        331.61220932006836,
+        477.25096893310547
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 33,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        477.1368637084961,
+        226.67390060424805,
+        492.86312103271484
+      ],
+      "text": "",
+      "confidence": 0.9990740716457367,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        477.1368637084961,
+        226.67390060424805,
+        492.86312103271484
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 34,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        477.1368637084961,
+        331.61220932006836,
+        492.86312103271484
+      ],
+      "text": "",
+      "confidence": 0.9989214837551117,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        477.1368637084961,
+        331.61220932006836,
+        492.86312103271484
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 34,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        492.38741302490234,
+        226.67390060424805,
+        508.0471420288086
+      ],
+      "text": "",
+      "confidence": 0.9990091025829315,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        492.38741302490234,
+        226.67390060424805,
+        508.0471420288086
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 35,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        492.38741302490234,
+        331.61220932006836,
+        508.0471420288086
+      ],
+      "text": "",
+      "confidence": 0.9988565146923065,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        492.38741302490234,
+        331.61220932006836,
+        508.0471420288086
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 35,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        508.33946990966797,
+        331.61220932006836,
+        524.1098251342773
+      ],
+      "text": "",
+      "confidence": 0.9994302093982697,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        508.33946990966797,
+        331.61220932006836,
+        524.1098251342773
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 36,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        524.2265853881836,
+        226.67390060424805,
+        539.896110534668
+      ],
+      "text": "",
+      "confidence": 0.9997760951519012,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        524.2265853881836,
+        226.67390060424805,
+        539.896110534668
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 37,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        524.2265853881836,
+        331.61220932006836,
+        539.896110534668
+      ],
+      "text": "",
+      "confidence": 0.9996235072612762,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        524.2265853881836,
+        331.61220932006836,
+        539.896110534668
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 37,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        539.9938888549805,
+        226.67390060424805,
+        555.5242538452148
+      ],
+      "text": "",
+      "confidence": 0.9995772540569305,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        539.9938888549805,
+        226.67390060424805,
+        555.5242538452148
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 38,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        539.9938888549805,
+        331.61220932006836,
+        555.5242538452148
+      ],
+      "text": "",
+      "confidence": 0.9994246661663055,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        539.9938888549805,
+        331.61220932006836,
+        555.5242538452148
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 38,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        555.7122421264648,
+        226.67390060424805,
+        571.2952499389648
+      ],
+      "text": "",
+      "confidence": 0.9995990991592407,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        555.7122421264648,
+        226.67390060424805,
+        571.2952499389648
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 39,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        555.7122421264648,
+        331.61220932006836,
+        571.2952499389648
+      ],
+      "text": "",
+      "confidence": 0.9994465112686157,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        555.7122421264648,
+        331.61220932006836,
+        571.2952499389648
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 39,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        571.7239608764648,
+        331.61220932006836,
+        587.3054428100586
+      ],
+      "text": "",
+      "confidence": 0.999671995639801,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        571.7239608764648,
+        331.61220932006836,
+        587.3054428100586
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 40,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        587.3452987670898,
+        331.61220932006836,
+        602.9522323608398
+      ],
+      "text": "",
+      "confidence": 0.9996898472309113,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        587.3452987670898,
+        331.61220932006836,
+        602.9522323608398
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 41,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        603.2383041381836,
+        331.61220932006836,
+        618.7416000366211
+      ],
+      "text": "",
+      "confidence": 0.9997288286685944,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        603.2383041381836,
+        331.61220932006836,
+        618.7416000366211
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 42,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        39.34064620733261,
+        618.5860824584961,
+        226.67390060424805,
+        634.1454696655273
+      ],
+      "text": "",
+      "confidence": 0.9997629225254059,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        39.34064620733261,
+        618.5860824584961,
+        226.67390060424805,
+        634.1454696655273
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 43,
+      "col": 0
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        618.5860824584961,
+        331.61220932006836,
+        634.1454696655273
+      ],
+      "text": "",
+      "confidence": 0.9996103346347809,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        618.5860824584961,
+        331.61220932006836,
+        634.1454696655273
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 43,
+      "col": 1
+    },
+    {
+      "row_span": 1,
+      "col_span": 1,
+      "bbox": [
+        228.44855880737305,
+        633.9712142944336,
+        331.61220932006836,
+        649.4311141967773
+      ],
+      "text": "",
+      "confidence": 0.9997527599334717,
+      "source_boxes": [],
+      "source_words": [],
+      "grid_bbox": [
+        228.44855880737305,
+        633.9712142944336,
+        331.61220932006836,
+        649.4311141967773
+      ],
+      "page": null,
+      "table_id": "tatr_table_0",
+      "row_header": null,
+      "col_header": null,
+      "is_header": false,
+      "metadata": {},
+      "row": 44,
+      "col": 1
+    }
+  ],
+  "unmatched_ground_truth": [
+    {
+      "row": 0,
+      "col": 1,
+      "text": "Number or % of total",
+      "is_header": true,
+      "bbox": [
+        246.0,
+        36.0,
+        330.0,
+        45.0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "text": "Chromosome size (bp)",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        55.0,
+        208.0,
+        64.0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "text": "2,341,251",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        55.0,
+        330.0,
+        64.0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "text": "1011 (45%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        102.0,
+        330.0,
+        111.0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "text": "5",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        118.0,
+        330.0,
+        127.0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "text": "General function",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        134.0,
+        208.0,
+        142.0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "text": "505 (22%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        134.0,
+        330.0,
+        142.0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "text": "743 (33%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        149.0,
+        330.0,
+        158.0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 1,
+      "text": "1",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        165.0,
+        330.0,
+        174.0
+      ]
+    },
+    {
+      "row": 9,
+      "col": 1,
+      "text": "3",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        181.0,
+        330.0,
+        190.0
+      ]
+    },
+    {
+      "row": 10,
+      "col": 0,
+      "text": "Ribosomal RNA operons",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        197.0,
+        208.0,
+        205.0
+      ]
+    },
+    {
+      "row": 10,
+      "col": 1,
+      "text": "5",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        197.0,
+        330.0,
+        205.0
+      ]
+    },
+    {
+      "row": 11,
+      "col": 1,
+      "text": "0",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        212.0,
+        330.0,
+        221.0
+      ]
+    },
+    {
+      "row": 12,
+      "col": 1,
+      "text": "0",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        228.0,
+        330.0,
+        237.0
+      ]
+    },
+    {
+      "row": 13,
+      "col": 0,
+      "text": "Poly GC tracts",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        244.0,
+        208.0,
+        252.0
+      ]
+    },
+    {
+      "row": 13,
+      "col": 1,
+      "text": "0",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        244.0,
+        330.0,
+        252.0
+      ]
+    },
+    {
+      "row": 14,
+      "col": 0,
+      "text": "Gene classes",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        260.0,
+        330.0,
+        268.0
+      ]
+    },
+    {
+      "row": 15,
+      "col": 1,
+      "text": "46",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        275.0,
+        330.0,
+        284.0
+      ]
+    },
+    {
+      "row": 16,
+      "col": 1,
+      "text": "11",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        291.0,
+        330.0,
+        300.0
+      ]
+    },
+    {
+      "row": 17,
+      "col": 1,
+      "text": "29",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        307.0,
+        330.0,
+        316.0
+      ]
+    },
+    {
+      "row": 18,
+      "col": 0,
+      "text": "Redox-sensing PAS domain proteins",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        322.0,
+        208.0,
+        331.0
+      ]
+    },
+    {
+      "row": 18,
+      "col": 1,
+      "text": "3",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        322.0,
+        330.0,
+        331.0
+      ]
+    },
+    {
+      "row": 19,
+      "col": 1,
+      "text": "25",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        338.0,
+        330.0,
+        347.0
+      ]
+    },
+    {
+      "row": 20,
+      "col": 0,
+      "text": "Restriction/modification systems",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        354.0,
+        330.0,
+        363.0
+      ]
+    },
+    {
+      "row": 22,
+      "col": 1,
+      "text": "0",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        385.0,
+        330.0,
+        394.0
+      ]
+    },
+    {
+      "row": 23,
+      "col": 1,
+      "text": "0",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        401.0,
+        330.0,
+        410.0
+      ]
+    },
+    {
+      "row": 24,
+      "col": 0,
+      "text": "Transcriptional regulators",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        417.0,
+        330.0,
+        426.0
+      ]
+    },
+    {
+      "row": 25,
+      "col": 0,
+      "text": "Regulatory proteins",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        433.0,
+        208.0,
+        441.0
+      ]
+    },
+    {
+      "row": 25,
+      "col": 1,
+      "text": "36",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        433.0,
+        330.0,
+        441.0
+      ]
+    },
+    {
+      "row": 26,
+      "col": 1,
+      "text": "1",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        448.0,
+        330.0,
+        457.0
+      ]
+    },
+    {
+      "row": 27,
+      "col": 1,
+      "text": "7",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        464.0,
+        330.0,
+        473.0
+      ]
+    },
+    {
+      "row": 28,
+      "col": 0,
+      "text": "Two-component systems",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        480.0,
+        330.0,
+        489.0
+      ]
+    },
+    {
+      "row": 29,
+      "col": 0,
+      "text": "Response regulator",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        496.0,
+        208.0,
+        504.0
+      ]
+    },
+    {
+      "row": 29,
+      "col": 1,
+      "text": "42",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        496.0,
+        330.0,
+        504.0
+      ]
+    },
+    {
+      "row": 30,
+      "col": 1,
+      "text": "37",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        511.0,
+        330.0,
+        520.0
+      ]
+    },
+    {
+      "row": 31,
+      "col": 0,
+      "text": "Taxon-specific genes",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        527.0,
+        330.0,
+        536.0
+      ]
+    },
+    {
+      "row": 32,
+      "col": 0,
+      "text": "A. butzleri proteins found:",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        543.0,
+        330.0,
+        552.0
+      ]
+    },
+    {
+      "row": 33,
+      "col": 0,
+      "text": "Within e-Proteobacterial taxa",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        559.0,
+        208.0,
+        567.0
+      ]
+    },
+    {
+      "row": 33,
+      "col": 1,
+      "text": "1754 (77.6%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        559.0,
+        330.0,
+        567.0
+      ]
+    },
+    {
+      "row": 34,
+      "col": 1,
+      "text": "98 (4.3%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        574.0,
+        330.0,
+        583.0
+      ]
+    },
+    {
+      "row": 35,
+      "col": 1,
+      "text": "10 (0.4%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        590.0,
+        330.0,
+        599.0
+      ]
+    },
+    {
+      "row": 36,
+      "col": 1,
+      "text": "133 (5.9%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        606.0,
+        330.0,
+        615.0
+      ]
+    },
+    {
+      "row": 37,
+      "col": 0,
+      "text": "Sulfurovum or Nitratiruptor only",
+      "is_header": false,
+      "bbox": [
+        37.0,
+        622.0,
+        208.0,
+        630.0
+      ]
+    },
+    {
+      "row": 37,
+      "col": 1,
+      "text": "56 (24.8%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        622.0,
+        330.0,
+        630.0
+      ]
+    },
+    {
+      "row": 38,
+      "col": 1,
+      "text": "190 (8.4%)",
+      "is_header": false,
+      "bbox": [
+        246.0,
+        637.0,
+        330.0,
+        646.0
+      ]
+    }
+  ]
+}
