@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="490.0" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700">Chapter 5 ingest benchmark summary</text>
+<line x1="80" y1="445" x2="940" y2="445" stroke="#333" stroke-width="1"/>
+<line x1="80" y1="70" x2="80" y2="445" stroke="#333" stroke-width="1"/>
+<line x1="80" y1="445.0" x2="940" y2="445.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="449.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">0.0</text>
+<line x1="80" y1="370.0" x2="940" y2="370.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="374.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">0.2</text>
+<line x1="80" y1="295.0" x2="940" y2="295.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="299.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">0.4</text>
+<line x1="80" y1="220.0" x2="940" y2="220.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="224.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">0.6</text>
+<line x1="80" y1="145.0" x2="940" y2="145.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="149.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">0.8</text>
+<line x1="80" y1="70.0" x2="940" y2="70.0" stroke="#d9d9d9" stroke-dasharray="4 4" stroke-width="1"/>
+<text x="68" y="74.0" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#333">1.0</text>
+<text x="24" y="257.5" text-anchor="middle" transform="rotate(-90 24 257.5)" font-family="Arial, sans-serif" font-size="14" fill="#333">Score</text>
+<rect x="80.0" y="126.6" width="144.8" height="318.4" fill="#3f6fb5"/>
+<text x="152.4" y="116.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#222">0.849</text>
+<text x="152.4" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#222">DocLayNet</text>
+<text x="152.4" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555">F1@0.50</text>
+<rect x="258.8" y="168.0" width="144.8" height="277.0" fill="#5a8f3d"/>
+<text x="331.2" y="158.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#222">0.739</text>
+<text x="331.2" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#222">PubLayNet</text>
+<text x="331.2" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555">F1@0.50</text>
+<rect x="437.6" y="79.3" width="144.8" height="365.7" fill="#b56a3f"/>
+<text x="510.0" y="69.3" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#222">0.975</text>
+<text x="510.0" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#222">PubTables detection</text>
+<text x="510.0" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555">F1@0.50</text>
+<rect x="616.4" y="70.0" width="144.8" height="375.0" fill="#7a5ab5"/>
+<text x="688.8" y="60.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#222">1.000</text>
+<text x="688.8" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#222">OCR scan</text>
+<text x="688.8" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555">OCR token F1</text>
+<rect x="795.2" y="135.2" width="144.8" height="309.8" fill="#3f9f9b"/>
+<text x="867.6" y="125.2" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#222">0.826</text>
+<text x="867.6" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#222">FUNSD OCR</text>
+<text x="867.6" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555">OCR token F1</text>
+</svg>

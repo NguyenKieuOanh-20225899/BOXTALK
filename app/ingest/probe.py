@@ -211,16 +211,16 @@ def _estimate_text_quality(text: str) -> float:
     total = max(len(stripped), 1)
 
     # Basic character ratios
-    printable_ratio = sum(1 for c in stripped if c.isprintable()) / total
-    alnum_ratio = sum(1 for c in stripped if c.isalnum()) / total
-    whitespace_ratio = sum(1 for c in stripped if c.isspace()) / total
+    printable_ratio = sum(1 for c in stripped if c.isprintable()) / total  #in được 
+    alnum_ratio = sum(1 for c in stripped if c.isalnum()) / total # chữ và số
+    whitespace_ratio = sum(1 for c in stripped if c.isspace()) / total # khoảng trắng
 
     # Line analysis
-    lines = [ln.strip() for ln in stripped.splitlines() if ln.strip()]
+    lines = [ln.strip() for ln in stripped.splitlines() if ln.strip()] #
     if not lines:
         return 0.0
 
-    avg_line_len = sum(len(ln) for ln in lines) / len(lines)
+    avg_line_len = sum(len(ln) for ln in lines) / len(lines) # ngắn quá thì dễ OCR
 
     # OCR quality indicators
     weird_chars = set("@#$%^&*_+=~`|<>[]{}")
