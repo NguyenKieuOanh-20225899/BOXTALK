@@ -21,6 +21,54 @@ minh ba diem:
   --out results\region_routing_ablation\qcdt_pubtables_ocr31
 ```
 
+## Lenh chay lai nhanh
+
+### 1. Tao overlay cho mot trang QCDT
+
+```powershell
+$pdf = "data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf"
+.\.venv-gpu\Scripts\python.exe scripts\draw_region_overlay.py $pdf --page 6 --out docs\chapter5\figures\qcdt_page6_region_overlay.png
+```
+
+### 2. So sanh region OFF/ON tren mot trang QCDT
+
+```powershell
+$pdf = "data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf"
+.\.venv-gpu\Scripts\python.exe scripts\compare_region_routing.py $pdf --page 6 --out-dir docs\chapter5\region_compare
+```
+
+Output:
+
+```text
+docs/chapter5/region_compare/QCDT_2025_5445_QD-DHBK_page6_region_compare.json
+docs/chapter5/region_compare/QCDT_2025_5445_QD-DHBK_page6_region_compare.md
+```
+
+### 3. Chay lai benchmark lon 31 PDF
+
+```powershell
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_region_routing_ablation.py `
+  --pdf data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf `
+  --glob "data/benchmarks/pubtables_structure/pdfs/*.pdf" `
+  --glob "data/benchmarks/ocr_scan_25/pdfs/scan_ocr_00[1-5].pdf" `
+  --out results\region_routing_ablation\qcdt_pubtables_ocr31
+```
+
+### 4. Chay lai benchmark chi rieng QCDT
+
+```powershell
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_region_routing_ablation.py `
+  --pdf data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf `
+  --out results\region_routing_ablation\qcdt_only
+```
+
+### 5. Validation sau khi sua code region
+
+```powershell
+.\.venv-gpu\Scripts\python.exe -m compileall app scripts
+.\.venv-gpu\Scripts\python.exe -m pytest tests\test_region_level_routing.py -q
+```
+
 Ket qua duoc ghi tai:
 
 ```text
@@ -160,4 +208,3 @@ region OFF ingest -> build index -> retrieval/QA
 region ON ingest  -> build index -> retrieval/QA
 same queries, compare Hit@k/Recall/MRR/answer/evidence.
 ```
-

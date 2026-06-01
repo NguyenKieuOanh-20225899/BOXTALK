@@ -77,6 +77,29 @@ Ket qua benchmark da tong hop tai:
 docs/chapter5/13_region_routing_large_ablation_results.md
 ```
 
+## Lenh rerun day du de copy
+
+```powershell
+# Overlay 1 trang
+$pdf = "data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf"
+.\.venv-gpu\Scripts\python.exe scripts\draw_region_overlay.py $pdf --page 6 --out docs\chapter5\figures\qcdt_page6_region_overlay.png
+
+# So sanh OFF/ON tren 1 trang
+.\.venv-gpu\Scripts\python.exe scripts\compare_region_routing.py $pdf --page 6 --out-dir docs\chapter5\region_compare
+
+# Benchmark lon OFF/ON tren 31 PDF
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_region_routing_ablation.py `
+  --pdf data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf `
+  --glob "data/benchmarks/pubtables_structure/pdfs/*.pdf" `
+  --glob "data/benchmarks/ocr_scan_25/pdfs/scan_ocr_00[1-5].pdf" `
+  --out results\region_routing_ablation\qcdt_pubtables_ocr31
+
+# Benchmark rieng QCDT
+.\.venv-gpu\Scripts\python.exe scripts\benchmark_region_routing_ablation.py `
+  --pdf data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf `
+  --out results\region_routing_ablation\qcdt_only
+```
+
 ## Validation can chay
 
 ```powershell
