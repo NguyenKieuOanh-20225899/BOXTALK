@@ -28,13 +28,30 @@ class TableCell:
     grid_bbox: BBox | None = None
     page: int | None = None
     table_id: str | None = None
+    row_header: str | None = None
+    col_header: str | None = None
+    is_header: bool | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_meta(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["row"] = payload.pop("row_index")
         payload["col"] = payload.pop("col_index")
-        payload["is_header"] = self.row_index == 0
+        payload["is_header"] = self.is_header if self.is_header is not None else self.row_index == 0
         return payload
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.to_meta()
+
+    @classmethod
+    def from_dict(cls, value: dict[str, Any]) -> "TableCell":
+        payload = dict(value)
+        if "row" in payload and "row_index" not in payload:
+            payload["row_index"] = payload.pop("row")
+        if "col" in payload and "col_index" not in payload:
+            payload["col_index"] = payload.pop("col")
+        allowed = set(cls.__dataclass_fields__)
+        return cls(**{key: payload[key] for key in payload if key in allowed})
 
 
 @dataclass(slots=True)
@@ -900,12 +917,61 @@ def table_structure_from_rows(
     row_bboxes: list[tuple[float, float, float, float]] | None = None,
     table_bbox: tuple[float, float, float, float] | None = None,
 ) -> dict[str, Any]:
+    reconstruction_trace: dict[str, Any] | None = None
+    reconstructed_meta_cells: list[dict[str, Any]] | None = None
+    if rows:
+        try:
+            from app.ingest.table_reconstruct import (
+                cells_from_hypothesis,
+                constraint_table_reconstruction_enabled,
+                reconstruct_from_rows,
+            )
+
+            if constraint_table_reconstruction_enabled():
+                original_rows = [list(row) for row in rows]
+                best_hypothesis = reconstruct_from_rows(original_rows)
+                if best_hypothesis.headers and best_hypothesis.rows:
+                    rows = [best_hypothesis.headers, *best_hypothesis.rows]
+                    cells = None
+                    cell_bboxes = None
+                    reconstructed_meta_cells = cells_from_hypothesis(best_hypothesis)
+                    reconstruction_trace = {
+                        "enabled": True,
+                        "status": "applied",
+                        "before_rows": original_rows,
+                        "after_rows": rows,
+                        "score": best_hypothesis.score,
+                        "constraints": best_hypothesis.constraints,
+                        "trace": best_hypothesis.trace,
+                    }
+        except Exception as exc:
+            reconstruction_trace = {
+                "enabled": True,
+                "status": "fallback",
+                "error": str(exc),
+            }
+
     max_cols = max((len(row) for row in rows), default=0)
     headers = list(rows[0]) if rows and max_cols > 1 else []
     body_rows = rows[1:] if headers else rows
     meta_cells: list[dict[str, Any]] = []
-    if cells is not None:
-        meta_cells = [cell.to_meta() for cell in cells if cell.text]
+    row_headers = _infer_row_headers(rows, headers)
+    if reconstructed_meta_cells is not None:
+        meta_cells = reconstructed_meta_cells
+    elif cells is not None:
+        meta_cells = []
+        for cell in cells:
+            if not cell.text:
+                continue
+            meta_cell = cell.to_meta()
+            meta_cell["row_header"] = meta_cell.get("row_header") or row_headers.get(cell.row_index)
+            meta_cell["col_header"] = meta_cell.get("col_header") or _header_at(headers, cell.col_index)
+            meta_cell["is_header"] = (
+                meta_cell.get("is_header")
+                if meta_cell.get("is_header") is not None
+                else bool(headers and cell.row_index == 0)
+            )
+            meta_cells.append(meta_cell)
     else:
         for row_index, row in enumerate(rows):
             for col_index, cell in enumerate(row):
@@ -918,6 +984,8 @@ def table_structure_from_rows(
                     "col_span": 1,
                     "text": cell,
                     "is_header": bool(headers and row_index == 0),
+                    "row_header": row_headers.get(row_index),
+                    "col_header": _header_at(headers, col_index),
                 }
                 if cell_bboxes and row_index < len(cell_bboxes) and col_index < len(cell_bboxes[row_index]):
                     bbox = cell_bboxes[row_index][col_index]
@@ -928,6 +996,16 @@ def table_structure_from_rows(
 
     csv_text = rows_to_csv(rows)
     html_text = cells_to_html(cells) if cells is not None else rows_to_html(rows)
+    markdown_text = cells_to_markdown(cells) if cells is not None else _rows_to_markdown(rows)
+    extraction_trace = {
+        "backend": backend,
+        "row_count": len(rows),
+        "col_count": max_cols,
+        "cell_count": len(meta_cells),
+        "has_cell_geometry": bool(cells or cell_bboxes),
+    }
+    if reconstruction_trace is not None:
+        extraction_trace["constraint_reconstruction"] = reconstruction_trace
     return {
         "backend": backend,
         "table_backend": backend,
@@ -938,13 +1016,54 @@ def table_structure_from_rows(
         "table_rows": rows,
         "table_records": _rows_to_records(headers, body_rows),
         "table_csv": csv_text,
+        "table_markdown": markdown_text,
         "table_html": html_text,
         "table_bbox": table_bbox,
         "table_column_bounds": column_bounds or [],
         "table_row_bboxes": row_bboxes or [],
         "table_cells": meta_cells,
         "table_cell_count": len(meta_cells),
+        "extraction_trace": extraction_trace,
+        "citation_metadata": {
+            "block_type": "table",
+            "citation_target": "table",
+            "table_bbox": table_bbox,
+        },
     }
+
+
+def cells_to_rows(cells: list[TableCell] | list[dict[str, Any]] | None) -> list[list[str]]:
+    if not cells:
+        return []
+    typed = [cell if isinstance(cell, TableCell) else TableCell.from_dict(cell) for cell in cells]
+    row_count = max((cell.row_index + cell.row_span for cell in typed), default=0)
+    col_count = max((cell.col_index + cell.col_span for cell in typed), default=0)
+    rows = [[""] * col_count for _ in range(row_count)]
+    for cell in typed:
+        if cell.row_index < row_count and cell.col_index < col_count:
+            rows[cell.row_index][cell.col_index] = cell.text
+    return rows
+
+
+def cells_to_csv(cells: list[TableCell] | list[dict[str, Any]] | None) -> str:
+    return rows_to_csv(cells_to_rows(cells))
+
+
+def cells_to_markdown(cells: list[TableCell] | list[dict[str, Any]] | None) -> str:
+    return _rows_to_markdown(cells_to_rows(cells))
+
+
+def _infer_row_headers(rows: list[list[str]], headers: list[str]) -> dict[int, str]:
+    if not rows:
+        return {}
+    start = 1 if headers else 0
+    return {row_index: row[0] for row_index, row in enumerate(rows[start:], start=start) if row and row[0]}
+
+
+def _header_at(headers: list[str], col_index: int) -> str | None:
+    if 0 <= col_index < len(headers):
+        return headers[col_index] or None
+    return None
 
 
 def _rows_to_records(headers: list[str], body_rows: list[list[str]]) -> list[dict[str, str]]:

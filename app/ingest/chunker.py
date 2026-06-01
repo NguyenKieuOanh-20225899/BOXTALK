@@ -1,4 +1,5 @@
 from app.ingest.schemas import BlockNode, ChunkNode
+from app.ingest.table_chunking import build_table_chunks, table_aware_chunking_enabled
 
 
 def build_chunks(blocks: list[BlockNode], max_chars: int = 1200) -> list[ChunkNode]:
@@ -58,6 +59,11 @@ def build_chunks(blocks: list[BlockNode], max_chars: int = 1200) -> list[ChunkNo
 
         if block.block_type == "table":
             flush()
+            if table_aware_chunking_enabled():
+                table_chunks = build_table_chunks(block, start_index=chunk_index)
+                chunks.extend(table_chunks)
+                chunk_index += len(table_chunks)
+                continue
             chunks.append(
                 ChunkNode(
                     chunk_id=f"chunk_{chunk_index:05d}",

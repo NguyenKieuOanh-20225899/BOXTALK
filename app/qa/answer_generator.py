@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+from app.qa.citations import format_evidence_citation
 from app.qa.schemas import EvidenceAssessment, GroundedAnswer
 from app.qa.table_lookup_utils import lookup_table_answer, lookup_table_answer_from_text, normalize_table_from_sources
 from app.qa.table_query_utils import is_table_lookup_query
@@ -1101,15 +1102,7 @@ class GroundedAnswerGenerator:
         return "I do not have enough grounded evidence to answer."
 
     def _citation(self, hit: RetrievedHit) -> dict[str, Any]:
-        return {
-            "chunk_id": hit.chunk_id,
-            "doc_id": hit.chunk.doc_id,
-            "source_name": hit.chunk.source_name,
-            "page": hit.page,
-            "section": hit.section,
-            "heading_path": hit.heading_path,
-            "score": round(float(hit.final_score or hit.score), 4),
-        }
+        return format_evidence_citation(hit)
 
     def _is_grounded(self, answer: str, hits: list[RetrievedHit]) -> bool:
         evidence_text = "\n".join(hit.chunk.text for hit in hits)

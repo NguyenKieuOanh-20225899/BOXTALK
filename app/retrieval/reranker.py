@@ -8,6 +8,7 @@ from typing import Any, Protocol
 
 from app.retrieval.colbert_retriever import DEFAULT_COLBERT_MODEL_NAME, ColBERTRetriever
 from app.retrieval.schemas import DocumentChunkRef, RetrievedHit
+from app.retrieval.table_aware import table_aware_retrieval_enabled, table_aware_score
 
 
 class Reranker(Protocol):
@@ -112,6 +113,11 @@ class HeuristicReranker:
         if chunk.block_type == "table" or chunk.metadata.get("is_table_chunk"):
             if tokens & self.TABLE_TERMS:
                 score += 0.20
+        if table_aware_retrieval_enabled():
+            boost, trace = table_aware_score(query, chunk)
+            score += boost
+            if trace.table_boost_applied:
+                chunk.metadata["table_retrieval_trace"] = trace.to_dict()
 
         if chunk.block_type == "heading":
             score += 0.05
