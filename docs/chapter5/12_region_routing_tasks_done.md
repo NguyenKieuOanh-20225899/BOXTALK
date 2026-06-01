@@ -19,6 +19,8 @@ Branch: `region-routing-defense-docs`
 - Them utility ve overlay:
   - `app/ingest/region/debug.py`;
   - `scripts/draw_region_overlay.py`.
+- Them script so sanh region ON/OFF:
+  - `scripts/compare_region_routing.py`.
 - Them test cho:
   - metadata trace cua table block;
   - tao anh overlay region debug.
@@ -33,6 +35,30 @@ Branch: `region-routing-defense-docs`
 python scripts/draw_region_overlay.py path/to/file.pdf --page 1 --out docs/chapter5/figures/region_overlay_page1.png
 ```
 
+## Cach so sanh co/khong co region
+
+```powershell
+python scripts/compare_region_routing.py path/to/file.pdf --page 1 --out-dir docs/chapter5/region_compare
+```
+
+Script se chay ingest hai lan tren cung PDF:
+
+- `BOXBIIBOO_ENABLE_REGION_ROUTING=0`;
+- `BOXBIIBOO_ENABLE_REGION_ROUTING=1`.
+
+Output gom:
+
+- file JSON de inspect chi tiet;
+- file Markdown de dua vao docs/bao cao.
+
+Can xem:
+
+- `used_backend`;
+- `block_type_counts`;
+- `route_backend_counts`;
+- `trace_meta` cua tung block;
+- block/chunk count tren trang can so sanh.
+
 ## Validation can chay
 
 ```powershell
@@ -46,4 +72,3 @@ python -m pytest tests/test_region_level_routing.py -q
 - Khong claim region routing luon tot hon neu chua co paired benchmark full ingest
   tren PDF thuc te hon hop.
 - Nen dua anh overlay vao Chuong 5 hoac slide bao ve.
-
