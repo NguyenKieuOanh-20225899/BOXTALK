@@ -21,6 +21,8 @@ Branch: `region-routing-defense-docs`
   - `scripts/draw_region_overlay.py`.
 - Them script so sanh region ON/OFF:
   - `scripts/compare_region_routing.py`.
+- Them script benchmark full-ingest region ON/OFF tren nhieu PDF:
+  - `scripts/benchmark_region_routing_ablation.py`.
 - Them test cho:
   - metadata trace cua table block;
   - tao anh overlay region debug.
@@ -58,6 +60,22 @@ Can xem:
 - `route_backend_counts`;
 - `trace_meta` cua tung block;
 - block/chunk count tren trang can so sanh.
+
+## Cach chay benchmark lon region ON/OFF
+
+```powershell
+python scripts/benchmark_region_routing_ablation.py `
+  --pdf data\real_pdfs\QCDT_2025_5445_QD-DHBK.pdf `
+  --glob "data/benchmarks/pubtables_structure/pdfs/*.pdf" `
+  --glob "data/benchmarks/ocr_scan_25/pdfs/scan_ocr_00[1-5].pdf" `
+  --out results\region_routing_ablation\qcdt_pubtables_ocr31
+```
+
+Ket qua benchmark da tong hop tai:
+
+```text
+docs/chapter5/13_region_routing_large_ablation_results.md
+```
 
 ## Validation can chay
 
