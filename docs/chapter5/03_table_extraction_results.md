@@ -48,3 +48,32 @@ Trace noi bat: suy ra 4 cot, tach row Tien si bi merge, day gia tri cot Chuong t
 - Hybrid TATR cai thien table structure tren PubTables subset da chay.
 - Cell-level citation co ich khi cau hoi can tra loi o cap o bang.
 - Exact CSV/HTML van la gioi han; khong nen claim reconstruct hoan chinh moi bang PDF.
+
+## Huong mo rong: OCR word boxes -> Hybrid TATR
+
+Voi PDF scan/image, OCR can duoc dung de lay text va word boxes. Neu region la
+bang, cac OCR word boxes nay co the dua vao Hybrid TATR de gan text vao cell do
+TATR phat hien:
+
+```text
+PDF scan/image
+-> OCR text + word boxes
+-> table region
+-> Hybrid TATR voi anh bang + OCR word boxes
+-> table_cells / table_csv / table_markdown
+-> table-aware chunks
+```
+
+Trong code hien tai, luong nay chua duoc bat tu dong cho moi PDF scan/image
+trong production pipeline. Vi du `PMC2147049_table_0.pdf` khi full ingest duoc
+fallback sang `ocr`. Do do, can trinh bay day la huong mo rong, khong phai ket
+qua da tich hop hoan chinh.
+
+Flag de xuat cho ablation sau:
+
+| Flag | Gia tri | Y nghia |
+| --- | --- | --- |
+| `BOXBIIBOO_ENABLE_OCR_TO_HYBRID_TATR` | `0` | OCR/table-from-OCR baseline. |
+| `BOXBIIBOO_ENABLE_OCR_TO_HYBRID_TATR` | `1` | Neu co table region va OCR word boxes, chay Hybrid TATR cho vung bang. |
+
+Chi tiet xem `docs/chapter5/14_ocr_to_hybrid_tatr_extension.md`.

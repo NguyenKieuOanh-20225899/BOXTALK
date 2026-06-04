@@ -1,0 +1,248 @@
+{
+  "text": "page-header\ntext\nsection-header\nsection-header\nsection-header\ntext\ntext\nsection-header\ntext\nsection-header\ntext\nsection-header\ntext\nsection-header\ntext\ncaption\ntable\npage-footer",
+  "ordered_text": [
+    "page-header",
+    "text",
+    "section-header",
+    "section-header",
+    "section-header",
+    "text",
+    "text",
+    "section-header",
+    "text",
+    "section-header",
+    "text",
+    "section-header",
+    "text",
+    "section-header",
+    "text",
+    "caption",
+    "table",
+    "page-footer"
+  ],
+  "layout_regions": [
+    {
+      "label": "metadata",
+      "bbox": [
+        69.7066879272461,
+        52.243324279785156,
+        311.7871398925781,
+        62.39323043823242
+      ],
+      "text": "page-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        69.78914642333984,
+        107.12824249267578,
+        376.1832275390625,
+        296.888916015625
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        70.06744384765625,
+        314.5030212402344,
+        192.96463012695312,
+        340.8367614746094
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        70.43492889404297,
+        314.5673522949219,
+        128.83206176757812,
+        328.442138671875
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        70.34724426269531,
+        329.4407043457031,
+        193.19935607910156,
+        340.99005126953125
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        70.08680725097656,
+        344.38983154296875,
+        376.54766845703125,
+        490.4257507324219
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        70.13056182861328,
+        507.50018310546875,
+        377.1579895019531,
+        623.5537719726562
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        70.28864288330078,
+        640.9248046875,
+        326.6761169433594,
+        652.6870727539062
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        70.22992706298828,
+        656.1121826171875,
+        376.7099609375,
+        742.3607177734375
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        70.18235778808594,
+        758.6637573242188,
+        105.86890411376953,
+        770.3262329101562
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        396.4085693359375,
+        106.845458984375,
+        704.2439575195312,
+        193.0640411376953
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        396.29083251953125,
+        210.26681518554688,
+        570.6449584960938,
+        222.2806396484375
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        396.31353759765625,
+        225.00914001464844,
+        704.771240234375,
+        401.0680236816406
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "heading",
+      "bbox": [
+        396.3798828125,
+        418.1788330078125,
+        617.1654663085938,
+        429.8189697265625
+      ],
+      "text": "section-header",
+      "metadata": {}
+    },
+    {
+      "label": "paragraph",
+      "bbox": [
+        396.5605773925781,
+        432.78466796875,
+        703.9865112304688,
+        727.634521484375
+      ],
+      "text": "text",
+      "metadata": {}
+    },
+    {
+      "label": "caption",
+      "bbox": [
+        69.45967102050781,
+        783.74609375,
+        558.8795166015625,
+        794.18017578125
+      ],
+      "text": "caption",
+      "metadata": {}
+    },
+    {
+      "label": "table",
+      "bbox": [
+        68.48080444335938,
+        792.27099609375,
+        702.6787719726562,
+        890.2369995117188
+      ],
+      "text": "table",
+      "metadata": {}
+    },
+    {
+      "label": "metadata",
+      "bbox": [
+        20.40345001220703,
+        927.07763671875,
+        45.68751525878906,
+        938.1971435546875
+      ],
+      "text": "page-footer",
+      "metadata": {}
+    }
+  ],
+  "table_regions": [
+    {
+      "label": "table",
+      "bbox": [
+        68.48080444335938,
+        792.27099609375,
+        702.6787719726562,
+        890.2369995117188
+      ],
+      "text": "table",
+      "metadata": {}
+    }
+  ],
+  "table_cells": [],
+  "table_html": null,
+  "table_csv": null,
+  "backend": "model_layout_direct",
+  "latency_sec": 15.428519500012044,
+  "success": true,
+  "error": null,
+  "metadata": {
+    "generated_pdf": "docs\\chapter5\\figures\\pubtables_detection_pmc1064082_1_run\\_work\\PMC1064082_1.pdf",
+    "block_count": 18,
+    "direct_component_benchmark": true
+  }
+}
