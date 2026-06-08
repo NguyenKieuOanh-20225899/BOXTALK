@@ -1,0 +1,96 @@
+{
+  "dataset_name": "pubtables",
+  "mode": "table",
+  "num_samples": 1,
+  "success_rate": 1.0,
+  "metric_summary": {
+    "spanning_cell_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "non_empty_pred_cell_rate": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "text_source_missing_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "layout_iou50": null,
+    "layout_iou75": null,
+    "table_detection_iou50": {
+      "micro_precision": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_recall": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "macro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      }
+    },
+    "table_detection_iou75": {
+      "micro_precision": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "micro_recall": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "micro_f1": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "macro_f1": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      }
+    },
+    "table_structure": null,
+    "table_cell_iou50": null,
+    "table_cell_iou75": null
+  },
+  "latency": {
+    "mean": 15.428519500012044,
+    "p50": 15.428519500012044,
+    "p95": 15.428519500012044
+  },
+  "error_count": 0,
+  "errors": [],
+  "issues": [],
+  "config": {
+    "dataset": "pubtables",
+    "data_dir": "docs\\chapter5\\figures\\pubtables_detection_pmc1064082_1_dataset",
+    "limit": 1,
+    "out": "docs\\chapter5\\figures\\pubtables_detection_pmc1064082_1_run",
+    "device": "cuda",
+    "mode": "table",
+    "table_backend": "default",
+    "save_predictions": true,
+    "seed": 13
+  },
+  "backend_counts": {
+    "model_layout_direct": 1
+  },
+  "timestamp_utc": "2026-06-03T14:51:00Z",
+  "git_commit": "3aee645"
+}

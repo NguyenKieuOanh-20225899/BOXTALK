@@ -1,0 +1,279 @@
+{
+  "dataset_name": "pubtables_structure",
+  "mode": "table",
+  "num_samples": 1,
+  "success_rate": 1.0,
+  "metric_summary": {
+    "char_accuracy": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "token_f1": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "normalized_text_similarity": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "cer": {
+      "mean": 1.0,
+      "p50": 1.0,
+      "p95": 1.0
+    },
+    "wer": {
+      "mean": 1.0,
+      "p50": 1.0,
+      "p95": 1.0
+    },
+    "reading_order_score": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "table_exact_csv": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "table_exact_html": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "cell_precision_iou50": {
+      "mean": 0.31521739130434784,
+      "p50": 0.31521739130434784,
+      "p95": 0.31521739130434784
+    },
+    "cell_recall_iou50": {
+      "mean": 0.3918918918918919,
+      "p50": 0.3918918918918919,
+      "p95": 0.3918918918918919
+    },
+    "cell_f1_iou50": {
+      "mean": 0.34939759036144574,
+      "p50": 0.34939759036144574,
+      "p95": 0.34939759036144574
+    },
+    "text_assignment_f1": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "row_count_error": {
+      "mean": 6.0,
+      "p50": 6.0,
+      "p95": 6.0
+    },
+    "col_count_error": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "row_count_mae": {
+      "mean": 6.0,
+      "p50": 6.0,
+      "p95": 6.0
+    },
+    "col_count_mae": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "row_oversegmentation_count": {
+      "mean": 1.0,
+      "p50": 1.0,
+      "p95": 1.0
+    },
+    "row_undersegmentation_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "col_oversegmentation_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "col_undersegmentation_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "spanning_cell_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "non_empty_pred_cell_rate": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "text_source_missing_count": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "grits_top_like": {
+      "mean": 0.891566265060241,
+      "p50": 0.891566265060241,
+      "p95": 0.891566265060241
+    },
+    "grits_loc_like": {
+      "mean": 0.21739969184479582,
+      "p50": 0.21739969184479582,
+      "p95": 0.21739969184479582
+    },
+    "grits_con_like": {
+      "mean": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "empty_cell_rate": {
+      "mean": 1.0,
+      "p50": 1.0,
+      "p95": 1.0
+    },
+    "matched_cell_count": {
+      "mean": 29.0,
+      "p50": 29.0,
+      "p95": 29.0
+    },
+    "unmatched_pred_count": {
+      "mean": 63.0,
+      "p50": 63.0,
+      "p95": 63.0
+    },
+    "unmatched_gt_count": {
+      "mean": 45.0,
+      "p50": 45.0,
+      "p95": 45.0
+    },
+    "layout_iou50": null,
+    "layout_iou75": null,
+    "table_detection_iou50": {
+      "micro_precision": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_recall": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "macro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      }
+    },
+    "table_detection_iou75": {
+      "micro_precision": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_recall": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "micro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "macro_f1": {
+        "mean": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      }
+    },
+    "table_structure": {
+      "precision": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "f1": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      }
+    },
+    "table_cell_iou50": {
+      "precision": {
+        "mean": 0.31521739130434784,
+        "p50": 0.31521739130434784,
+        "p95": 0.31521739130434784
+      },
+      "recall": {
+        "mean": 0.3918918918918919,
+        "p50": 0.3918918918918919,
+        "p95": 0.3918918918918919
+      },
+      "f1": {
+        "mean": 0.34939759036144574,
+        "p50": 0.34939759036144574,
+        "p95": 0.34939759036144574
+      }
+    },
+    "table_cell_iou75": {
+      "precision": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "f1": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      }
+    }
+  },
+  "latency": {
+    "mean": 17.362304500013124,
+    "p50": 17.362304500013124,
+    "p95": 17.362304500013124
+  },
+  "error_count": 0,
+  "errors": [],
+  "issues": [],
+  "config": {
+    "dataset": "pubtables_structure",
+    "data_dir": "data\\benchmarks\\pubtables_structure_ocr_words_pmc2147049_single",
+    "limit": 1,
+    "out": "docs\\chapter5\\ingest_visualizations\\PMC2147049_table_0_backend_compare\\tatr",
+    "device": null,
+    "mode": "table",
+    "table_backend": "tatr",
+    "save_predictions": true,
+    "seed": 13
+  },
+  "backend_counts": {
+    "tatr": 1
+  },
+  "timestamp_utc": "2026-06-01T10:45:11Z",
+  "git_commit": "49bc614"
+}

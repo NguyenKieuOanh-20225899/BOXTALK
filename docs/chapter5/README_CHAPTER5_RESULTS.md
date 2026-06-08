@@ -19,6 +19,7 @@ Danh gia pipeline truy xuat va hoi dap thong tin tren PDF theo nhieu tang: inges
 | `08_final_chapter5_tables.md` | Bang LaTeX copy vao bao cao | Done | Co bang dataset, ingest, table, retrieval, QA, error |
 | `09_chapter5_flags_and_additions.md` | Flags, rerun bo sung, phan them vao Chuong 5 | Done | Liet ke env flags va output rerun large |
 | `10_region_routing_ablation.md` | Ablation bat/tat region routing | Done | Mock khong regression; PubTables/FUNSD task-specific khong chung minh truc tiep region |
+| `14_ocr_to_hybrid_tatr_extension.md` | Huong mo rong OCR word boxes sang Hybrid TATR | Done | De xuat flag bat/tat de so sanh scan table OCR-only voi OCR+Hybrid TATR |
 
 ## Commands da chay
 
@@ -93,4 +94,5 @@ python scripts/benchmark_qa.py --index-dir results/retrieval_index/qasper_qa_500
 - Khong claim PDF nao cung trich xuat hoan hao.
 - Khong claim khong bao gio hallucinate.
 - Table reconstruction van chua hoan chinh voi moi merged cell/multi-header.
+- PDF scan/image table hien chua tu dong noi OCR word boxes sang Hybrid TATR trong production pipeline; day la huong mo rong co flag bat/tat de ablation.
 - Fine-tune TATR structure la viec de sau, chua lam trong giai doan nay.

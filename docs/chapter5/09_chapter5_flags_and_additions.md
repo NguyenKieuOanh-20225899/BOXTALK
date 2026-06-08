@@ -18,6 +18,7 @@ File nay ghi lai cac flag/env can bat va cac benchmark large da chay lai them sa
 | `--table-backend tatr` | N/A | TATR baseline | Pretrained TATR boxes. |
 | `--table-backend hybrid_tatr` | N/A | Table ablation chinh | TATR boxes + word assignment. |
 | `--dataset ocr --data-dir <folder>/ocr` | N/A | OCR benchmarks | OCR adapter can `ocr_samples.jsonl` nam truc tiep trong data-dir. |
+| `BOXBIIBOO_ENABLE_OCR_TO_HYBRID_TATR` | `0/1` | De xuat mo rong scan table | Bat/tat luong OCR word boxes -> Hybrid TATR cho table region; chua la default production. |
 
 ## Commands bo sung da chay
 
@@ -56,3 +57,4 @@ python scripts/benchmark_ingest_suite.py --dataset ocr --data-dir data/benchmark
 - Ghi ro PubTables detection 500 da rerun that voi model layout bat.
 - Ghi ro OCR scan synthetic khong dai dien OCR thuc te; FUNSD OCR la benchmark thuc te hon va co CER/WER cao hon.
 - Giu han che: PubTables structure default 25 rerun moi bi timeout, nhung da co rerun 25 cu va mau 5 moi de kiem tra pipeline.
+- Them huong mo rong OCR word boxes -> Hybrid TATR cho scan/image table, kem flag `BOXBIIBOO_ENABLE_OCR_TO_HYBRID_TATR` de ablation khi tich hop.

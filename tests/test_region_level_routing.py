@@ -5,6 +5,7 @@ from pathlib import Path
 import fitz
 
 from app.ingest.extract.region_routed import extract_with_region_routed_backend
+from app.ingest.region.debug import draw_regions_debug
 from app.ingest.region.detector import detect_regions
 
 
@@ -60,6 +61,10 @@ def test_region_routed_backend_extracts_table_region_without_duplicate_text(monk
     assert pages[0].has_table is True
     assert len(table_blocks) == 1
     assert table_blocks[0].meta["route_backend"] == "table"
+    assert table_blocks[0].meta["region_type"] == "table"
+    assert table_blocks[0].meta["region_bbox"] == table_blocks[0].bbox
+    assert table_blocks[0].meta["page_number"] == 1
+    assert table_blocks[0].meta["fallback_used"] is False
     assert table_blocks[0].meta["table_row_count"] == 3
     assert table_blocks[0].meta["table_col_count"] == 3
 
@@ -68,3 +73,20 @@ def test_region_routed_backend_extracts_table_region_without_duplicate_text(monk
     assert any(block.block_type == "caption" for block in blocks)
     assert any(block.block_type == "figure" for block in blocks)
     assert sum(1 for block in blocks if block.block_type == "metadata") >= 2
+
+
+def test_draw_regions_debug_overlay(monkeypatch, tmp_path: Path) -> None:
+    pdf_path = tmp_path / "regions.pdf"
+    out_path = tmp_path / "regions_overlay.png"
+    _make_region_pdf(pdf_path)
+    monkeypatch.setenv("BOXBIIBOO_ENABLE_REGION_VECTOR_FIGURES", "1")
+
+    doc = fitz.open(pdf_path)
+    try:
+        regions = detect_regions(doc[0])
+        draw_regions_debug(doc[0], regions, out_path)
+    finally:
+        doc.close()
+
+    assert out_path.exists()
+    assert out_path.stat().st_size > 0

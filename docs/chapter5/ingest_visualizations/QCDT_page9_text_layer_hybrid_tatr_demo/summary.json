@@ -1,0 +1,47 @@
+{
+  "doc_id": "QCDT_2025_5445_QD-DHBK.pdf",
+  "page_number": 9,
+  "source_pdf": "data\\real_pdfs\\QCDT_2025_5445_QD-DHBK.pdf",
+  "source_run": "docs/chapter5/ingest_visualizations/QCDT_page9_hybrid_tatr",
+  "visualization_type": "PDF text-layer word boxes + Hybrid TATR cell grid",
+  "tables": [
+    {
+      "table_index": 1,
+      "block_id": "p0008_b0005",
+      "bbox": [
+        122.10000356038411,
+        294.60996500651044,
+        488.1800003051758,
+        334.2899856567383
+      ],
+      "text_source": "pdf_text_words",
+      "route_backend": "hybrid_tatr",
+      "table_backend": "hybrid_tatr",
+      "row_count": 2,
+      "col_count": 5,
+      "cell_count": 10,
+      "pdf_word_boxes_in_bbox": 18,
+      "csv_file": "05_table1_hybrid_tatr_output.csv",
+      "markdown_file": "06_table1_hybrid_tatr_output.md"
+    },
+    {
+      "table_index": 2,
+      "block_id": "p0008_b0013",
+      "bbox": [
+        88.76400089263916,
+        639.7981567382812,
+        521.175048828125,
+        717.6018343838779
+      ],
+      "text_source": "pdf_text_words",
+      "route_backend": "hybrid_tatr",
+      "table_backend": "hybrid_tatr",
+      "row_count": 3,
+      "col_count": 10,
+      "cell_count": 30,
+      "pdf_word_boxes_in_bbox": 50,
+      "csv_file": "05_table2_hybrid_tatr_output.csv",
+      "markdown_file": "06_table2_hybrid_tatr_output.md"
+    }
+  ]
+}
