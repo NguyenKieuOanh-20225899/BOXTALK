@@ -1,0 +1,87 @@
+\documentclass[../DoAn.tex]{subfiles}
+
+\begin{document}
+
+\begin{longtable}{
+    @{}
+    >{\raggedright\arraybackslash}p{0.24\textwidth}
+    >{\raggedright\arraybackslash}p{0.70\textwidth}
+    @{}
+}
+\caption{Danh mục thuật ngữ sử dụng trong đồ án}
+\label{tab:list-of-terms}\\
+\hline
+\textbf{Thuật ngữ} & \textbf{Ý nghĩa trong đồ án} \\
+\hline
+\endfirsthead
+
+\multicolumn{2}{c}{\textit{Bảng~\thetable{} (tiếp theo)}}\\
+\hline
+\textbf{Thuật ngữ} & \textbf{Ý nghĩa trong đồ án} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{2}{r}{\textit{Còn tiếp ở trang sau}}\\
+\endfoot
+
+\hline
+\endlastfoot
+
+\textbf{Backend}
+& Thành phần xử lý cụ thể được chọn để thực hiện một bước trong hệ thống, ví dụ backend trích xuất văn bản, OCR hoặc tái dựng bảng. \\
+
+\textbf{Benchmark}
+& Tập dữ liệu, câu hỏi và quy tắc đánh giá dùng để so sánh các cấu hình hệ thống. \\
+
+\textbf{Chunk}
+& Đơn vị đoạn được sinh từ block hoặc bảng để đưa vào chỉ mục và phục vụ truy xuất. \\
+
+\textbf{Citation}
+& Dẫn chứng nguồn đi kèm câu trả lời, có thể trỏ tới tài liệu, trang, đoạn văn, bảng, hàng hoặc ô bảng. \\
+
+\textbf{Corpus}
+& Tập các chunk được dùng làm không gian tìm kiếm của hệ thống truy xuất. \\
+
+\textbf{Dense retrieval}
+& Truy xuất ngữ nghĩa bằng cách biểu diễn câu hỏi và chunk dưới dạng vector. \\
+
+\textbf{Evidence}
+& Bằng chứng được truy xuất từ tài liệu và dùng để hỗ trợ câu trả lời. \\
+
+\textbf{Grounded QA}
+& Hỏi đáp có căn cứ, trong đó câu trả lời phải được hỗ trợ bởi bằng chứng và dẫn chứng nguồn. \\
+
+\textbf{Hybrid retrieval}
+& Truy xuất kết hợp nhiều tín hiệu, thường gồm tín hiệu từ khóa và tín hiệu ngữ nghĩa. \\
+
+\textbf{Ingest}
+& Luồng tiếp nhận và trích xuất dữ liệu từ PDF, gồm phân tích trang, trích xuất văn bản, xử lý bảng và sinh metadata. \\
+
+\textbf{Indexing}
+& Bước lập chỉ mục từ các chunk để phục vụ truy xuất bằng từ khóa hoặc vector. \\
+
+\textbf{Metadata}
+& Siêu dữ liệu nguồn như tên tài liệu, trang, khung bao, loại block, bảng, hàng hoặc ô. \\
+
+\textbf{Pipeline}
+& Chuỗi các bước xử lý nối tiếp nhau từ ingest PDF đến truy xuất, hỏi đáp và dẫn chứng. \\
+
+\textbf{Region routing}
+& Cơ chế định tuyến theo vùng nội dung, chọn cách xử lý khác nhau cho vùng văn bản, bảng hoặc ảnh. \\
+
+\textbf{Reranking}
+& Bước sắp xếp lại các kết quả truy xuất ban đầu để ưu tiên bằng chứng phù hợp hơn. \\
+
+\textbf{Table-aware chunking}
+& Cách chia đoạn có nhận thức bảng, sinh chunk ở mức bảng, hàng hoặc ô thay vì chỉ coi bảng là văn bản phẳng. \\
+
+\textbf{Text layer}
+& Lớp văn bản có sẵn trong PDF, cho phép trích xuất chữ và tọa độ mà không cần OCR. \\
+
+\textbf{Trace}
+& Vết xử lý ghi lại chiến lược truy xuất, bằng chứng được chọn, quyết định kiểm tra bằng chứng và nguồn sinh câu trả lời. \\
+
+\end{longtable}
+
+\end{document}

@@ -1,0 +1,376 @@
+\documentclass[../DoAn.tex]{subfiles}
+
+\begin{document}
+
+\section{Tổng quan chương}
+
+Chương này khảo sát bài toán truy xuất và hỏi đáp thông tin trên tài liệu PDF,
+đồng thời xác định các yêu cầu cần thiết cho hệ thống được xây dựng trong đồ án.
+Khác với Chương 1, phần này không nhắc lại toàn bộ động cơ của đề tài mà tập
+trung làm rõ đầu vào, đầu ra, nhóm người dùng, các thách thức chính và tiêu chí
+đánh giá. Kết quả của chương là danh sách yêu cầu chức năng, yêu cầu phi chức
+năng và bảng liên kết giữa yêu cầu với các phần thiết kế, thực nghiệm ở các
+chương sau.
+
+\section{Bài toán truy xuất và hỏi đáp trên tài liệu PDF}
+\label{section:pdf-qa-problem}
+
+Bài toán được xem xét trong đồ án có đầu vào là một hoặc nhiều tài liệu PDF và
+câu hỏi của người dùng bằng ngôn ngữ tự nhiên. Đầu ra mong muốn là câu trả lời
+ngắn gọn, đúng trọng tâm, kèm dẫn chứng cho phép người dùng kiểm tra lại nội
+dung trong tài liệu gốc. Dẫn chứng có thể trỏ tới trang, đoạn văn, bảng, hàng hoặc
+ô bảng tùy theo loại thông tin được sử dụng để trả lời.
+
+Ở mức tổng quát, bài toán gồm hai nhóm nhiệm vụ. Nhóm thứ nhất là xử lý và tổ
+chức tài liệu PDF thành các đơn vị có thể truy xuất, bao gồm văn bản, bảng và các
+thông tin nguồn đi kèm. Nhóm thứ hai là truy xuất các đoạn thông tin liên quan,
+kiểm tra mức độ đầy đủ của bằng chứng và tạo câu trả lời dựa trên các bằng chứng
+đó. Nếu bước truy xuất lấy sai hoặc thiếu bằng chứng, bước hỏi đáp phía sau rất
+khó tạo ra câu trả lời chính xác. Vì vậy, đồ án không chỉ đánh giá câu trả lời cuối
+cùng mà còn đánh giá từng tầng của quy trình xử lý.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{Mô tả đầu vào, đầu ra và yêu cầu chính của bài toán}
+\label{tab:problem-input-output}
+\begin{tabularx}{\textwidth}{
+    |>{\raggedright\arraybackslash}p{0.24\textwidth}
+    |>{\raggedright\arraybackslash}X|
+}
+\hline
+\textbf{Thành phần} & \textbf{Mô tả} \\
+\hline
+Đầu vào tài liệu &
+Tài liệu PDF có lớp văn bản, tài liệu có bảng, bố cục nhiều vùng hoặc một số
+trang cần nhận dạng ký tự từ ảnh. \\
+\hline
+Đầu vào truy vấn &
+Câu hỏi bằng ngôn ngữ tự nhiên, có thể hỏi về đoạn văn, điều khoản, quy định,
+bảng hoặc giá trị trong ô bảng. \\
+\hline
+Đầu ra truy xuất &
+Danh sách bằng chứng liên quan kèm thông tin nguồn như tài liệu, trang, loại
+nội dung và vị trí trong tài liệu. \\
+\hline
+Đầu ra hỏi đáp &
+Câu trả lời ngắn gọn, bám sát bằng chứng và có dẫn chứng để kiểm chứng. \\
+\hline
+Yêu cầu kiểm soát &
+Khi tài liệu không chứa đủ thông tin, hệ thống cần trả lời thận trọng thay vì tự
+suy đoán. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Đặc điểm dữ liệu PDF và các thách thức chính}
+\label{section:pdf-data-characteristics}
+
+PDF là định dạng thuận tiện cho hiển thị, lưu trữ và chia sẻ, nhưng không phải lúc
+nào cũng lưu nội dung theo cấu trúc thuận lợi cho xử lý tự động. Nhiều tài liệu PDF
+chứa văn bản, bảng, hình ảnh, chú thích, tiêu đề đầu trang, chân trang, số trang và
+bố cục nhiều cột. Khi trích xuất tự động, nội dung có thể bị sai thứ tự đọc, mất ngữ
+cảnh hoặc lẫn các thành phần không thuộc nội dung chính. Các bộ dữ liệu phân
+tích bố cục tài liệu như DocLayNet và PubTables-1M cũng cho thấy xử lý layout và
+bảng là những bài toán riêng trong khai thác tài liệu PDF
+\cite{pfitzmann2022doclaynet,smock2022pubtables}.
+
+Bảng biểu là một thách thức quan trọng vì thông tin trong bảng phụ thuộc vào quan
+hệ giữa hàng, cột và ô. Nếu bảng chỉ được nối thành văn bản tuyến tính, hệ thống có
+thể giữ được một phần từ khóa nhưng mất quan hệ giữa điều kiện và giá trị. Điều
+này ảnh hưởng trực tiếp đến các câu hỏi dạng tra cứu như quy đổi điểm, tìm khoảng
+giá trị hoặc xác định điều kiện áp dụng. Với PDF được quét từ ảnh, hệ thống còn
+cần nhận dạng ký tự quang học để lấy nội dung và vị trí từ trên trang
+\cite{du2020ppocr}.
+
+Từ các đặc điểm trên, đồ án tập trung vào bốn thách thức chính: trích xuất nội dung
+PDF theo đúng thứ tự đọc, biểu diễn bảng sao cho giữ được cấu trúc, truy xuất đúng
+bằng chứng cho nhiều kiểu câu hỏi và tạo câu trả lời có thể kiểm chứng bằng dẫn
+chứng nguồn.
+
+\section{Nhu cầu và kịch bản sử dụng}
+\label{section:user-needs}
+
+Người dùng mục tiêu của hệ thống là những người thường xuyên cần tra cứu thông
+tin trong các tài liệu PDF dài hoặc có cấu trúc bán hình thức. Trong môi trường giáo
+dục, người dùng có thể cần hỏi về quy chế đào tạo, điều kiện tốt nghiệp, cách tính
+điểm hoặc quy định học vụ. Trong môi trường tổ chức, người dùng có thể tra cứu
+quy trình nội bộ, tài liệu vận hành, hướng dẫn nghiệp vụ hoặc chính sách áp dụng
+cho một trường hợp cụ thể.
+
+Điểm chung của các kịch bản này là người dùng không chỉ cần kết quả nhanh mà
+còn cần biết câu trả lời được lấy từ đâu. Vì vậy, hệ thống cần hỗ trợ hỏi đáp bằng
+ngôn ngữ tự nhiên, truy xuất đúng đoạn thông tin liên quan và cung cấp dẫn chứng
+nguồn. Đối với các tài liệu mang tính quy định, dẫn chứng là yêu cầu quan trọng vì
+người dùng thường cần kiểm tra lại điều khoản hoặc bảng nguồn trước khi sử dụng
+kết quả.
+
+\section{Khảo sát các hướng tiếp cận liên quan}
+\label{section:related-approaches}
+
+Các hệ thống truy xuất và hỏi đáp trên tài liệu thường kết hợp nhiều hướng tiếp
+cận. Truy xuất theo từ khóa như BM25 có ưu điểm nhanh, dễ triển khai và bám sát
+thuật ngữ trong tài liệu \cite{robertson2009bm25}. Truy xuất ngữ nghĩa biểu diễn
+câu hỏi và đoạn văn bản trong không gian vector, nhờ đó có thể tìm các đoạn liên
+quan ngay cả khi câu hỏi không trùng từ khóa với tài liệu
+\cite{karpukhin2020dpr,reimers2019sentencebert}. Tuy nhiên, trong tài liệu quy
+định, chỉ dùng một trong hai hướng có thể chưa đủ: từ khóa có thể bỏ sót cách diễn
+đạt khác, còn truy xuất ngữ nghĩa có thể lấy nhầm đoạn gần nghĩa nhưng sai điều
+kiện.
+
+Hướng hỏi đáp tăng cường bằng truy xuất sử dụng các đoạn đã truy xuất làm ngữ
+cảnh cho bước sinh câu trả lời \cite{lewis2020rag}. Các hướng gần đây cũng nhấn
+mạnh vai trò của việc kiểm tra lại quá trình truy xuất, sinh và phê bình câu trả lời
+nhằm giảm nguy cơ tạo thông tin thiếu căn cứ \cite{asai2024selfrag}. Trong phạm
+vi đồ án, các hướng tiếp cận này được sử dụng như nền tảng để thiết kế quy trình
+truy xuất, kiểm tra bằng chứng và sinh câu trả lời có dẫn chứng.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{Tổng hợp các hướng tiếp cận liên quan và vai trò trong đồ án}
+\label{tab:related-work-summary}
+\begin{tabularx}{\textwidth}{
+    |>{\raggedright\arraybackslash}p{0.22\textwidth}
+    |>{\raggedright\arraybackslash}p{0.26\textwidth}
+    |>{\raggedright\arraybackslash}X
+    |>{\raggedright\arraybackslash}p{0.18\textwidth}|
+}
+\hline
+\textbf{Hướng tiếp cận} & \textbf{Điểm mạnh} & \textbf{Hạn chế trong bài toán PDF QA} & \textbf{Nguồn} \\
+\hline
+Truy xuất theo từ khóa &
+Nhanh, bám sát thuật ngữ và điều khoản trong tài liệu. &
+Dễ bỏ sót khi câu hỏi diễn đạt khác văn bản gốc. &
+\cite{robertson2009bm25} \\
+\hline
+Truy xuất ngữ nghĩa &
+Tìm kiếm theo ý nghĩa của câu hỏi, phù hợp với câu hỏi tự nhiên. &
+Có thể lấy nhầm đoạn gần nghĩa nhưng không chứa đúng điều kiện cần trả lời. &
+\cite{karpukhin2020dpr,reimers2019sentencebert} \\
+\hline
+Kết hợp nhiều kết quả truy xuất &
+Tận dụng nhiều tín hiệu xếp hạng khác nhau. &
+Cần lựa chọn trọng số hoặc cơ chế hợp nhất phù hợp từng tập dữ liệu. &
+\cite{cormack2009rrf} \\
+\hline
+Hỏi đáp tăng cường bằng truy xuất &
+Sinh câu trả lời dựa trên ngữ cảnh được truy xuất từ tài liệu. &
+Vẫn cần kiểm soát chất lượng bằng chứng và dẫn chứng nguồn. &
+\cite{lewis2020rag} \\
+\hline
+Kiểm soát sinh câu trả lời &
+Giảm nguy cơ tạo thông tin không được tài liệu hỗ trợ. &
+Không bảo đảm loại bỏ hoàn toàn lỗi nếu bằng chứng đầu vào thiếu hoặc sai. &
+\cite{asai2024selfrag,jeong2024adaptiverag} \\
+\hline
+Phân tích bố cục và bảng &
+Giúp nhận diện vùng nội dung, bảng, hàng, cột và ô. &
+Cần kết hợp với văn bản hoặc OCR để phục vụ truy xuất và hỏi đáp. &
+\cite{pfitzmann2022doclaynet,smock2022pubtables} \\
+\hline
+Nhận dạng ký tự quang học &
+Cho phép xử lý tài liệu được quét từ ảnh. &
+Kết quả phụ thuộc chất lượng ảnh, độ nghiêng và nhiễu của tài liệu. &
+\cite{du2020ppocr} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Phân tích yêu cầu của hệ thống}
+\label{section:system-requirements}
+
+Dựa trên bài toán và các kịch bản sử dụng đã phân tích, hệ thống cần đáp ứng các
+yêu cầu chức năng và phi chức năng sau. Các yêu cầu được mã hóa để thuận tiện
+cho việc liên kết với thiết kế ở Chương 4, Chương 5 và thực nghiệm ở Chương 6.
+
+\subsection{Yêu cầu chức năng}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{Yêu cầu chức năng của hệ thống}
+\label{tab:functional-requirements}
+\begin{tabularx}{\textwidth}{
+    |>{\centering\arraybackslash}p{0.12\textwidth}
+    |>{\raggedright\arraybackslash}p{0.26\textwidth}
+    |>{\raggedright\arraybackslash}X|
+}
+\hline
+\textbf{Mã} & \textbf{Yêu cầu} & \textbf{Mô tả} \\
+\hline
+FR-01 & Tiếp nhận tài liệu PDF &
+Hệ thống cho phép xử lý tài liệu PDF đầu vào và xác định thông tin cơ bản của
+tài liệu. \\
+\hline
+FR-02 & Trích xuất nội dung &
+Hệ thống trích xuất văn bản, bảng và metadata nguồn như tài liệu, trang, vùng
+nội dung và loại block. \\
+\hline
+FR-03 & Định tuyến theo vùng nội dung &
+Hệ thống có khả năng lựa chọn cách xử lý phù hợp cho vùng văn bản, bảng hoặc
+vùng ảnh thay vì xử lý cả trang như một khối duy nhất. \\
+\hline
+FR-04 & Chia đoạn và lập chỉ mục &
+Hệ thống chuyển nội dung đã trích xuất thành các đơn vị truy xuất và xây dựng
+chỉ mục phục vụ tìm kiếm. \\
+\hline
+FR-05 & Truy xuất bằng chứng &
+Hệ thống nhận câu hỏi bằng ngôn ngữ tự nhiên và trả về các đoạn thông tin liên
+quan nhất. \\
+\hline
+FR-06 & Hỏi đáp có căn cứ &
+Hệ thống tạo câu trả lời dựa trên bằng chứng đã truy xuất và tránh tự suy đoán
+khi thiếu thông tin. \\
+\hline
+FR-07 & Dẫn chứng nguồn &
+Câu trả lời cần đi kèm dẫn chứng tới tài liệu, trang, đoạn văn, bảng, hàng hoặc ô
+bảng khi có thể. \\
+\hline
+FR-08 & Đánh giá thực nghiệm &
+Hệ thống hỗ trợ chạy benchmark để đánh giá ingest, trích xuất bảng, truy xuất,
+hỏi đáp và dẫn chứng. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Yêu cầu phi chức năng}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{Yêu cầu phi chức năng của hệ thống}
+\label{tab:non-functional-requirements}
+\begin{tabularx}{\textwidth}{
+    |>{\centering\arraybackslash}p{0.12\textwidth}
+    |>{\raggedright\arraybackslash}p{0.26\textwidth}
+    |>{\raggedright\arraybackslash}X|
+}
+\hline
+\textbf{Mã} & \textbf{Yêu cầu} & \textbf{Mô tả} \\
+\hline
+NFR-01 & Khả năng kiểm chứng &
+Kết quả cần giữ được thông tin nguồn để người dùng kiểm tra lại trong PDF gốc. \\
+\hline
+NFR-02 & Tính có căn cứ &
+Câu trả lời phải bám vào bằng chứng được truy xuất và hạn chế sinh thông tin
+không có trong tài liệu. \\
+\hline
+NFR-03 & Tính mô-đun &
+Các tầng ingest, chunking, retrieval và QA cần được tách riêng để dễ kiểm thử,
+thay thế và đánh giá. \\
+\hline
+NFR-04 & Hiệu năng chấp nhận được &
+Thời gian truy xuất và trả lời cần phù hợp với kịch bản hỏi đáp tương tác trên
+một hoặc một nhóm tài liệu. \\
+\hline
+NFR-05 & Khả năng mở rộng đánh giá &
+Hệ thống cần cho phép thêm benchmark hoặc cấu hình mới để phục vụ so sánh và
+phân tích lỗi. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Phạm vi dữ liệu và thực nghiệm}
+\label{section:data-and-experiment-scope}
+
+Phạm vi chính của đồ án là các tài liệu PDF có lớp văn bản và cấu trúc bán hình
+thức, ví dụ quy chế, quy định, thông tư, sổ tay hướng dẫn, báo cáo và tài liệu
+nghiệp vụ. Đây là nhóm tài liệu thường có nhu cầu tra cứu cao và cần câu trả lời
+có dẫn chứng. Đồ án có khảo sát thêm tài liệu được quét từ ảnh và tài liệu chứa
+bảng để đánh giá giới hạn của pipeline, nhưng chưa đặt mục tiêu xử lý hoàn chỉnh
+mọi dạng PDF.
+
+Các trường hợp ngoài phạm vi chính gồm tài liệu ảnh chất lượng thấp, biểu đồ yêu
+cầu phân tích hình ảnh chuyên sâu, công thức phức tạp, bảng cần tái dựng chính
+xác tuyệt đối và câu hỏi đòi hỏi suy luận số học nhiều bước. Vì vậy, các kết quả
+thực nghiệm trong đồ án chỉ được diễn giải trong phạm vi dữ liệu và cấu hình được
+nêu ở Chương 6.
+
+\section{Tiêu chí đánh giá}
+\label{section:evaluation-criteria-chapter2}
+
+Đồ án đánh giá hệ thống theo nhiều tầng thay vì chỉ đo câu trả lời cuối cùng. Ở
+tầng xử lý tài liệu, tiêu chí quan trọng là khả năng trích xuất đúng nội dung, nhận
+diện vùng bảng, giữ thứ tự đọc và bảo toàn metadata nguồn. Ở tầng truy xuất, hệ
+thống được đánh giá theo khả năng tìm đúng bằng chứng và xếp bằng chứng phù
+hợp ở vị trí cao. Ở tầng hỏi đáp, các tiêu chí chính là độ khớp câu trả lời, độ khớp
+bằng chứng, tỷ lệ câu trả lời có căn cứ và tỷ lệ sinh thông tin thiếu căn cứ. Đối với
+dữ liệu bảng, đồ án đánh giá thêm khả năng truy xuất đúng bảng, hàng, cột hoặc ô
+liên quan.
+
+Các định nghĩa metric và công thức được trình bày tập trung tại Chương 3; quy
+ước tính điểm theo từng tập dữ liệu được nêu trong Chương 6 để tránh lặp lại giữa
+phần khảo sát và phần thực nghiệm.
+
+\section{Liên kết yêu cầu với thiết kế và thực nghiệm}
+\label{section:requirements-traceability}
+
+Bảng~\ref{tab:requirements-traceability} liên kết các yêu cầu đã xác định với phần
+thiết kế ở Chương 4, Chương 5 và phần thực nghiệm ở Chương 6. Bảng này giúp đảm bảo mỗi
+yêu cầu quan trọng đều có thành phần triển khai và tiêu chí đánh giá tương ứng.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\caption{Liên kết yêu cầu với thiết kế và thực nghiệm}
+\label{tab:requirements-traceability}
+\begin{tabularx}{\textwidth}{
+    |>{\centering\arraybackslash}p{0.10\textwidth}
+    |>{\raggedright\arraybackslash}p{0.25\textwidth}
+    |>{\raggedright\arraybackslash}p{0.24\textwidth}
+    |>{\raggedright\arraybackslash}X|
+}
+\hline
+\textbf{Mã} & \textbf{Yêu cầu} & \textbf{Thiết kế liên quan} & \textbf{Thực nghiệm liên quan} \\
+\hline
+FR-01, FR-02 & Tiếp nhận và trích xuất PDF &
+Tầng ingest tài liệu PDF &
+Mục~\ref{subsection:ingest-results} và Mục~\ref{subsection:region-routing-results} \\
+\hline
+FR-03 & Định tuyến theo vùng nội dung &
+Region-level routing, metadata vùng &
+Mục~\ref{subsection:region-routing-results} \\
+\hline
+FR-04 & Chia đoạn và lập chỉ mục &
+Chunking văn bản, table-aware chunking, indexing &
+Mục~\ref{subsection:table-aware-results} và Mục~\ref{subsection:retrieval-results} \\
+\hline
+FR-05 & Truy xuất bằng chứng &
+BM25, dense retrieval, hybrid retrieval, reranking &
+Mục~\ref{subsection:retrieval-results} \\
+\hline
+FR-06, FR-07 & Hỏi đáp có căn cứ và dẫn chứng &
+Evidence checker, answer generator, citation &
+Mục~\ref{section:end-to-end-results} và Mục~\ref{section:ablation-results} \\
+\hline
+FR-08, NFR-05 & Đánh giá thực nghiệm &
+Script benchmark, cấu hình ablation &
+Chương 6, các mục thực nghiệm theo tầng và ablation \\
+\hline
+NFR-01, NFR-02 & Khả năng kiểm chứng và tính có căn cứ &
+Metadata nguồn, citation target, cell-level evidence &
+Mục~\ref{subsection:table-aware-results}, Mục~\ref{section:end-to-end-results} \\
+\hline
+NFR-03, NFR-04 & Tính mô-đun và hiệu năng &
+Tổ chức pipeline theo tầng, lưu index tách biệt &
+Mục~\ref{subsection:region-routing-results} và Mục~\ref{section:error-analysis} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Kết chương}
+
+Chương này đã xác định rõ bài toán truy xuất và hỏi đáp trên tài liệu PDF, các
+thách thức chính của dữ liệu PDF, nhu cầu sử dụng, các hướng tiếp cận liên quan
+và phạm vi thực nghiệm của đồ án. Điểm khác biệt so với phần giới thiệu là các
+yêu cầu đã được mã hóa thành FR/NFR và liên kết với thiết kế, thực nghiệm ở các
+chương sau. Đây là cơ sở để Chương 3 trình bày các nền tảng lý thuyết và công
+nghệ được sử dụng, trước khi Chương 4 đi vào thiết kế hệ thống cụ thể.
+
+\end{document}

@@ -208,6 +208,10 @@ def run_config(
             }
         )
 
+    table_hit = mean(float(row["table_hit"]) for row in per_query)
+    row_match = mean(float(row["row_match"]) for row in per_query)
+    column_match = mean(float(row["column_match"]) for row in per_query)
+    cell_match = mean(float(row["cell_match"]) for row in per_query)
     summary = {
         "config": label,
         "variant": variant,
@@ -215,10 +219,14 @@ def run_config(
         "corpus_chunk_count": len(corpus_rows),
         "top_k": top_k,
         "strategy": "bm25",
-        "table_hit_at_5": mean(float(row["table_hit"]) for row in per_query),
-        "row_match_at_5": mean(float(row["row_match"]) for row in per_query),
-        "column_match_at_5": mean(float(row["column_match"]) for row in per_query),
-        "cell_match_at_5": mean(float(row["cell_match"]) for row in per_query),
+        "table_hit": table_hit,
+        "row_match": row_match,
+        "column_match": column_match,
+        "cell_match": cell_match,
+        f"table_hit_at_{top_k}": table_hit,
+        f"row_match_at_{top_k}": row_match,
+        f"column_match_at_{top_k}": column_match,
+        f"cell_match_at_{top_k}": cell_match,
         "latency_ms_mean": mean(latencies) if latencies else 0.0,
         "derived_corpus": str(corpus_path),
     }
@@ -250,6 +258,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def write_latex(path: Path, summaries: list[dict[str, Any]]) -> None:
+    top_k = summaries[0].get("top_k", 5) if summaries else 5
     lines = [
         r"\begin{table}[H]",
         r"\centering",
@@ -257,16 +266,16 @@ def write_latex(path: Path, summaries: list[dict[str, Any]]) -> None:
         r"\label{tab:real-table-qa-retrieval-result}",
         r"\begin{tabular}{|p{4.2cm}|c|c|c|c|}",
         r"\hline",
-        r"\textbf{Cấu hình} & \textbf{Table Hit@5} & \textbf{Row Match@5} & \textbf{Column Match@5} & \textbf{Cell Match@5} \\",
+        rf"\textbf{{Cấu hình}} & \textbf{{Table Hit@{top_k}}} & \textbf{{Row Match@{top_k}}} & \textbf{{Column Match@{top_k}}} & \textbf{{Cell Match@{top_k}}} \\",
         r"\hline",
     ]
     for summary in summaries:
         lines.append(
             f"{summary['config']} & "
-            f"{summary['table_hit_at_5']:.3f} & "
-            f"{summary['row_match_at_5']:.3f} & "
-            f"{summary['column_match_at_5']:.3f} & "
-            f"{summary['cell_match_at_5']:.3f} \\\\"
+            f"{summary['table_hit']:.3f} & "
+            f"{summary['row_match']:.3f} & "
+            f"{summary['column_match']:.3f} & "
+            f"{summary['cell_match']:.3f} \\\\"
         )
         lines.append(r"\hline")
     lines.extend([r"\end{tabular}", r"\end{table}", ""])
@@ -275,8 +284,8 @@ def write_latex(path: Path, summaries: list[dict[str, Any]]) -> None:
 
 def write_readme(path: Path, args: argparse.Namespace, summaries: list[dict[str, Any]]) -> None:
     rows = "\n".join(
-        f"| {s['config']} | {s['table_hit_at_5']:.3f} | {s['row_match_at_5']:.3f} | "
-        f"{s['column_match_at_5']:.3f} | {s['cell_match_at_5']:.3f} |"
+        f"| {s['config']} | {s['table_hit']:.3f} | {s['row_match']:.3f} | "
+        f"{s['column_match']:.3f} | {s['cell_match']:.3f} |"
         for s in summaries
     )
     content = f"""# Real Table QA Retrieval Benchmark
@@ -296,7 +305,7 @@ Mục tiêu là so sánh tác động của biểu diễn bảng trong retrieval
 
 ## Kết quả
 
-| Cấu hình | Table Hit@5 | Row Match@5 | Column Match@5 | Cell Match@5 |
+| Cấu hình | Table Hit@{args.top_k} | Row Match@{args.top_k} | Column Match@{args.top_k} | Cell Match@{args.top_k} |
 |---|---:|---:|---:|---:|
 {rows}
 

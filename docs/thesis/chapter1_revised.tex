@@ -1,0 +1,158 @@
+\documentclass[../DoAn.tex]{subfiles}
+\begin{document}
+
+\section{Đặt vấn đề}
+\label{section:1.1}
+PDF là một trong những định dạng tài liệu được sử dụng rộng rãi trong giáo dục, doanh nghiệp và nghiên cứu nhờ khả năng bảo toàn bố cục, dễ chia sẻ và phù hợp với nhiều loại tài liệu như quy chế, báo cáo, sổ tay hướng dẫn, hợp đồng, tài liệu kỹ thuật và bài báo khoa học. PDF giúp giữ nguyên bố cục khi hiển thị, nhưng không lưu nội dung theo cách thuận tiện cho việc máy tính tự động phân tích và xử lý, điều này gây khó khăn cho việc trích xuất và khai thác thông tin tự động\cite{pfitzmann2022doclaynet,smock2022pubtables}.
+
+Người dùng thường tra cứu thông tin trong PDF bằng cách đọc thủ công hoặc tìm kiếm từ khóa. Cách làm này phù hợp với tài liệu ngắn hoặc khi người dùng biết chính xác cụm từ cần tìm, nhưng kém hiệu quả với tài liệu dài, tài liệu có bảng biểu hoặc các câu hỏi cần tổng hợp thông tin từ nhiều đoạn. Bên cạnh đó, với các tài liệu mang tính quy định hoặc nghiệp vụ, câu trả lời không chỉ cần đúng mà còn phải có nguồn để người dùng kiểm chứng lại.
+
+Do đó, bài toán truy xuất và hỏi đáp thông tin trên tài liệu PDF cần được tiếp cận như một quy trình kết hợp giữa xử lý tài liệu, truy xuất thông tin và sinh câu trả lời có căn cứ. Một hệ thống phù hợp cần tìm được các bằng chứng liên quan trong tài liệu, tạo câu trả lời bám sát bằng chứng và cung cấp dẫn chứng như trang, mục hoặc vùng nội dung để người dùng kiểm tra lại thông tin gốc.
+
+\section{Mục tiêu và phạm vi đề tài}
+\label{section:objectives-and-scope}
+
+Mục tiêu của đề tài là nghiên cứu, xây dựng và đánh giá một hệ thống hỗ trợ truy
+xuất và hỏi đáp thông tin trên tài liệu PDF. 
+
+Về xử lý tài liệu, hệ thống cần trích xuất và tổ chức nội dung PDF thành các đơn
+vị phù hợp cho việc lập chỉ mục và truy xuất. Nội dung đầu ra cần bảo toàn các
+thông tin quan trọng như tài liệu nguồn, số trang, loại nội dung, ngữ cảnh đề mục
+và cấu trúc bảng khi có thể. Đối với tài liệu chứa nhiều loại nội dung, hệ thống
+cần lựa chọn phương pháp xử lý phù hợp cho từng vùng thay vì coi toàn bộ trang
+là một khối văn bản duy nhất.
+
+Về truy xuất và hỏi đáp, hệ thống cần tìm được các đoạn thông tin liên quan, đánh
+giá mức độ đầy đủ của chúng và tạo câu trả lời dựa trên thông tin đã truy xuất.
+Câu trả lời cần đi kèm dẫn chứng về tài liệu, trang, đoạn văn hoặc thành phần bảng
+tương ứng. Khi tài liệu không chứa đủ thông tin, hệ thống cần trả lời thận trọng
+thay vì tự suy đoán.
+
+Về thực nghiệm, đồ án tiến hành so sánh các cấu hình truy xuất, đánh giá chất
+lượng trích xuất bảng, khả năng tìm đúng thông tin và chất lượng câu trả lời có
+dẫn chứng. Các thí nghiệm loại bỏ thành phần cũng được sử dụng để phân tích vai
+trò của từng thành phần trong quy trình xử lý.
+
+Phạm vi chính của đề tài là các tài liệu PDF có lớp văn bản và cấu trúc bán hình
+thức, chẳng hạn như quy chế, quy định, thông tư, sổ tay hướng dẫn và tài liệu
+nghiệp vụ. Đồ án khảo sát thêm tài liệu được quét từ ảnh và tài liệu chứa bảng biểu
+nhằm đánh giá giới hạn của hệ thống, nhưng chưa đặt mục tiêu xử lý hoàn chỉnh
+mọi dạng PDF.
+
+Các trường hợp nằm ngoài phạm vi chính gồm tài liệu ảnh có chất lượng thấp,
+biểu đồ yêu cầu phân tích hình ảnh chuyên sâu, công thức phức tạp, bảng cần tái
+dựng chính xác tuyệt đối và câu hỏi đòi hỏi suy luận số học qua nhiều bước. Kết
+quả của đồ án chỉ được diễn giải trong phạm vi các tập dữ liệu và cấu hình thực
+nghiệm được trình bày tại Chương 5; đồ án không khẳng định hệ thống hoạt động
+hoàn hảo trên mọi loại tài liệu PDF.
+\section{Định hướng giải pháp}
+
+Đồ án tiếp cận bài toán theo hướng hỏi đáp tăng cường bằng truy xuất\cite{lewis2020rag}. Theo hướng
+này, nội dung PDF được xử lý, chia đoạn và lập chỉ mục trước khi tiếp nhận câu
+hỏi. Khi có truy vấn, hệ thống tìm các bằng chứng liên quan rồi mới tạo câu trả lời
+dựa trên những bằng chứng đó.
+
+Tầng truy xuất kết hợp BM25 \cite{robertson2009bm25} với truy xuất ngữ nghĩa
+\cite{karpukhin2020dpr}. Cấu hình truy xuất được lựa chọn theo đặc điểm câu hỏi,
+sau đó các ứng viên có thể được sắp xếp lại trước khi chuyển sang tầng hỏi đáp.
+
+Tại tầng tiếp nhận tài liệu, hệ thống sử dụng cơ chế định tuyến theo vùng để lựa
+chọn cách xử lý phù hợp cho văn bản, bảng hoặc vùng ảnh. Đối với bảng, hệ thống
+kết hợp cấu trúc hình học \cite{smock2022pubtables} từ Table Transformer với các hộp từ lấy từ lớp văn bản
+PDF hoặc OCR \cite{du2020ppocr}. Kết quả được chuyển thành các đơn vị truy xuất ở mức bảng, hàng
+và ô nhằm hỗ trợ truy vấn bảng và dẫn chứng chi tiết.
+
+Tại tầng hỏi đáp, các bằng chứng được đánh giá về mức độ liên quan, độ bao phủ
+và khả năng truy vết nguồn. Câu trả lời được tạo từ các bằng chứng đã chọn và đi
+kèm dẫn chứng. Thiết kế này nhằm giảm nguy cơ tạo thông tin không được tài liệu
+hỗ trợ, nhưng không bảo đảm loại bỏ hoàn toàn hiện tượng này trên mọi loại câu
+hỏi và tài liệu.
+
+Trọng tâm của đồ án là thiết kế, tích hợp và đánh giá một pipeline đầu cuối thay
+vì đề xuất một thuật toán hoặc mô hình học máy hoàn toàn mới. Các đóng góp triển
+khai và thực nghiệm chính được tổng hợp trong
+Bảng~\ref{tab:main-contributions}.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{Các đóng góp triển khai và thực nghiệm chính của đồ án}
+\label{tab:main-contributions}
+\begin{tabularx}{\textwidth}{
+    |>{\centering\arraybackslash}p{0.06\textwidth}
+    |>{\raggedright\arraybackslash}p{0.27\textwidth}
+    |>{\raggedright\arraybackslash}X
+    |>{\raggedright\arraybackslash}p{0.20\textwidth}|
+}
+\hline
+\textbf{STT} & \textbf{Đóng góp} & \textbf{Nội dung} & \textbf{Bằng chứng} \\
+\hline
+
+1 &
+Đánh giá pipeline theo nhiều tầng &
+Đánh giá riêng tầng tiếp nhận tài liệu, trích xuất bảng, truy xuất, hỏi đáp và
+dẫn chứng thay vì chỉ đo câu trả lời cuối cùng. &
+Chương 6 và Bảng 6.14 \\
+\hline
+
+2 &
+Định tuyến theo vùng nội dung &
+Xử lý độc lập từng vùng và lựa chọn backend theo loại nội dung trong trang PDF. &
+Mục 6.3.2 và Bảng 6.5 hoặc 6.6\\
+\hline
+
+3 &
+Tích hợp Hybrid TATR &
+Kết hợp cấu trúc hình học từ TATR với các hộp từ để tái dựng nội dung bảng. &
+Mục 6.3.3 và Bảng 6.7 \\
+\hline
+
+4 &
+Table-aware chunking &
+Biểu diễn bảng thành các đơn vị ở mức bảng, hàng và ô để phục vụ truy xuất. &
+Mục 6.3.4 \\
+\hline
+
+5 &
+Hỏi đáp có định tuyến và dẫn chứng &
+Kết hợp lựa chọn chiến lược truy xuất, kiểm tra bằng chứng và tạo citation. &
+Bảng 6.12 và 6.15 \\
+\hline
+
+6 &
+Ablation study &
+Phân tích ảnh hưởng của từng thành phần bằng cách so sánh các cấu hình có và
+không sử dụng thành phần tương ứng. &
+Mục 6.5 và Bảng 6.14 \\
+\hline
+
+\end{tabularx}
+\end{table}
+
+\section{Bố cục đồ án}
+
+Phần còn lại của đồ án được tổ chức như sau.
+
+Chương 2 xác định bài toán, dữ liệu đầu vào, đầu ra mong muốn, các yêu cầu chức
+năng và các thách thức chính khi xử lý PDF cho truy xuất và hỏi đáp.
+
+Chương 3 trình bày các nền tảng lý thuyết và công nghệ được sử dụng trực tiếp
+trong đồ án, gồm xử lý PDF, trích xuất bảng, lập chỉ mục, truy xuất thông tin, hỏi
+đáp có căn cứ và các độ đo đánh giá.
+
+Chương 4 mô tả thiết kế luồng ingest, tức luồng tiếp nhận và trích xuất dữ liệu từ
+PDF. Trọng tâm của chương là cách hệ thống chuyển tài liệu PDF thành block,
+chunk và metadata có thể lập chỉ mục và truy vết.
+
+Chương 5 mô tả thiết kế luồng xử lý truy vấn trên dữ liệu đã được trích xuất, gồm
+định tuyến câu hỏi, truy xuất bằng chứng, kiểm tra bằng chứng, sinh câu trả lời và
+tạo dẫn chứng nguồn.
+
+Chương 6 trình bày thực nghiệm, bao gồm đánh giá theo từng tầng của quy trình,
+thí nghiệm đầu cuối trên các tập đánh giá chính, các thí nghiệm loại bỏ thành phần
+và phân tích lỗi, giới hạn của hệ thống.
+
+Chương 7 trình bày kết luận chung của đồ án, các hạn chế còn lại và các hướng phát
+triển tiếp theo.
+\end{document}

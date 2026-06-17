@@ -1,0 +1,30 @@
+\documentclass[../DoAn.tex]{subfiles}
+
+\begin{document}
+
+\section*{Tóm tắt}
+
+Đồ án nghiên cứu các phương pháp trích xuất, lập chỉ mục, truy xuất và hỏi đáp
+thông tin trên tài liệu PDF. Trọng tâm của đồ án không chỉ là tạo câu trả lời, mà
+còn là giữ lại cấu trúc và thông tin nguồn của tài liệu PDF để người dùng có thể
+kiểm chứng kết quả. Hệ thống được tổ chức thành hai luồng liên kết với nhau.
+Luồng tiếp nhận và trích xuất tài liệu phân tích trang PDF, định tuyến các vùng
+nội dung, trích xuất văn bản, tái dựng bảng và lưu siêu dữ liệu nguồn. Luồng xử
+lý truy vấn xây dựng chỉ mục từ dữ liệu đã trích xuất, truy xuất bằng chứng, kiểm
+tra mức độ đầy đủ của bằng chứng, sinh câu trả lời và trả về dẫn chứng nguồn.
+
+Hệ thống kết hợp truy xuất theo từ khóa, truy xuất ngữ nghĩa, truy xuất kết hợp và
+hỏi đáp tăng cường bằng truy xuất. Đối với bảng, đồ án đánh giá bộ trích xuất
+bảng mặc định, Table Transformer và thiết kế Hybrid TATR kết hợp cấu trúc hình
+học của bảng với các hộp từ lấy từ lớp văn bản PDF. Các thực nghiệm được tổ
+chức theo nhiều tầng, gồm tiếp nhận và trích xuất PDF, phân tích bố cục, OCR,
+tái dựng bảng, truy xuất, chia đoạn có nhận thức bảng, hỏi đáp có căn cứ và các
+thí nghiệm loại bỏ thành phần.
+
+Kết quả thực nghiệm trên tập đánh giá QCDT cho thấy quy trình đề xuất có thể
+truy xuất bằng chứng liên quan và sinh câu trả lời có dẫn chứng trong phạm vi
+các thiết lập đã đánh giá. Tuy nhiên, kết quả trên QASPER cho thấy hệ thống
+vẫn còn hạn chế với tài liệu khoa học dài và các câu hỏi cần tổng hợp nhiều bằng
+chứng.
+
+\end{document}

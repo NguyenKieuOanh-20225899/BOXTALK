@@ -69,6 +69,7 @@ coverage.xml
 /data/
 /results/
 /out/
+/Quyển đồ án/
 
 # Logs
 *.log
