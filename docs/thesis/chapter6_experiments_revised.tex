@@ -28,9 +28,9 @@ lại mô tả kiến trúc.
 \hline
 RQ1 &
 Luồng ingest chính với probe, định tuyến vùng, OCR, text extractor và table
-extractor hoạt động ổn định đến mức nào? &
+extractor tạo được dữ liệu hợp lệ đến mức nào? &
 Ingest chính và định tuyến vùng &
-Tỷ lệ thành công, F1, token F1, thời gian xử lý \\
+Tỷ lệ thành công, route trace, token F1, metadata, thời gian xử lý \\
 \hline
 RQ2 &
 Hybrid TATR có cải thiện tái dựng cấu trúc và nội dung bảng không? &
@@ -80,12 +80,12 @@ Phân tích loại bỏ thành phần \(\rightarrow\) phân tích lỗi \(\right
 \subsection{Phạm vi các tập đánh giá}
 
 Các tập đánh giá được chia thành ba nhóm. QCDT được dùng để đánh giá luồng
-hỏi đáp chính. SciFact và QASPER được dùng như tập phụ để khảo sát khả năng
-chuyển miền sang tài liệu khoa học. PubTables-1M và các tập OCR được dùng để
-đánh giá các thành phần trong luồng ingest chính. DocLayNet và PubLayNet chỉ
-dùng để khảo sát phụ backend phát hiện bố cục tùy chọn, không dùng làm kết luận
-chính cho pipeline probe--region routing--OCR/text/table
-\cite{pfitzmann2022doclaynet,zhong2019publaynet,smock2022pubtables}.
+hỏi đáp chính và tác động đầu cuối của ingest. SciFact và QASPER được dùng như
+tập phụ để khảo sát khả năng chuyển miền sang tài liệu khoa học. PubTables-1M
+và các tập OCR được dùng để đánh giá các backend bảng/OCR được pipeline ingest
+gọi trực tiếp \cite{smock2022pubtables}. Các kết quả phát hiện bố cục bằng
+backend \texttt{model\_layout} tùy chọn không được dùng làm kết luận chính vì
+pipeline chính của đồ án là probe--region routing--OCR/text/table.
 
 \begin{table}[H]
 \centering
@@ -123,19 +123,19 @@ Phụ &
 Tập dữ liệu gồm câu hỏi tự nhiên, đáp án và bằng chứng gắn với bài báo khoa học;
 dùng để phân tích giới hạn với câu hỏi dài và nhiều bằng chứng. \\
 \hline
-DocLayNet, PubLayNet &
-Khảo sát phụ &
-Khảo sát backend phát hiện bố cục tùy chọn trên 49 mẫu DocLayNet và 100 mẫu
-PubLayNet, gồm các vùng như văn bản, tiêu đề, bảng, hình và chú thích. &
-Không thuộc pipeline chính của đồ án; chỉ phản ánh chất lượng backend
-\texttt{model\_layout} nếu được bật bằng cấu hình. \\
-\hline
 PubTables-1M &
 Thành phần &
-Đánh giá phát hiện bảng và tái dựng cấu trúc bảng, gồm hàng, cột, ô, gán văn bản
-vào ô và so khớp CSV. &
-Tập 25 mẫu dùng để so sánh các backend; tập 100 mẫu proxy dùng để kiểm tra mở
-rộng Hybrid TATR và phân tích lỗi theo nhóm bảng. \\
+Đánh giá tái dựng cấu trúc bảng trên tập PubTables structure, gồm hàng, cột, ô,
+gán văn bản vào ô và so khớp CSV. &
+Tập 25 mẫu dùng để so sánh backend bảng; tập 100 mẫu proxy dùng để kiểm tra
+Hybrid TATR trên số lượng mẫu lớn hơn và phân tích lỗi theo nhóm bảng. \\
+\hline
+OCR scan, FUNSD &
+Thành phần &
+Đánh giá backend OCR trên tập scan tổng hợp và tập biểu mẫu FUNSD đã chuyển
+về định dạng benchmark OCR. &
+Dùng để kiểm tra khả năng nhận dạng chữ của nhánh OCR; không thay thế đánh
+giá đầy đủ PDF scan tiếng Việt thực tế. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -197,6 +197,11 @@ C4 &
 \texttt{no\_citation\_grounding} &
 Đo vai trò của từng thành phần trong luồng hỏi đáp. \\
 \hline
+C5 &
+Region OFF / Region ON &
+Đo tác động của \texttt{region\_routed} trong pipeline ingest chính bằng cách
+chạy cùng một tập PDF với và không có định tuyến vùng. \\
+\hline
 \end{tabularx}
 \end{table}
 
@@ -208,73 +213,89 @@ trạng thái đánh giá bằng chứng trong luồng chuẩn.
 \section{Thực nghiệm theo tầng pipeline}
 \label{section:layer-experiments}
 
-\subsection{Các backend thành phần trong luồng ingest}
+\subsection{Probe, định tuyến và trích xuất trong luồng ingest chính}
 \label{subsection:ingest-results}
 
-Bảng~\ref{tab:ingest-component-results} là đánh giá thành phần, không phải đánh
-giá toàn bộ pipeline hỏi đáp. Trong pipeline chính của đồ án, luồng ingest được
-tổ chức theo hướng probe--region routing--OCR/text/table. Vì vậy, các kết quả
-cần đọc theo hai nhóm.
-
-Nhóm thứ nhất gắn trực tiếp với pipeline chính. PubTables detection đánh giá
-backend phát hiện vùng bảng, tức bước tạo bbox bảng để region routing có thể
-đưa vùng này sang table extractor. Hai dòng OCR đánh giá khả năng nhận dạng chữ
-trên tài liệu scan hoặc ảnh. Token F1 đo mức khớp token giữa văn bản nhận dạng
-và văn bản chuẩn, còn CER đo tỷ lệ lỗi ký tự; CER càng thấp càng tốt. PP-OCR là
-nền tảng OCR được tham khảo trong hệ thống \cite{du2020ppocr}.
-
-Nhóm thứ hai là khảo sát phụ cho backend phát hiện bố cục tùy chọn. DocLayNet
-và PubLayNet không được dùng để chứng minh pipeline chính probe--region
-routing--OCR/text/table. Hai tập này chỉ kiểm tra mô hình
-\texttt{Aryn/deformable-detr-DocLayNet} nếu backend \texttt{model\_layout}
-được bật. Khi đó, mô hình sinh bbox bố cục và nhãn vùng; hệ thống chỉ nhận kết
-quả này để chuẩn hóa nhãn, chuẩn hóa tọa độ và chuyển thành block. Do đó, F1
-trên DocLayNet và PubLayNet phản ánh chất lượng backend tùy chọn, không phải
-chất lượng toàn bộ luồng ingest chính.
-
-Các độ đo F1@0,50 và F1@0,75 được tính sau khi ghép bbox dự đoán với bbox đúng
-theo ngưỡng IoU tương ứng: ngưỡng 0,50 cho biết mô hình tìm đúng vùng ở mức
-tương đối, còn ngưỡng 0,75 đòi hỏi bbox khớp chặt hơn với vùng thật.
+Pipeline ingest chính được đánh giá theo đúng luồng
+probe--region routing--OCR/text/table. Mục tiêu của phần này không phải chứng
+minh một mô hình layout riêng, mà kiểm tra bốn điểm: probe chọn được hướng xử
+lý ban đầu, region routing tạo được vết định tuyến, các backend OCR/text/table tạo
+được block hợp lệ, và cơ chế fallback không làm pipeline thất bại khi backend đầu
+tiên không phù hợp. Kết quả được tổng hợp từ các tệp trong thư mục
+\texttt{results} bằng script \texttt{scripts/benchmark\_main\_ingest\_pipeline.py}.
 
 \begin{table}[H]
 \centering
-\small
+\scriptsize
 \renewcommand{\arraystretch}{1.2}
-\caption{Kết quả đánh giá các backend thành phần trong luồng ingest}
+\caption{Đánh giá luồng ingest chính theo probe, định tuyến và backend}
 \label{tab:ingest-component-results}
 \begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\centering\arraybackslash}p{0.10\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
+    |>{\raggedright\arraybackslash}p{0.21\textwidth}
+    |>{\raggedright\arraybackslash}p{0.18\textwidth}
+    |>{\raggedright\arraybackslash}p{0.20\textwidth}
     |>{\raggedright\arraybackslash}X|
 }
 \hline
-\textbf{Tập đánh giá} & \textbf{Số mẫu} & \textbf{Độ đo 1} &
-\textbf{Độ đo 2} & \textbf{Kết quả} \\
+\textbf{Nội dung kiểm tra} & \textbf{Dữ liệu} & \textbf{Độ đo} &
+\textbf{Kết quả và diễn giải} \\
 \hline
-DocLayNet & 49 & F1@0,50 & F1@0,75 & 0,849 / 0,807 \\
+Probe và chọn backend cấp tài liệu &
+31 PDF gồm QCDT, PDF bảng và scan tổng hợp &
+Probe accuracy, backend routing accuracy &
+Probe chọn đúng hướng xử lý cho 31/31 tài liệu, đạt accuracy 1,000. Backend
+cấp tài liệu sau probe/fallback cũng đúng 31/31: 30 tài liệu đi qua OCR và tài
+liệu QCDT đi qua \texttt{region\_routed} khi bật định tuyến vùng. \\
 \hline
-PubLayNet & 100 & F1@0,50 & F1@0,75 & 0,739 / 0,708 \\
+Định tuyến vùng trên QCDT &
+Một tài liệu QCDT có text layer và bảng &
+Route expectation, route trace, route backend &
+Kỳ vọng QCDT cần cả nhánh text và nhánh bảng; hệ thống đạt 1/1 ở mức tài liệu.
+Bật region routing tạo 9 block bảng và 494 block có vết định tuyến. Trong đó
+484 block đi qua nhánh text, 8 block qua nhánh table, 1 block qua Hybrid TATR
+và 1 block placeholder. \\
 \hline
-PubTables detection & 500 & F1@0,50 & F1@0,75 & 0,975 / 0,914 \\
+Backend OCR &
+25 mẫu scan tổng hợp và 25 mẫu FUNSD OCR &
+Token F1, CER &
+Scan tổng hợp đạt Token F1 1,000 và CER 0,000. FUNSD đạt Token F1 0,826 và
+CER 0,466, cho thấy OCR giảm chất lượng rõ rệt trên dữ liệu nhiễu hơn
+\cite{du2020ppocr}. \\
 \hline
-OCR scan tổng hợp & 25 & Token F1 & CER & 1,000 / 0,000 \\
+Backend bảng &
+100 mẫu PubTables-1M proxy &
+Cell F1, Structure F1, Text Assignment F1, Exact CSV &
+Hybrid TATR đạt Cell F1@0,50 là 0,947, Structure F1 là 0,778,
+Text Assignment F1 là 0,997 và Exact CSV là 0,530. Đây là đánh giá backend
+bảng được pipeline gọi khi gặp vùng bảng, không phải đánh giá OCR đầu cuối. \\
 \hline
-FUNSD OCR & 25 & Token F1 & CER & 0,826 / 0,466 \\
+Đầu ra block/chunk/metadata &
+31 PDF ở thí nghiệm Region OFF/ON &
+Block success rate, metadata completeness &
+Region ON đạt block/chunk success rate 1,000, tạo trung bình 64,45 block,
+53,23 chunk và 15,94 block có route trace trên mỗi tài liệu. Trên các block mẫu,
+tỷ lệ có page id, bbox, block type, text và route trace đều đạt 1,000. \\
+\hline
+Fallback và chi phí xử lý &
+31 PDF ở thí nghiệm Region OFF/ON &
+Fallback count, fallback success rate, latency &
+Fallback được kích hoạt ở 30 tài liệu và thành công 30/30, không có tài liệu lỗi.
+Đổi lại, latency trung bình tăng từ 6,189 s lên 16,556 s khi bật region routing. \\
 \hline
 \end{tabularx}
 \end{table}
 
-Kết quả PubTables detection cho thấy backend phát hiện bảng đạt F1 cao trên tập
-500 mẫu, nhưng đây vẫn là đánh giá phát hiện bbox bảng, chưa phải đánh giá
-region routing đầu cuối. Tác động của region routing được kiểm tra riêng ở
-Mục~\ref{subsection:region-routing-results}. Với OCR, tập scan tổng hợp đạt
-Token F1 1,000 và CER 0,000, nhưng kết quả FUNSD thấp hơn rõ rệt. Chênh lệch
-này cho thấy dữ liệu tổng hợp chưa phản ánh đầy đủ nhiễu, phông chữ, căn chỉnh
-và bố cục của tài liệu thực tế. Do đó, kết quả OCR 1,000 chỉ được xem là kiểm tra
-chức năng trên dữ liệu sạch, không dùng để khẳng định hệ thống đã xử lý hoàn
-chỉnh PDF scan tiếng Việt trong mọi trường hợp.
+Bảng~\ref{tab:ingest-component-results} không báo F1 phát hiện bbox bố cục vì
+thí nghiệm này không dùng nhãn vùng thủ công cho region routing. Các giá trị
+accuracy trong bảng được hiểu ở mức tài liệu hoặc mức kỳ vọng route của tài
+liệu QCDT, không phải Precision/Recall/F1 cho từng bbox vùng. Nếu muốn đo F1
+theo từng loại vùng, cần bổ sung một tập PDF thật có nhãn chuẩn cho vùng text,
+bảng, ảnh và caption. Trong phạm vi đồ án, chất lượng ingest chính được đọc qua
+success rate, backend được chọn, số block bảng, vết định tuyến, metadata đầu ra,
+OCR, backend bảng và ảnh hưởng đầu cuối ở Mục~\ref{subsection:region-routing-results}.
+Kết quả OCR 1,000 trên scan tổng hợp chỉ được xem là kiểm tra chức năng trên dữ
+liệu sạch, không dùng để khẳng định hệ thống đã xử lý hoàn chỉnh PDF scan tiếng
+Việt trong mọi trường hợp.
 
 \subsection{Định tuyến theo vùng}
 \label{subsection:region-routing-results}
@@ -829,11 +850,11 @@ thay thế đánh giá thủ công về tính đúng, đầy đủ và phù hợ
 \textbf{RQ} & \textbf{Kết luận} & \textbf{Giới hạn} \\
 \hline
 RQ1 &
-Luồng ingest chính xử lý được các tài liệu thử nghiệm; backend phát hiện bảng và
-OCR cho thấy chất lượng khác nhau theo loại dữ liệu. &
-DocLayNet/PubLayNet chỉ là khảo sát phụ cho backend \texttt{model\_layout};
-region routing tăng traceability nhưng chưa chứng minh cải thiện QA ở cấu hình
-BM25-only. \\
+Luồng ingest chính đạt success rate 1,000 trên 31 PDF thử nghiệm; bật region
+routing tạo route trace, block bảng và metadata nguồn rõ hơn. &
+Region routing tăng khả năng truy vết nhưng chưa chứng minh cải thiện QA ở cấu
+hình BM25-only; chưa có tập nhãn thủ công để tính Routing Accuracy theo từng
+loại vùng. \\
 \hline
 RQ2 &
 Hybrid TATR cải thiện rõ tái dựng bảng so với hai backend còn lại. &
