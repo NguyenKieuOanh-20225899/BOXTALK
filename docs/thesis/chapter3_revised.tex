@@ -21,16 +21,16 @@ trong Chương 6 để đánh giá từng tầng của hệ thống.
 PDF ưu tiên bảo toàn hình thức hiển thị, nên nội dung thường gắn với tọa độ hình
 học trên trang. Vì vậy, khi xử lý PDF cho truy xuất và hỏi đáp, hệ thống cần chuyển
 nội dung từ dạng hiển thị sang các đơn vị có cấu trúc như trang, vùng nội dung,
-block và đơn vị truy xuất. Các bộ dữ liệu như DocLayNet và PubLayNet cho thấy nhận diện
-bố cục tài liệu là một bài toán quan trọng trong khai thác PDF
-\cite{pfitzmann2022doclaynet,zhong2019publaynet}.
+khối nội dung và đơn vị truy xuất. Các bộ dữ liệu như DocLayNet và PubLayNet cho thấy nhận diện
+bố cục tài liệu là một bài toán quan trọng trong khai thác PDF~
+\cite{pfitzmann2022doclaynet,zhong2019publaynet,shen2021layoutparser}.
 
-Trong đồ án, mỗi vùng nội dung được biểu diễn bằng khung bao
-(\textit{bounding box}), loại nội dung và siêu dữ liệu nguồn. Với PDF có lớp văn bản,
-hệ thống lấy văn bản và tọa độ bằng thư viện xử lý PDF như PyMuPDF
+Trong đồ án, mỗi vùng nội dung được biểu diễn bằng khung bao (bbox), loại nội dung
+và siêu dữ liệu nguồn. Với PDF có lớp văn bản,
+hệ thống lấy văn bản và tọa độ bằng thư viện xử lý PDF như PyMuPDF~
 \cite{pymupdf2026}. Với PDF được quét từ ảnh, nhận dạng ký tự quang học được
-dùng để lấy văn bản và vị trí từ \cite{du2020ppocr}. Đầu ra của tầng này là các
-block có trang, bbox, loại block, thứ tự đọc và ngữ cảnh đề mục, làm nền cho
+dùng để lấy văn bản và vị trí từ~\cite{du2020ppocr}. Đầu ra của tầng này là các
+khối nội dung có trang, bbox, loại khối nội dung, thứ tự đọc và ngữ cảnh đề mục, làm nền cho
 chia đoạn, lập chỉ mục, truy xuất và dẫn chứng nguồn.
 
 \section{Trích xuất và tái dựng bảng}
@@ -39,12 +39,13 @@ chia đoạn, lập chỉ mục, truy xuất và dẫn chứng nguồn.
 Bảng trong PDF không chỉ chứa văn bản mà còn chứa quan hệ hàng, cột và ô. Nếu
 bảng bị nối thành văn bản phẳng, hệ thống có thể giữ được từ khóa nhưng mất
 quan hệ điều kiện--giá trị. Vì vậy, đồ án xem trích xuất bảng là bước tái dựng cấu
-trúc, không chỉ là lấy chữ trong vùng bảng.
+trúc, không chỉ là lấy chữ trong vùng bảng. Các khảo sát về nhận dạng bảng cũng xem bài toán này là quá trình suy luận cấu
+trúc từ các dấu hiệu hình học và văn bản~\cite{zanibbi2004survey}.
 
-Table Transformer được xây dựng trên hướng phát hiện đối tượng bằng
-Transformer, kế thừa các ý tưởng từ Transformer và DETR
+Table Transformer được xây dựng trên hướng phát hiện đối tượng bằng Transformer,
+kế thừa các ý tưởng từ Transformer và DETR~
 \cite{vaswani2017transformer,carion2020detr}. PubTables-1M cung cấp dữ liệu
-và mô hình cho bài toán phát hiện bảng, nhận diện cấu trúc hàng, cột và ô
+và mô hình cho bài toán phát hiện bảng, nhận diện cấu trúc hàng, cột và ô~
 \cite{smock2022pubtables}. Trong đồ án, TATR được dùng để nhận diện cấu trúc
 hình học của bảng, còn Hybrid TATR kết hợp cấu trúc đó với các hộp từ lấy từ lớp
 văn bản PDF hoặc OCR để gán nội dung vào ô.
@@ -70,7 +71,7 @@ bảng.
 \textbf{Thành phần} & \textbf{Vai trò} & \textbf{Giới hạn} \\
 \hline
 Phát hiện vùng bảng &
-Xác định bbox bảng để crop ảnh bảng hoặc lấy các từ nằm trong vùng bảng. &
+Xác định khung bao bảng để cắt ảnh bảng hoặc lấy các từ nằm trong vùng bảng. &
 Bbox lệch có thể làm sai các bước sau. \\
 \hline
 TATR &
@@ -91,9 +92,9 @@ Chưa bảo đảm tái dựng hoàn hảo mọi bảng phức tạp. \\
 \section{Chia đoạn, siêu dữ liệu và lập chỉ mục}
 \label{section:chunking-indexing-foundation}
 
-Chia đoạn là bước chuyển block thành đơn vị truy xuất. Trong đồ án, đơn vị truy
+Chia đoạn là bước chuyển khối nội dung thành đơn vị truy xuất. Trong đồ án, đơn vị truy
 xuất không chỉ là một đoạn cắt theo độ dài, mà còn mang siêu dữ liệu như tài liệu
-nguồn, trang, loại block, đường dẫn đề mục, bbox và thông tin bảng nếu có. Các
+nguồn, trang, loại khối nội dung, đường dẫn đề mục, bbox và thông tin bảng nếu có. Các
 siêu dữ liệu này giúp hệ thống truy vết bằng chứng và tạo dẫn chứng về đúng vị
 trí trong PDF.
 
@@ -105,7 +106,7 @@ truy xuất tìm đúng bảng, hàng hoặc ô thay vì chỉ tìm đúng trang
 Lập chỉ mục là bước xây dựng cấu trúc tìm kiếm từ các đơn vị truy xuất. Với truy xuất từ
 khóa, chỉ mục phục vụ tính điểm theo từ. Với truy xuất ngữ nghĩa, mỗi đơn vị được
 mã hóa thành biểu diễn vector. Các thư viện tìm kiếm vector như FAISS hỗ trợ tìm
-kiếm tương đồng trên tập vector lớn \cite{johnson2021faiss}. Trong triển khai của
+kiếm tương đồng trên tập vector lớn~\cite{johnson2021faiss}. Trong triển khai của
 đồ án, chỉ mục vector được lưu bằng các biểu diễn đã chuẩn hóa; khi môi trường
 hỗ trợ, hệ thống có thể ghi thêm tệp chỉ mục FAISS.
 
@@ -119,7 +120,7 @@ ba nhóm chính: truy xuất theo từ khóa, truy xuất ngữ nghĩa và truy 
 \subsection{Truy xuất theo từ khóa}
 
 BM25 là phương pháp xếp hạng theo từ khóa dựa trên tần suất từ, độ hiếm của từ
-trong tập dữ liệu và độ dài tài liệu \cite{robertson2009bm25}. Với truy vấn \(q\) và
+trong tập dữ liệu và độ dài tài liệu~\cite{robertson2009bm25}. Với truy vấn \(q\) và
 đơn vị truy xuất \(d\), điểm BM25 có thể viết như sau:
 
 \begin{equation}
@@ -150,7 +151,7 @@ cụm quy định.
 
 Truy xuất ngữ nghĩa biểu diễn câu hỏi và đơn vị truy xuất trong cùng không gian vector.
 Dense Passage Retrieval và Sentence-BERT là hai hướng tiêu biểu cho truy xuất
-bằng biểu diễn vector \cite{karpukhin2020dpr,reimers2019sentencebert}. Gọi \(e_q\)
+bằng biểu diễn vector~\cite{karpukhin2020dpr,reimers2019sentencebert}. Gọi \(e_q\)
 là vector của câu hỏi và \(e_d\) là vector của đơn vị truy xuất, độ tương đồng có
 thể tính bằng cosine:
 
@@ -160,7 +161,7 @@ thể tính bằng cosine:
 \frac{e_q \cdot e_d}{\|e_q\|\|e_d\|}
 \end{equation}
 
-Khi các vector đã được chuẩn hóa, điểm dense có thể tính bằng tích vô hướng:
+Khi các vector đã được chuẩn hóa, điểm truy xuất ngữ nghĩa có thể tính bằng tích vô hướng:
 
 \begin{equation}
 \label{eq:dense-dot-product}
@@ -174,7 +175,7 @@ truy xuất ngữ nghĩa đơn lẻ làm cấu hình chính.
 \subsection{Truy xuất kết hợp và sắp xếp lại}
 
 Truy xuất kết hợp dùng cả tín hiệu từ khóa và tín hiệu ngữ nghĩa. Trong đồ án,
-điểm hybrid được tính bằng cách chuẩn hóa và cộng trọng số:
+điểm truy xuất kết hợp được tính bằng cách chuẩn hóa và cộng trọng số:
 
 \begin{equation}
 \label{eq:hybrid-score}
@@ -185,7 +186,7 @@ Truy xuất kết hợp dùng cả tín hiệu từ khóa và tín hiệu ngữ 
 (1-\alpha) \cdot \widehat{\operatorname{score}}_{dense}(q,d)
 \end{equation}
 
-Ngoài ra, hệ thống hỗ trợ Reciprocal Rank Fusion để hợp nhất danh sách xếp hạng
+Ngoài ra, hệ thống hỗ trợ Reciprocal Rank Fusion để hợp nhất danh sách xếp hạng~
 \cite{cormack2009rrf}:
 
 \begin{equation}
@@ -197,9 +198,11 @@ Ngoài ra, hệ thống hỗ trợ Reciprocal Rank Fusion để hợp nhất dan
 
 Trong đó \(R\) là tập các danh sách xếp hạng và \(\operatorname{rank}_r(d)\) là vị trí
 của đơn vị truy xuất \(d\) trong danh sách \(r\). Sau bước truy xuất ban đầu, hệ thống có thể
-sắp xếp lại một tập ứng viên nhỏ. ColBERT minh họa hướng tương tác muộn giữa
-truy vấn và tài liệu \cite{khattab2020colbert}. Trong mã nguồn của đồ án, bộ sắp
-xếp lại có thể là luật kinh nghiệm, cross-encoder hoặc ColBERT tùy cấu hình:
+sắp xếp lại một tập ứng viên nhỏ. Phương pháp của Nogueira và Cho minh họa
+hướng sắp xếp lại ứng viên bằng BERT~\cite{nogueira2019passage}. ColBERT sử
+dụng cơ chế tương tác muộn giữa biểu diễn truy vấn và tài liệu~
+\cite{khattab2020colbert}. Trong mã nguồn của đồ án, bộ sắp xếp lại có thể là
+luật kinh nghiệm, cross-encoder hoặc ColBERT tùy cấu hình:
 
 \begin{equation}
 \label{eq:rerank-score}
@@ -210,15 +213,17 @@ xếp lại có thể là luật kinh nghiệm, cross-encoder hoặc ColBERT tù
 \label{section:grounded-qa-foundation}
 
 Hỏi đáp tăng cường bằng truy xuất sử dụng các bằng chứng được truy xuất làm ngữ
-cảnh cho quá trình sinh câu trả lời \cite{lewis2020rag}. Cách tiếp cận này phù hợp
+cảnh cho quá trình sinh câu trả lời~\cite{lewis2020rag}. Cách tiếp cận này phù hợp
 với PDF vì câu trả lời cần bám vào tài liệu nguồn thay vì chỉ dựa vào kiến thức có
-sẵn của mô hình ngôn ngữ.
+sẵn của mô hình ngôn ngữ. Vấn đề tỷ lệ thông tin không được nguồn hỗ trợ trong sinh ngôn ngữ tự nhiên và đánh giá RAG cho thấy câu
+trả lời có vẻ hợp lý vẫn có thể không được nguồn hỗ trợ~
+\cite{ji2023hallucination,es2023ragas}.
 
 Trong đồ án, câu trả lời được xem là có căn cứ khi nội dung trả lời được hỗ trợ bởi
 bằng chứng đã truy xuất và có dẫn chứng kèm theo. Quy trình vì vậy gồm truy xuất
 top-k đơn vị nội dung, kiểm tra bằng chứng, sinh câu trả lời và tạo dẫn chứng. Các hướng như
 Self-RAG và Adaptive-RAG cũng nhấn mạnh vai trò của kiểm soát truy xuất, sinh
-và tự đánh giá câu trả lời \cite{asai2024selfrag,jeong2024adaptiverag}.
+và tự đánh giá câu trả lời~\cite{asai2024selfrag,jeong2024adaptiverag}.
 
 Trong triển khai hiện tại, định tuyến câu hỏi và kiểm tra bằng chứng được thực hiện
 bằng luật và siêu dữ liệu, chưa huấn luyện mô hình phân loại truy vấn mới. Cách làm
@@ -287,16 +292,16 @@ tính bởi:
 \sum_{i=1}^{M} t_i
 \end{equation}
 
-Success Rate cho biết quy trình có hoàn tất xử lý hay không, Token F1 và CER đo
+Tỷ lệ thành công cho biết quy trình có hoàn tất xử lý hay không, Token F1 và CER đo
 chất lượng OCR ở mức nội dung chữ, còn \(\operatorname{Latency}_{avg}\) phản ánh
 chi phí thực thi của cấu hình đang xét.
 
 \subsection{Độ đo truy xuất}
 
 Các độ đo truy xuất chính gồm Hit@k, Recall@k, MRR và NDCG. NDCG đo chất
-lượng thứ hạng có xét vị trí của kết quả liên quan \cite{jarvelin2002ndcg}. BEIR,
-SciFact và QASPER được dùng làm cơ sở dữ liệu benchmark liên quan đến truy
-xuất và hỏi đáp trên dữ liệu khoa học
+lượng thứ hạng có xét vị trí của kết quả liên quan~\cite{jarvelin2002ndcg}. BEIR,
+SciFact và QASPER được dùng làm cơ sở dữ liệu tập đánh giá liên quan đến truy
+xuất và hỏi đáp trên dữ liệu khoa học~
 \cite{thakur2021beir,wadden2020scifact,dasigi2021qasper}.
 
 Gọi \(Q\) là tập câu hỏi, \(G_i\) là tập bằng chứng đúng của câu hỏi \(i\), và
@@ -345,7 +350,7 @@ là điểm DCG lý tưởng nếu các kết quả được xếp theo thứ t�
 
 \subsection{Độ đo hỏi đáp có căn cứ}
 
-Với \(N\) câu hỏi, các độ đo QA trong đồ án được dùng ở dạng tổng quát:
+Với \(N\) câu hỏi, các độ đo hỏi đáp trong đồ án được dùng ở dạng tổng quát:
 
 \begin{equation}
 \label{eq:answer-match}
@@ -386,8 +391,8 @@ thông tin không được bằng chứng hỗ trợ. Các quy tắc khớp cụ
 
 \subsection{Độ đo xử lý bảng}
 
-Với phát hiện vùng bảng hoặc ô bảng, độ chồng khớp giữa bbox dự đoán \(B_p\)
-và bbox ground truth \(B_g\) được đo bằng IoU:
+Với phát hiện vùng bảng hoặc ô bảng, độ chồng khớp giữa khung bao dự đoán \(B_p\)
+và khung bao nhãn chuẩn \(B_g\) được đo bằng IoU:
 
 \begin{equation}
 \label{eq:iou}
@@ -395,7 +400,7 @@ và bbox ground truth \(B_g\) được đo bằng IoU:
 \frac{|B_p \cap B_g|}{|B_p \cup B_g|}
 \end{equation}
 
-Từ các cặp dự đoán--ground truth được ghép đúng theo ngưỡng IoU, hệ thống tính
+Từ các cặp dự đoán--nhãn chuẩn được ghép đúng theo ngưỡng IoU, hệ thống tính
 Precision, Recall và F1:
 
 \begin{equation}
@@ -415,9 +420,9 @@ Precision, Recall và F1:
 \end{equation}
 
 Precision cho biết trong các dự đoán của hệ thống có bao nhiêu dự đoán đúng,
-Recall cho biết hệ thống tìm được bao nhiêu đối tượng đúng trong ground truth,
+Recall cho biết hệ thống tìm được bao nhiêu đối tượng đúng trong nhãn chuẩn,
 còn F1 là trung bình điều hòa giữa hai độ đo này. Khi đánh giá phát hiện bảng,
-một dự đoán chỉ được tính là đúng nếu bbox dự đoán khớp với bbox ground truth
+một dự đoán chỉ được tính là đúng nếu khung bao dự đoán khớp với khung bao nhãn chuẩn
 theo ngưỡng IoU đã chọn.
 
 Với tái dựng bảng, Exact CSV kiểm tra mức khớp toàn bộ bảng sau chuẩn hóa:
@@ -434,8 +439,8 @@ Với tái dựng bảng, Exact CSV kiểm tra mức khớp toàn bộ bảng sa
 \right)
 \end{equation}
 
-Ngoài Exact CSV, đồ án còn dùng thêm Cell F1, Structure F1 và Text Assignment
-F1 để phân tích chi tiết hơn. Với Cell F1, gọi \(C^{pred}\) và \(C^{gold}\) là tập
+Ngoài Exact CSV, đồ án còn dùng thêm Cell F1, Structure F1 và Text Assignment F1
+để phân tích chi tiết hơn. Với Cell F1, gọi \(C^{pred}\) và \(C^{gold}\) là tập
 ô dự đoán và ô chuẩn sau khi ghép đúng theo ngưỡng IoU \(\tau\). Khi đó:
 
 \begin{equation}
@@ -457,7 +462,7 @@ trong đó:
 \end{equation}
 
 Structure F1 đo mức khớp của các quan hệ cấu trúc trong bảng, chẳng hạn hàng,
-cột, span hoặc quan hệ kề nhau giữa các ô. Gọi \(S^{pred}\) và \(S^{gold}\) là tập
+cột, quan hệ gộp ô hoặc quan hệ kề nhau giữa các ô. Gọi \(S^{pred}\) và \(S^{gold}\) là tập
 quan hệ cấu trúc dự đoán và chuẩn, khi đó:
 
 \begin{equation}
@@ -478,7 +483,7 @@ quan hệ cấu trúc dự đoán và chuẩn, khi đó:
 
 Text Assignment F1 đo mức khớp giữa văn bản và ô được gán. Gọi \(A^{pred}\) và
 \(A^{gold}\) là tập các cặp gán \((\text{token}, \text{cell})\) của hệ thống và
-ground truth, ta có:
+nhãn chuẩn, ta có:
 
 \begin{equation}
 \label{eq:text-assignment-f1}
@@ -536,15 +541,15 @@ tầng của quy trình. Bảng dưới tóm tắt nhóm công nghệ và nơi l
 \caption{Nhóm công nghệ và vai trò trong đồ án}
 \label{tab:chapter3-technology-summary}
 \begin{tabularx}{\textwidth}{
+    |>{\raggedright\arraybackslash}p{0.20\textwidth}
     |>{\raggedright\arraybackslash}p{0.25\textwidth}
-    |>{\raggedright\arraybackslash}X
-    |>{\raggedright\arraybackslash}p{0.27\textwidth}|
+    |>{\raggedright\arraybackslash}X|
 }
 \hline
 \textbf{Nhóm công nghệ} & \textbf{Vai trò} & \textbf{Liên hệ triển khai} \\
 \hline
 Xử lý PDF &
-Đọc lớp văn bản, lấy tọa độ, kết xuất trang và chuẩn hóa block. &
+Đọc lớp văn bản, lấy tọa độ, kết xuất trang và chuẩn hóa khối nội dung. &
 \texttt{app/ingest}, \texttt{app/loaders} \\
 \hline
 OCR &

@@ -9,7 +9,7 @@
 liệu PDF theo hướng câu trả lời có căn cứ từ tài liệu nguồn. Hệ thống được tổ
 chức thành hai luồng chính: luồng tiếp nhận và trích xuất PDF, và luồng
 xử lý truy vấn trên dữ liệu đã trích xuất. Cách tách này giúp làm rõ vai trò của
-từng tầng: tài liệu PDF trước hết phải được chuyển thành block, bảng, ô và
+từng tầng: tài liệu PDF trước hết phải được chuyển thành khối nội dung, bảng, ô và
 siêu dữ liệu nguồn; sau đó các đơn vị này mới được dùng để lập chỉ mục, truy xuất
 bằng chứng, sinh câu trả lời và tạo dẫn chứng.
 
@@ -38,20 +38,20 @@ khả năng dẫn chứng, không chỉ bằng độ khớp nội dung cuối c�
 \section{Hạn chế của đồ án}
 \label{section:thesis-limitations}
 
-Mặc dù đạt được các kết quả tích cực trên benchmark chính, đồ án vẫn còn một số
+Mặc dù đạt được các kết quả tích cực trên tập đánh giá chính, đồ án vẫn còn một số
 hạn chế rõ ràng.
 
-Khả năng xử lý PDF scan thực tế chưa được đánh giá đầy đủ. Kết quả OCR
-trên tập scan tổng hợp cao, nhưng chênh lệch với các tập dữ liệu nhiễu hơn cho thấy
+Khả năng xử lý PDF quét thực tế chưa được đánh giá đầy đủ. Kết quả OCR
+trên tập quét tổng hợp cao, nhưng chênh lệch với các tập dữ liệu nhiễu hơn cho thấy
 hệ thống vẫn nhạy với chất lượng ảnh, bố cục phức tạp và sai lệch hộp từ. Vì vậy,
-đồ án chưa thể khẳng định hiệu quả tương đương trên các tài liệu scan tiếng Việt
+đồ án chưa thể khẳng định hiệu quả tương đương trên các tài liệu quét tiếng Việt
 thực tế.
 
 Phần tái dựng bảng dù đã cải thiện mạnh ở các độ đo trung gian vẫn chưa
 giải quyết trọn vẹn các bảng khó. Exact CSV của Hybrid TATR còn thấp hơn đáng
 kể so với Cell F1 và Text Assignment F1, cho thấy hệ thống thường lấy đúng phần
 lớn ô và văn bản, nhưng vẫn dễ sai ở các bảng có ô gộp, tiêu đề nhiều hàng hoặc
-cấu trúc span phức tạp.
+cấu trúc ô gộp phức tạp.
 
 Khả năng tổng hợp nhiều bằng chứng còn hạn chế. Điều này thể hiện rõ trên
 QASPER, nơi nhiều câu hỏi yêu cầu kết hợp nhiều đoạn thông tin và tạo đáp án tự
@@ -64,7 +64,7 @@ cụ thể. QCDT đại diện cho tài liệu quy định tiếng Việt có l�
 Vì vậy, các kết quả hiện tại chưa đủ để suy rộng cho mọi loại tài liệu PDF hoặc mọi
 bối cảnh nghiệp vụ.
 
-Một giới hạn khác là các độ đo về grounding và hallucination trong đồ án phụ thuộc vào quy
+Một giới hạn khác là các độ đo về bảo đảm căn cứ và sinh thông tin không được nguồn hỗ trợ trong đồ án phụ thuộc vào quy
 tắc đánh giá đã xác định trước. Chúng rất hữu ích để kiểm tra khả năng dẫn chứng,
 nhưng không thay thế hoàn toàn cho đánh giá thủ công về độ đúng, độ đầy đủ và sự
 phù hợp ngữ cảnh của câu trả lời.
@@ -74,7 +74,7 @@ phù hợp ngữ cảnh của câu trả lời.
 
 Từ các hạn chế trên, có thể đề xuất một số hướng phát triển tiếp theo.
 
-Hướng thứ nhất là mở rộng đánh giá và cải thiện luồng trích xuất cho PDF scan tiếng Việt
+Hướng thứ nhất là mở rộng đánh giá và cải thiện luồng trích xuất cho PDF quét tiếng Việt
 thực tế. Điều này bao gồm xây dựng thêm tập dữ liệu gán nhãn, theo dõi độ tin cậy
 OCR theo từng vùng, và kết hợp tốt hơn giữa OCR với định tuyến theo vùng nội
 dung.
@@ -82,7 +82,7 @@ dung.
 Hướng thứ hai là tiếp tục cải thiện tái dựng bảng. Các nhóm bảng có ô gộp, tiêu đề
 nhiều hàng và cấu trúc không đồng nhất là nơi còn nhiều dư địa nhất. Một hướng đi
 khả thi là bổ sung các ràng buộc cấu trúc sau bước nhận diện ô, hoặc dùng biểu diễn
-đồ thị để tái dựng quan hệ hàng, cột và span một cách nhất quán hơn.
+đồ thị để tái dựng quan hệ hàng, cột và ô gộp một cách nhất quán hơn.
 
 Hướng thứ ba là tăng cường truy xuất và xếp hạng cho hỏi đáp trên bảng. Kết quả hiện tại cho
 thấy nhiều ô đúng đã tồn tại trong tập dữ liệu truy xuất nhưng chưa được đưa lên thứ hạng đủ cao.
@@ -104,11 +104,11 @@ khả năng tổng quát hóa của hệ thống sẽ vững hơn.
 \label{section:chapter7-summary}
 
 Đồ án đã cho thấy rằng bài toán hỏi đáp trên PDF không thể tách rời khỏi bài toán
-trích xuất PDF. Việc tổ chức lại tài liệu thành các block, bảng, ô và siêu dữ liệu nguồn
+trích xuất PDF. Việc tổ chức lại tài liệu thành các khối nội dung, bảng, ô và siêu dữ liệu nguồn
 là điều kiện cần để truy xuất bằng chứng đúng và tạo câu trả lời có thể kiểm chứng.
 Trong phạm vi dữ liệu và cấu hình đã đánh giá, hệ thống đạt được kết quả tích cực
 trên tập chính và chỉ ra rõ vai trò của từng thành phần trong quy trình. Đồng thời,
-đồ án cũng cho thấy những giới hạn còn lại ở xử lý scan, tái dựng bảng phức tạp và
+đồ án cũng cho thấy những giới hạn còn lại ở xử lý tài liệu quét, tái dựng bảng phức tạp và
 tổng hợp nhiều bằng chứng, từ đó mở ra các hướng phát triển tiếp theo cho bài toán
 trích xuất và khai thác thông tin trên tài liệu PDF.
 

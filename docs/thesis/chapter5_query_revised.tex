@@ -6,16 +6,16 @@
 \label{section:query-flow-goal}
 
 Chương này trình bày luồng xử lý truy vấn trên dữ liệu đã được trích xuất từ PDF.
-Nếu chương trước tập trung vào việc biến PDF thành block, chunk và index, thì
+Nếu chương trước tập trung vào việc biến PDF thành khối nội dung, đơn vị truy xuất và chỉ mục, thì
 chương này tập trung vào cách hệ thống sử dụng các dữ liệu đó để tìm bằng chứng,
 tạo câu trả lời và dẫn chứng nguồn. Vai trò của luồng truy vấn là kiểm chứng khả
 năng khai thác dữ liệu đã trích xuất, không thay thế trọng tâm trích xuất PDF của
 đề tài. Các kỹ thuật truy xuất và hỏi đáp được tích hợp trong luồng này dựa trên
-các hướng BM25, dense retrieval, RRF và RAG đã trình bày ở Chương 3
+các hướng BM25, truy xuất ngữ nghĩa, RRF và RAG đã trình bày ở Chương 3~
 \cite{robertson2009bm25,karpukhin2020dpr,cormack2009rrf,lewis2020rag}.
 
 Đầu vào của luồng này là câu hỏi của người dùng và chỉ mục truy xuất đã được xây
-từ kết quả ingest. Đầu ra là câu trả lời, danh sách bằng chứng, dẫn chứng và vết xử
+từ kết quả tiếp nhận và trích xuất tài liệu. Đầu ra là câu trả lời, danh sách bằng chứng, dẫn chứng và vết xử
 lý. Các thành phần truy xuất và hỏi đáp được tách riêng để có thể đánh giá lỗi
 theo từng tầng.
 
@@ -30,9 +30,9 @@ theo từng tầng.
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.82\linewidth}{\centering Bộ định tuyến câu hỏi: xác định loại câu hỏi và tín hiệu bảng nếu có}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Bộ lập kế hoạch truy xuất: chọn chiến lược, top-k, candidate-k, sắp xếp lại}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Bộ lập kế hoạch truy xuất: chọn chiến lược, top-k, số ứng viên ban đầu, sắp xếp lại}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Bộ truy xuất: BM25, dense, hybrid; điều chỉnh theo metadata bảng khi được bật}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Bộ truy xuất: BM25, truy xuất ngữ nghĩa, truy xuất kết hợp, ưu tiên siêu dữ liệu bảng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.82\linewidth}{\centering Bộ kiểm tra bằng chứng: kiểm tra liên quan, đầy đủ và khả năng dẫn chứng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
@@ -45,7 +45,7 @@ theo từng tầng.
 \end{figure}
 
 Luồng này được thiết kế để câu trả lời cuối cùng luôn gắn với bằng chứng trong
-chỉ mục. Với câu hỏi bảng, hệ thống có thể ưu tiên các chunk ở mức hàng hoặc ô.
+chỉ mục. Với câu hỏi bảng, hệ thống có thể ưu tiên các đơn vị truy xuất ở mức hàng hoặc ô.
 Với câu hỏi văn bản, hệ thống ưu tiên các đoạn có nội dung và ngữ cảnh đề mục
 phù hợp.
 
@@ -53,8 +53,8 @@ phù hợp.
 \label{section:query-traceability}
 
 Bảng~\ref{tab:query-traceability} tóm tắt các yêu cầu liên quan đến khai thác dữ
-liệu PDF sau trích xuất. Các yêu cầu này sử dụng trực tiếp corpus và metadata do
-luồng ingest tạo ra.
+liệu PDF sau trích xuất. Các yêu cầu này sử dụng trực tiếp tập đơn vị truy xuất và siêu dữ liệu do
+luồng tiếp nhận và trích xuất tài liệu tạo ra.
 
 \begin{table}[H]
 \centering
@@ -72,24 +72,24 @@ luồng ingest tạo ra.
 \hline
 FR-05 &
 Truy xuất các đoạn thông tin liên quan đến câu hỏi của người dùng. &
-\texttt{RetrievalService}, BM25, dense retrieval, hybrid retrieval. \\
+BM25, truy xuất ngữ nghĩa, truy xuất kết hợp. \\
 \hline
 FR-05, FR-07 &
 Ưu tiên truy xuất và dẫn chứng chính xác hơn với câu hỏi liên quan đến bảng. &
-\texttt{QueryRouter}, table-aware retrieval, metadata bảng/ô. \\
+Bộ định tuyến truy vấn, truy xuất có nhận thức về cấu trúc bảng, siêu dữ liệu bảng/ô. \\
 \hline
 FR-06 &
 Tạo câu trả lời dựa trên bằng chứng đã truy xuất và tránh tự suy đoán khi thiếu
 thông tin. &
-\texttt{EvidenceChecker}, \texttt{GroundedAnswerGenerator}. \\
+Bộ kiểm tra bằng chứng, bộ sinh câu trả lời có căn cứ. \\
 \hline
 FR-07 &
 Cung cấp dẫn chứng về tài liệu, trang, đoạn văn, bảng, hàng hoặc ô bảng. &
-\texttt{citations.py}, metadata dẫn chứng. \\
+\texttt{citations.py}, siêu dữ liệu. \\
 \hline
 FR-08 &
 Hỗ trợ đánh giá thực nghiệm theo từng tầng. &
-Vết xử lý, bằng chứng được chọn, chiến lược truy xuất, thời gian xử lý, kết quả benchmark. \\
+Vết xử lý, bằng chứng được chọn, chiến lược truy xuất, thời gian xử lý, kết quả tập đánh giá. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -116,24 +116,24 @@ Câu hỏi ngôn ngữ tự nhiên, có thể là câu hỏi văn bản hoặc t
 Kích hoạt luồng truy xuất và hỏi đáp. \\
 \hline
 Chỉ mục truy xuất &
-Corpus chunk, chỉ mục BM25, embedding nếu có, metadata nguồn. &
+Tập đơn vị truy xuất, chỉ mục BM25, biểu diễn vector nếu có, siêu dữ liệu nguồn. &
 Không gian tìm kiếm bằng chứng. \\
 \hline
 Cấu hình truy xuất &
-Chiến lược truy xuất, top-k, candidate-k, trọng số BM25/dense, bộ sắp xếp lại. &
+Chiến lược truy xuất, top-k, số ứng viên ban đầu, trọng số BM25/truy xuất ngữ nghĩa, bộ sắp xếp lại. &
 Điều khiển cách lấy bằng chứng. \\
 \hline
-RetrievedHit &
-Chunk được truy xuất, điểm, thứ hạng, nội dung và metadata nguồn. &
-Đơn vị bằng chứng đầu vào cho QA. \\
+Kết quả truy  &
+Đơn vị truy xuất được truy xuất, điểm, thứ hạng, nội dung và siêu dữ liệu nguồn. &
+Đơn vị bằng chứng đầu vào cho hỏi đáp. \\
 \hline
 Đánh giá bằng chứng &
-Điểm liên quan, độ bao phủ, mức có căn cứ và trạng thái đánh giá bằng chứng. &
-Quyết định sinh câu trả lời hoặc trả lời thận trọng khi chưa đủ căn cứ. \\
+Quyết định trả lời, mở rộng truy xuất, đổi chiến lược hoặc từ chối trả lời. &
+Kiểm soát việc sinh câu trả lời. \\
 \hline
-QAResult &
+Kết quả hỏi đáp &
 Câu trả lời, dẫn chứng, bằng chứng được chọn, chiến lược, vết xử lý và thời gian xử lý. &
-Đầu ra cuối cùng cho người dùng và benchmark. \\
+Đầu ra cuối cùng cho người dùng và tập đánh giá. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -141,18 +141,16 @@ Câu trả lời, dẫn chứng, bằng chứng được chọn, chiến lược
 \section{Phân loại câu hỏi và lập kế hoạch truy xuất}
 \label{section:query-router-planner-design}
 
-Hệ thống sử dụng QueryRouter để xác định loại câu hỏi ở mức đủ phục vụ retrieval.
+Hệ thống sử dụng định tuyến truy vấn để xác định loại câu hỏi ở mức đủ phục vụ truy xuất.
 Bộ phân loại hiện tại dựa trên luật và từ khóa, không phải mô hình học máy. Cách
 làm này phù hợp với phạm vi đồ án vì dễ kiểm tra, dễ giải thích và dễ tái lập trong
-benchmark. Khác với các hướng adaptive RAG học chiến lược truy xuất bằng mô
-hình \cite{jeong2024adaptiverag}, thiết kế hiện tại ưu tiên tính kiểm soát và khả
+tập đánh giá. Khác với các hướng adaptive RAG học chiến lược truy xuất bằng mô
+hình~\cite{jeong2024adaptiverag}, thiết kế hiện tại ưu tiên tính kiểm soát và khả
 năng phân tích lỗi.
 
-Sau khi có loại câu hỏi, \texttt{QueryAwareRetrievalPlanner} chọn cấu hình truy
-xuất. Ví dụ, câu hỏi dạng tra cứu bảng mở rộng tập ứng viên và tăng trọng số
-BM25. Khi tùy chọn table-aware retrieval được bật, bộ sắp xếp lại mới cộng thêm
-điểm dựa trên metadata bảng, hàng và ô. Câu hỏi cần tổng hợp có thể bật bước sắp
-xếp lại kết quả, còn câu hỏi đơn giản dùng top-k nhỏ hơn để giảm nhiễu.
+Sau khi có loại câu hỏi, \texttt{QueryAwareRetrievalPlanner} (Bộ lập kế hoạch truy xuất theo truy vấn) chọn cấu hình truy
+xuất phù hợp. Ví dụ, câu hỏi đơn giản
+dùng top-k nhỏ hơn để giảm nhiễu.
 
 \begin{table}[H]
 \centering
@@ -161,46 +159,47 @@ xếp lại kết quả, còn câu hỏi đơn giản dùng top-k nhỏ hơn đ�
 \caption{Thiết kế truy xuất theo loại câu hỏi}
 \label{tab:query-type-retrieval-plan}
 \begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\raggedright\arraybackslash}p{0.26\textwidth}
+    |>{\raggedright\arraybackslash}p{0.28\textwidth}
+    |>{\raggedright\arraybackslash}p{0.3\textwidth}
     |>{\raggedright\arraybackslash}X|
 }
 \hline
 \textbf{Loại câu hỏi} & \textbf{Cấu hình ưu tiên} & \textbf{Lý do thiết kế} \\
 \hline
-Factoid / definition &
-Hybrid, top-k vừa phải. &
+Thông tin trực tiếp \newline
+Định nghĩa &
+Truy xuất kết hợp, top-k vừa phải. &
 Cần tìm đoạn chứa thông tin trực tiếp. \\
 \hline
-Policy / procedural &
-Hybrid + sắp xếp lại. &
-Cần giữ nhiều evidence vì thường có điều kiện hoặc quy trình. \\
+Quy định \newline Quy trình &
+Truy xuất kết hợp, sắp xếp lại. &
+Cần giữ nhiều bằng chứng vì thường có điều kiện hoặc quy trình. \\
 \hline
-Comparison / multi-hop &
-Hybrid hoặc RRF, candidate-k lớn hơn. &
-Cần thu thập evidence từ nhiều đoạn. \\
+So sánh \newline Suy luận nhiều bước &
+Câu hỏi so sánh dùng truy xuất kết hợp và sắp xếp lại; câu hỏi suy luận nhiều bước dùng truy xuất kết hợp và RRF với số ứng viên ban đầu lớn hơn. &
+Cần thu thập bằng chứng từ nhiều đoạn. \\
 \hline
-Table lookup &
-Hybrid, tăng trọng số BM25; có thể bật table-aware boost khi cấu hình cho phép. &
+Câu hỏi tra cứu bảng &
+Truy xuất kết hợp, tăng trọng số BM25, mở rộng số ứng viên ban đầu và ngữ cảnh lân cận. Cơ chế ưu tiên đơn vị truy xuất thuộc bảng chỉ bật khi cấu hình truy xuất bảng được kích hoạt. &
 Cần khớp chính xác hàng, cột, giá trị số hoặc ký hiệu trong bảng. \\
 \hline
-Ambiguous &
-Hybrid với phạm vi tìm kiếm rộng hơn. &
+Mơ hồ &
+Truy xuất kết hợp với phạm vi tìm kiếm rộng hơn. &
 Ý định chưa rõ nên không thu hẹp quá sớm. \\
 \hline
 \end{tabularx}
 \end{table}
 
-\section{Truy xuất evidence}
+\section{Truy xuất bằng chứng}
 \label{section:evidence-retrieval-design}
 
-\texttt{RetrievalService} cung cấp một giao diện chung cho nhiều chiến lược truy xuất.
-BM25 khai thác tín hiệu từ khóa \cite{robertson2009bm25}; dense retrieval khai
-thác embedding \cite{karpukhin2020dpr,reimers2019sentencebert}; hybrid
-retrieval kết hợp hai tín hiệu này bằng weighted sum hoặc RRF
-\cite{cormack2009rrf}. Reranker chỉ áp dụng trên tập ứng viên nhỏ đã được lấy ra
+\texttt{RetrievalService} (Dịch vụ truy xuất) cung cấp một giao diện chung cho nhiều chiến lược truy xuất.
+BM25 khai thác từ khóa~\cite{robertson2009bm25}; truy xuất ngữ nghĩa khai
+thác biểu diễn vector~\cite{karpukhin2020dpr,reimers2019sentencebert}; truy xuất kết hợp
+kết hợp hai tín hiệu này bằng tổng có trọng số hoặc RRF~
+\cite{cormack2009rrf}. Bộ sắp xếp lại chỉ áp dụng trên tập ứng viên nhỏ đã được lấy ra
 trước đó. Trong các cấu hình sắp xếp lại nâng cao, ColBERT là một ví dụ của
-hướng late interaction giữa truy vấn và tài liệu \cite{khattab2020colbert}.
+hướng tương tác muộn giữa truy vấn và tài liệu~\cite{khattab2020colbert}.
 
 \begin{figure}[H]
 \centering
@@ -208,40 +207,39 @@ hướng late interaction giữa truy vấn và tài liệu \cite{khattab2020col
 \begin{tabular}{c}
 \fbox{\parbox{0.82\linewidth}{\centering Câu hỏi + cấu hình truy xuất}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Truy xuất ứng viên: BM25, dense hoặc hybrid}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Truy xuất ứng viên: BM25, truy xuất ngữ nghĩa hoặc truy xuất kết hợp}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Sắp xếp lại tùy chọn: heuristic, cross-encoder hoặc ColBERT}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Sắp xếp lại tùy chọn: quy tắc kinh nghiệm, cross-encoder hoặc ColBERT}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Điều chỉnh theo metadata bảng nếu truy vấn liên quan bảng}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Điều chỉnh theo siêu dữ liệu bảng nếu truy vấn liên quan bảng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Top-k kết quả có nội dung, điểm và metadata nguồn}}\\
+\fbox{\parbox{0.82\linewidth}{\centering Top-k kết quả có nội dung, điểm và siêu dữ liệu nguồn}}\\
 \end{tabular}
-\caption{Luồng truy xuất evidence trong hệ thống}
+\caption{Luồng truy xuất bằng chứng trong hệ thống}
 \label{fig:evidence-retrieval-flow}
 \end{figure}
 
-Mỗi kết quả truy xuất được chuẩn hóa thành \texttt{RetrievedHit}. Đối tượng này
-không chỉ chứa nội dung chunk, mà còn giữ điểm truy xuất, thứ hạng và metadata
-như tài liệu nguồn, trang, block type, heading path và thông tin bảng nếu có. Đây
-là dữ liệu mà tầng QA sử dụng để kiểm tra evidence và tạo citation.
+Mỗi kết quả truy xuất được chuẩn hóa thành \texttt{RetrievedHit} (bản ghi kết quả truy xuất). Đối tượng này
+không chỉ chứa nội dung đơn vị truy xuất, mà còn giữ điểm truy xuất, thứ hạng và siêu dữ liệu
+như tài liệu nguồn, trang, loại khối nội dung, đường dẫn đề mục và thông tin bảng nếu có. Đây
+là dữ liệu mà tầng hỏi đáp sử dụng để kiểm tra bằng chứng và tạo dẫn chứng nguồn.
 
 \section{Truy xuất trên dữ liệu bảng}
 \label{section:query-table-aware-retrieval}
 
 Truy vấn bảng là nơi thể hiện rõ vai trò của dữ liệu đã được trích xuất ở chương
-trước. Nếu bảng chỉ được đưa vào index như văn bản phẳng, hệ thống có thể tìm
+trước. Nếu bảng chỉ được đưa vào chỉ mục như văn bản phẳng, hệ thống có thể tìm
 đúng bảng nhưng khó xác định đúng hàng hoặc ô. Vì vậy, khi câu hỏi có dấu hiệu
-tra cứu bảng, hệ thống ưu tiên các chunk có metadata bảng.
-Thiết kế này kế thừa phần biểu diễn bảng ở luồng ingest, trong đó cấu trúc bảng
+tra cứu bảng, hệ thống ưu tiên các đơn vị truy xuất có siêu dữ liệu bảng.
+Thiết kế này kế thừa phần biểu diễn bảng ở luồng tiếp nhận và trích xuất tài liệu, trong đó cấu trúc bảng
 có thể được tái dựng từ Table Transformer/TATR và các hộp từ lấy từ lớp văn bản
-PDF~\cite{smock2022pubtables}. Với tài liệu scan, OCR là nguồn văn bản và tọa
-độ bổ sung trong hướng tích hợp riêng~\cite{du2020ppocr}.
+hoặc OCR~\cite{smock2022pubtables,du2020ppocr}.
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Metadata bảng được dùng trong truy xuất và dẫn chứng}
+\caption{Siêu dữ liệu bảng được dùng trong truy xuất và dẫn chứng}
 \label{tab:table-query-metadata}
 \begin{tabularx}{\textwidth}{
     |>{\raggedright\arraybackslash}p{0.30\textwidth}
@@ -251,7 +249,7 @@ PDF~\cite{smock2022pubtables}. Với tài liệu scan, OCR là nguồn văn bả
 \textbf{Trường} & \textbf{Vai trò} \\
 \hline
 \texttt{table\_id} &
-Xác định bảng nguồn của evidence. \\
+Xác định bảng nguồn của bằng chứng. \\
 \hline
 \texttt{row\_header} &
 Hỗ trợ khớp câu hỏi với hàng tương ứng trong bảng. \\
@@ -263,72 +261,67 @@ Hỗ trợ khớp câu hỏi với cột hoặc điều kiện cần tra cứu. 
 Giá trị có thể được dùng trực tiếp cho câu trả lời bảng. \\
 \hline
 \texttt{citation\_target} &
-Xác định citation ở mức bảng, hàng hoặc ô. \\
+Xác định dẫn chứng nguồn ở mức bảng, hàng hoặc ô. \\
 \hline
 \end{tabularx}
 \end{table}
 
-Cách xử lý này giúp hệ thống trả về evidence nhỏ hơn và chính xác hơn. Ví dụ,
-với câu hỏi về một giá trị trong bảng điểm, evidence phù hợp nhất thường là
-table cell chứa \texttt{row\_header}, \texttt{col\_header} và \texttt{cell\_text}, không
+Cách xử lý này giúp hệ thống trả về bằng chứng nhỏ hơn và chính xác hơn. Ví dụ,
+với câu hỏi về một giá trị trong bảng điểm, bằng chứng phù hợp nhất thường là
+đơn vị truy xuất ở mức ô chứa \texttt{row\_header}, \texttt{col\_header} và \texttt{cell\_text}, không
 phải toàn bộ trang PDF.
 
-\section{Kiểm tra evidence và sinh câu trả lời}
+\section{Kiểm tra bằng chứng và sinh câu trả lời}
 \label{section:evidence-check-answer-design}
 
-Sau truy xuất, EvidenceChecker đánh giá tập evidence theo mức độ liên quan, độ
-đầy đủ, khả năng hỗ trợ câu trả lời và khả năng tạo citation. Kết quả kiểm tra được
-biểu diễn bằng bốn trạng thái: \texttt{answer}, \texttt{expand\_retrieval},
-\texttt{switch\_strategy} và \texttt{abstain}. Trong triển khai hiện tại, các trạng
-thái này được lưu trong vết xử lý và dùng để kiểm soát bộ sinh câu trả lời. Hệ
-thống chưa tự động thực hiện lại truy xuất khi nhận trạng thái
-\texttt{expand\_retrieval} hoặc \texttt{switch\_strategy}. Cách tổ chức này đi
-theo hướng RAG có kiểm soát bằng chứng~\cite{lewis2020rag,asai2024selfrag}.
+Sau truy xuất, bộ kiểm tra bằng chứng đánh giá tập bằng chứng theo mức độ liên quan, độ
+đầy đủ, khả năng hỗ trợ câu trả lời và khả năng tạo dẫn chứng nguồn. Kết quả kiểm tra có
+thể dẫn tới bốn quyết định: trả lời, mở rộng truy xuất, đổi chiến lược hoặc từ chối
+trả lời khi không đủ căn cứ. Cách tổ chức này đi theo hướng RAG có kiểm soát
+bằng chứng: câu trả lời chỉ được sinh sau khi có ngữ cảnh truy xuất phù hợp~
+\cite{lewis2020rag,asai2024selfrag}.
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Các trạng thái sau bước kiểm tra evidence}
+\caption{Các quyết định sau bước kiểm tra bằng chứng}
 \label{tab:evidence-check-decisions-revised}
 \begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
+    |>{\raggedright\arraybackslash}p{0.28\textwidth}
     |>{\raggedright\arraybackslash}X|
 }
 \hline
 \textbf{Quyết định} & \textbf{Xử lý trong hệ thống} \\
 \hline
 \texttt{answer} &
-Evidence đủ để sinh câu trả lời có căn cứ. \\
+Bằng chứng đủ để sinh câu trả lời có căn cứ. \\
 \hline
 \texttt{expand\_retrieval} &
-Evidence có liên quan nhưng chưa đủ bao phủ câu hỏi; hệ thống ghi nhận trạng
-thái và không tạo câu trả lời khẳng định. \\
+Bằng chứng có liên quan nhưng chưa đủ bao phủ câu hỏi. \\
 \hline
 \texttt{switch\_strategy} &
-Evidence truy xuất còn yếu; hệ thống ghi nhận trạng thái và không tự động đổi
-chiến lược trong luồng hiện tại. \\
+Bằng chứng yếu, hệ thống có thể đổi cấu hình truy xuất. \\
 \hline
 \texttt{abstain} &
-Không đủ căn cứ; hệ thống trả lời thận trọng thay vì suy đoán. \\
+Không đủ căn cứ, hệ thống trả lời thận trọng thay vì suy đoán. \\
 \hline
 \end{tabularx}
 \end{table}
 
-AnswerGenerator tạo câu trả lời từ các evidence đã chọn. Với câu hỏi bảng, hệ
-thống có thể ưu tiên giá trị trong \texttt{cell\_text}. Với câu hỏi văn bản, hệ thống
-tạo câu trả lời dựa trên các câu hoặc đoạn được evidence hỗ trợ. Các thành phần
-LLM như fallback hoặc explainer chỉ là tùy chọn: chúng không được dùng để thay
-thế retrieval và evidence checking \cite{lewis2020rag}.
+Bộ sinh câu trả lời tạo câu trả lời từ các bằng chứng đã chọn. Với câu hỏi bảng, hệ
+thống có thể ưu tiên giá trị trong \texttt{cell\_text} (giá trị trong ô). Với câu hỏi văn bản, hệ thống
+tạo câu trả lời dựa trên các câu hoặc đoạn được bằng chứng hỗ trợ. Các thành phần dùng mô hình ngôn ngữ lớn, chẳng hạn cơ chế giải thích bổ sung sau khi có câu trả lời để sát với ngôn ngữ tự nhiên và mượt mà, cơ chế này chỉ là tùy chọn. Chúng không thay thế bước truy xuất
+và kiểm tra bằng chứng~\cite{lewis2020rag}.
 
-\section{Thiết kế citation và trace}
+\section{Thiết kế dẫn chứng nguồn và vết xử lý}
 \label{section:citation-trace-design}
 
-Citation được tạo từ metadata của evidence. Với văn bản, citation trỏ về tài liệu,
-trang, chunk và heading path. Với bảng, citation có thể trỏ về table id, hàng, cột,
-ô và bbox nguồn. Trace lưu lại loại câu hỏi, chiến lược truy xuất, top hit, quyết
-định evidence và nguồn sinh câu trả lời. Nhờ đó, khi kết quả sai, có thể kiểm tra
-lỗi đến từ retrieval, evidence checking hay answer generation.
+Dẫn chứng nguồn được tạo từ siêu dữ liệu của bằng chứng. Với văn bản, dẫn chứng nguồn trỏ về tài liệu,
+trang, đơn vị truy xuất và đường dẫn đề mục. Với bảng, dẫn chứng nguồn có thể trỏ về \texttt{table\_id} (mã định danh của bảng), hàng, cột,
+ô và khung bao nguồn. Vết xử lý lưu lại loại câu hỏi, chiến lược truy xuất, kết quả xếp hạng cao nhất, quyết
+định bằng chứng và nguồn sinh câu trả lời. Nhờ đó, khi kết quả sai, có thể kiểm tra
+lỗi đến từ truy xuất, bằng chứng  hay bộ sinh câu trả lời.
 
 \begin{table}[H]
 \centering
@@ -341,19 +334,19 @@ lỗi đến từ retrieval, evidence checking hay answer generation.
     |>{\raggedright\arraybackslash}X|
 }
 \hline
-\textbf{Mức citation} & \textbf{Thông tin dẫn chứng} \\
+\textbf{Mức dẫn chứng nguồn} & \textbf{Thông tin dẫn chứng} \\
 \hline
-Text chunk &
-Tài liệu, trang, heading path, chunk id. \\
+Đơn vị truy xuất dạng văn bản &
+Tài liệu, trang, đường dẫn tiêu đề, đơn vị truy xuất id. \\
 \hline
-Table &
-Trang, table id, caption hoặc mô tả bảng. \\
+Bảng &
+Trang, mã định danh bảng, chú thích của bảng hoặc mô tả bảng. \\
 \hline
-Table row &
-Table id, chỉ số hàng, row header và trang. \\
+Hàng bảng &
+Mã định danh bảng, chỉ số hàng, tiêu đề của hàng và trang. \\
 \hline
-Table cell &
-Table id, row header, column header, cell text và bbox nếu có. \\
+Ô bảng &
+Định danh bảng, tiêu đề hàng, tiêu đề cột, nội dung ô và bbox nếu có. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -368,33 +361,32 @@ Table id, row header, column header, cell text và bbox nếu có. \\
 \caption{Các thành phần mã nguồn chính của luồng xử lý truy vấn}
 \label{tab:query-code-organization}
 \begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.36\textwidth}
+    |>{\raggedright\arraybackslash}p{0.5\textwidth}
     |>{\raggedright\arraybackslash}X|
 }
 \hline
 \textbf{Thành phần} & \textbf{Vai trò} \\
 \hline
 \texttt{app/retrieval} &
-BM25, dense retrieval, hybrid retrieval, reranking, route planner và service. \\
+BM25, truy xuất ngữ nghĩa, truy xuất kết hợp, sắp xếp lại, bộ định tuyến và lập kế hoạch. \\
 \hline
 \texttt{app/retrieval/table\_aware.py} &
-Điều chỉnh truy xuất với các chunk thuộc bảng, hàng hoặc ô. \\
+Điều chỉnh truy xuất với các đơn vị truy xuất thuộc bảng, hàng hoặc ô. \\
 \hline
 \texttt{app/qa/router.py} &
 Phân loại câu hỏi bằng luật để chọn hướng xử lý phù hợp. \\
 \hline
 \texttt{app/qa/evidence\_checker.py} &
-Đánh giá evidence, tạo trạng thái kiểm tra và cung cấp dữ liệu cho bộ sinh câu
-trả lời. \\
+Đánh giá bằng chứng và quyết định trả lời, mở rộng, đổi chiến lược hoặc abstain. \\
 \hline
 \texttt{app/qa/answer\_generator.py} &
-Sinh câu trả lời từ evidence đã chọn và ưu tiên câu trả lời có căn cứ. \\
+Sinh câu trả lời từ bằng chứng đã chọn và ưu tiên câu trả lời có căn cứ. \\
 \hline
 \texttt{app/qa/citations.py} &
-Chuẩn hóa citation từ metadata của evidence. \\
+Chuẩn hóa dẫn chứng nguồn từ siêu dữ liệu của bằng chứng. \\
 \hline
 \texttt{scripts/quick\_qa\_terminal.py} &
-Demo hỏi đáp nhanh trên terminal và hiển thị evidence/citation. \\
+Demo hỏi đáp nhanh trên terminal và hiển thị bằng chứng/dẫn chứng nguồn. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -403,10 +395,10 @@ Demo hỏi đáp nhanh trên terminal và hiển thị evidence/citation. \\
 \label{section:query-chapter-summary}
 
 Chương này đã trình bày luồng xử lý truy vấn trên dữ liệu đã trích xuất từ PDF.
-Luồng này gồm phân loại câu hỏi, lập kế hoạch truy xuất, lấy evidence, kiểm tra
-evidence, sinh câu trả lời và tạo citation. Cấu trúc này giúp hệ thống không chỉ
+Luồng này gồm phân loại câu hỏi, lập kế hoạch truy xuất, lấy bằng chứng, kiểm tra
+bằng chứng, sinh câu trả lời và tạo dẫn chứng nguồn. Cấu trúc này giúp hệ thống không chỉ
 trả lời câu hỏi, mà còn chỉ ra dữ liệu PDF nào đã hỗ trợ câu trả lời đó. Chương
-thực nghiệm tiếp theo sẽ đánh giá riêng từng tầng để chứng minh vai trò của ingest,
-retrieval, table-aware chunking và grounded QA.
+thực nghiệm tiếp theo sẽ đánh giá riêng từng tầng để chứng minh vai trò của tiếp nhận và trích xuất tài liệu,
+truy xuất, chia đoạn có nhận thức bảng và hỏi đáp có căn cứ.
 
 \end{document}

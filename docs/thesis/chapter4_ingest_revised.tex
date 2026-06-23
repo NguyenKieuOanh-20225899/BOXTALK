@@ -2,27 +2,27 @@
 
 \begin{document}
 
-\section{Mục tiêu của luồng ingest}
+\section{Mục tiêu của luồng tiếp nhận và trích xuất tài liệu}
 \label{section:chapter4-ingest-goal}
 
-Chương này trình bày thiết kế luồng ingest, tức luồng tiếp nhận và trích xuất nội
+Chương này trình bày thiết kế luồng tiếp nhận và trích xuất tài liệu, tức luồng tiếp nhận và trích xuất nội
 dung từ tài liệu PDF. Trọng tâm của chương là cách hệ thống chuyển một tài liệu
 PDF đầu vào thành dữ liệu có cấu trúc để các bước phía sau có thể lập chỉ mục,
 truy xuất và dẫn chứng. Đây là phần gắn trực tiếp với tên đề tài, vì chất lượng
 trích xuất PDF quyết định dữ liệu mà hệ thống có thể khai thác.
 
-Luồng ingest không chỉ lấy văn bản từ PDF. Hệ thống cần xác định trang, vùng nội
-dung, thứ tự đọc, loại block, bảng, ô bảng và các metadata nguồn. Các thông tin
+Luồng tiếp nhận và trích xuất tài liệu không chỉ lấy văn bản từ PDF. Hệ thống cần xác định trang, vùng nội
+dung, thứ tự đọc, loại nội dung, bảng, ô bảng và các siêu dữ liệu nguồn. Các thông tin
 này giúp kết quả trích xuất không bị tách rời khỏi tài liệu gốc, đồng thời cho phép
 truy vết lại câu trả lời về đúng trang, đoạn văn hoặc ô bảng.
 
-\section{Tổng quan luồng ingest}
+\section{Tổng quan luồng tiếp nhận và trích xuất tài liệu}
 \label{section:ingest-flow-overview}
 
-Luồng ingest được tổ chức thành các bước có thể kiểm tra độc lập. Đầu vào là
-một tài liệu PDF; đầu ra là tập block và chunk có metadata, có thể đưa vào chỉ mục
+Luồng tiếp nhận và trích xuất tài liệu được tổ chức thành các bước có thể kiểm tra độc lập. Đầu vào là
+một tài liệu PDF, đầu ra là tập khối nội dung và đơn vị truy xuất có siêu dữ liệu, có thể đưa vào chỉ mục
 truy xuất. Các bước liên quan đến OCR và trích xuất bảng sử dụng các nền tảng
-đã trình bày ở Chương 3, gồm PP-OCR và Table Transformer
+đã trình bày ở Chương 3, gồm PP-OCR và Table Transformer~
 \cite{du2020ppocr,smock2022pubtables}.
 
 \begin{figure}[H]
@@ -31,25 +31,25 @@ truy xuất. Các bước liên quan đến OCR và trích xuất bảng sử d�
 \begin{tabular}{c}
 \fbox{\parbox{0.78\linewidth}{\centering PDF đầu vào}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.78\linewidth}{\centering Thăm dò tài liệu: kiểm tra lớp văn bản, ảnh, trang scan, số block}}\\[0.15cm]
+\fbox{\parbox{0.78\linewidth}{\centering Thăm dò tài liệu: kiểm tra lớp văn bản, ảnh, trang quét, số khối nội dung}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.78\linewidth}{\centering Lập kế hoạch ingest: chọn trích xuất văn bản, bố cục, OCR hoặc định tuyến vùng}}\\[0.15cm]
+\fbox{\parbox{0.78\linewidth}{\centering Lập kế hoạch tiếp nhận và trích xuất tài liệu: chọn trích xuất văn bản, bố cục, OCR hoặc định tuyến vùng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.78\linewidth}{\centering Phát hiện vùng nội dung và sắp xếp thứ tự đọc}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.78\linewidth}{\centering Định tuyến vùng: văn bản, bảng, ảnh/scan sang bộ xử lý phù hợp}}\\[0.15cm]
+\fbox{\parbox{0.78\linewidth}{\centering Định tuyến vùng: văn bản, bảng, ảnh/tài liệu quét sang bộ xử lý phù hợp}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.78\linewidth}{\centering Chuẩn hóa block, tái dựng bảng, sinh chunk và metadata}}\\
+\fbox{\parbox{0.78\linewidth}{\centering Chuẩn hóa khối nội dung, tái dựng bảng, sinh đơn vị truy xuất và siêu dữ liệu}}\\
 \end{tabular}
-\caption{Luồng ingest và trích xuất dữ liệu từ PDF}
+    \caption{Luồng tiếp nhận và trích xuất dữ liệu từ PDF}
 \label{fig:chapter4-ingest-flow}
 \end{figure}
 
-Thiết kế này tách rõ hai trách nhiệm. Probe hoạt động ở mức tài liệu hoặc trang
-để quyết định chiến lược xử lý tổng thể. Region routing hoạt động ở mức vùng
-nội dung trong trang để chọn backend phù hợp cho từng vùng.
+Thiết kế này tách rõ hai trách nhiệm. Thăm dò tài liệu hoạt động ở mức tài liệu hoặc trang
+để quyết định chiến lược xử lý tổng thể. Định tuyến theo vùng nội dung hoạt động ở mức vùng
+nội dung trong trang để chọn bộ xử lý phù hợp cho từng vùng.
 
-\section{Liên kết yêu cầu với thiết kế ingest}
+\section{Liên kết yêu cầu với thiết kế tiếp nhận và trích xuất tài liệu}
 \label{section:ingest-traceability}
 
 Bảng~\ref{tab:ingest-traceability} tóm tắt cách các yêu cầu liên quan đến trích
@@ -60,7 +60,7 @@ bảng yêu cầu chức năng ở Chương 2.
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Liên kết yêu cầu với thành phần thiết kế trong luồng ingest}
+\caption{Liên kết yêu cầu với thành phần thiết kế trong luồng tiếp nhận và trích xuất tài liệu}
 \label{tab:ingest-traceability}
 \begin{tabularx}{\textwidth}{
     |>{\raggedright\arraybackslash}p{0.16\textwidth}
@@ -72,40 +72,40 @@ bảng yêu cầu chức năng ở Chương 2.
 \hline
 FR-01 &
 Tiếp nhận tài liệu PDF và phân tích thông tin cơ bản của tài liệu. &
-\texttt{probe.py}, luồng điều phối ingest. \\
+\texttt{probe.py}, luồng điều phối tiếp nhận và trích xuất tài liệu. \\
 \hline
 FR-02 &
-Trích xuất văn bản, bảng và metadata nguồn như trang, vùng nội dung và loại block. &
-Phát hiện vùng, sắp xếp thứ tự đọc, chuẩn hóa block, bộ trích xuất văn bản/bảng. \\
+Trích xuất văn bản, bảng và siêu dữ liệu nguồn như trang, vùng nội dung và loại khối nội dung. &
+Phát hiện vùng, sắp xếp thứ tự đọc, chuẩn hóa khối nội dung, bộ trích xuất văn bản/bảng. \\
 \hline
 FR-03 &
-Định tuyến xử lý theo vùng nội dung như văn bản, bảng, ảnh hoặc vùng scan. &
+Định tuyến xử lý theo vùng nội dung như văn bản, bảng, ảnh hoặc vùng quét. &
 Định tuyến theo vùng và các bộ xử lý văn bản/bảng/OCR. \\
 \hline
 FR-04 &
 Chia đoạn và lập chỉ mục từ nội dung đã trích xuất. &
-Chia đoạn văn bản, chia đoạn có nhận thức bảng, chỉ mục BM25, chỉ mục dense. \\
+Chia đoạn văn bản, chia đoạn có nhận thức bảng, chỉ mục BM25, chỉ mục vector. \\
 \hline
 FR-07 &
-Giữ metadata nguồn để phục vụ dẫn chứng ở các tầng sau. &
-Trang, bbox, đường dẫn đề mục, mã bảng, metadata hàng/cột/ô. \\
+Giữ siêu dữ liệu nguồn để phục vụ dẫn chứng ở các tầng sau. &
+Trang, khung bao (bbox), đường dẫn đề mục, mã bảng, siêu dữ liệu hàng/cột/ô. \\
 \hline
 \end{tabularx}
 \end{table}
 
-\section{Đầu vào và đầu ra của luồng ingest}
+\section{Đầu vào và đầu ra của luồng tiếp nhận và trích xuất tài liệu}
 \label{section:ingest-input-output}
 
 Bảng~\ref{tab:ingest-input-output} mô tả rõ dữ liệu đi vào và dữ liệu được tạo ra
-sau ingest. Phần này giúp tránh nhầm lẫn giữa metadata và dữ liệu trích xuất: mỗi
-block/chunk luôn có nội dung chính, còn metadata dùng để mô tả nguồn gốc và
+sau tiếp nhận và trích xuất tài liệu. Phần này giúp tránh nhầm lẫn giữa siêu dữ liệu và dữ liệu trích xuất: mỗi
+khối nội dung/đơn vị truy xuất luôn có nội dung chính, còn siêu dữ liệu dùng để mô tả nguồn gốc và
 cách xử lý nội dung đó.
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Dữ liệu vào và đầu ra của luồng ingest}
+\caption{Dữ liệu vào và đầu ra của luồng tiếp nhận và trích xuất tài liệu}
 \label{tab:ingest-input-output}
 \begin{tabularx}{\textwidth}{
     |>{\raggedright\arraybackslash}p{0.26\textwidth}
@@ -116,47 +116,44 @@ cách xử lý nội dung đó.
 \textbf{Thành phần} & \textbf{Dữ liệu chính} & \textbf{Mục đích} \\
 \hline
 PDF đầu vào &
-File PDF, số trang, text layer nếu có, ảnh nhúng, hình học trang. &
+File PDF, số trang, lớp văn bản nếu có, ảnh nhúng, hình học trang. &
 Nguồn dữ liệu cần trích xuất. \\
 \hline
-Kết quả probe &
-Số trang, số ký tự, số block, số ảnh, tỷ lệ trang có text, tỷ lệ trang có khả năng scan. &
-Chọn chiến lược ingest ban đầu. \\
+Kết quả thăm dò tài liệu &
+Số trang, số ký tự, số khối nội dung, số ảnh, tỷ lệ trang có lớp văn bản, tỷ lệ trang có khả năng là ảnh quét. &
+Chọn chiến lược tiếp nhận và trích xuất tài liệu ban đầu. \\
 \hline
 Region &
-Bbox, loại vùng, nội dung thô và backend được định tuyến. &
+Bbox, loại vùng, nội dung thô và bộ xử lý được định tuyến. &
 Chia trang thành các vùng xử lý độc lập. \\
 \hline
-Block &
-Văn bản đã trích xuất, loại block, trang, bbox, heading path và metadata xử lý. &
+Khối nội dung &
+Văn bản đã trích xuất, loại khối nội dung, trang, khung bao, đường dẫn đề mục và siêu dữ liệu xử lý. &
 Đơn vị nội dung sau trích xuất PDF. \\
 \hline
-Table block &
-Caption, bảng Markdown, danh sách cell, hàng, cột, bbox và metadata bảng. &
-Giữ cấu trúc bảng để chunking và citation. \\
+Khối nội dung loại bảng &
+Chú thích bảng, bảng Markdown, danh sách ô, hàng, cột, khung bao và siêu dữ liệu bảng. &
+Giữ cấu trúc bảng để chia đoạn và dẫn chứng nguồn. \\
 \hline
-Chunk &
-Nội dung dùng cho truy xuất, chunk id, trang, loại block và metadata nguồn. &
-Đơn vị được đưa vào corpus và retrieval index. \\
+Đơn vị truy xuất &
+Nội dung dùng cho truy xuất, mã định danh đơn vị truy xuất, trang, loại khối nội dung và siêu dữ liệu nguồn. &
+Đơn vị được đưa vào tập đơn vị truy xuất và chỉ mục truy xuất. \\
 \hline
 \end{tabularx}
 \end{table}
 
-\section{Probe và lập kế hoạch ingest}
+\section{Thăm dò tài liệu và lập kế hoạch tiếp nhận và trích xuất tài liệu}
 \label{section:probe-ingest-plan}
 
-Probe là bước thăm dò nhanh tài liệu trước khi chạy các backend trích xuất. Bước
+Thăm dò tài liệu là bước thăm dò nhanh tài liệu trước khi chạy các bộ xử lý trích xuất. Bước
 này không tạo dữ liệu cuối cùng cho truy xuất, mà thu thập đặc trưng để lựa chọn
-chiến lược ingest phù hợp. Ví dụ, nếu PDF có text layer rõ ràng, hệ thống ưu tiên
-trích xuất văn bản trực tiếp; nếu nhiều trang ít chữ nhưng nhiều ảnh, hệ thống cân
-nhắc OCR \cite{du2020ppocr}; nếu trang có bố cục hỗn hợp, hệ thống ưu tiên
-region routing.
+chiến lược tiếp nhận và trích xuất tài liệu phù hợp.
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Một số tín hiệu dùng trong bước probe}
+\caption{Một số tín hiệu dùng trong bước thăm dò tài liệu}
 \label{tab:probe-signals}
 \begin{tabularx}{\textwidth}{
     |>{\raggedright\arraybackslash}p{0.30\textwidth}
@@ -165,27 +162,27 @@ region routing.
 \hline
 \textbf{Tín hiệu} & \textbf{Ý nghĩa trong thiết kế} \\
 \hline
-Tỷ lệ trang có text layer &
+Tỷ lệ trang có lớp văn bản &
 Ước lượng khả năng trích xuất văn bản trực tiếp từ PDF. \\
 \hline
 Tỷ lệ trang không có text &
-Gợi ý tài liệu scan hoặc trang ảnh cần OCR. \\
+Gợi ý tài liệu quét hoặc trang ảnh cần OCR. \\
 \hline
-Số block và mật độ block &
+Số khối nội dung và mật độ khối nội dung &
 Gợi ý mức độ phức tạp của bố cục trang. \\
 \hline
 Số ảnh và vùng ảnh lớn &
 Gợi ý trang nhiều hình hoặc nội dung cần nhận dạng từ ảnh. \\
 \hline
 Chất lượng văn bản trung bình &
-Giúp phát hiện text layer nhiễu hoặc trích xuất kém. \\
+Giúp phát hiện lớp văn bản nhiễu hoặc trích xuất kém. \\
 \hline
 \end{tabularx}
 \end{table}
 
-Sau probe, hệ thống tạo một kế hoạch ingest gồm danh sách backend theo thứ tự ưu
-tiên. Nếu backend đầu tiên không tạo được block hợp lệ, cơ chế fallback chuyển
-sang backend tiếp theo. Cách này giúp hệ thống không phụ thuộc vào một phương
+Sau thăm dò tài liệu, hệ thống tạo một kế hoạch  gồm danh sách bộ xử lý trích xuất tài liệu theo thứ tự ưu
+tiên. Nếu bộ xử lý đầu tiên không tạo được khối nội dung hợp lệ, cơ chế dự phòng chuyển
+sang bộ xử lý tiếp theo. Cách này giúp hệ thống không phụ thuộc vào một phương
 pháp trích xuất duy nhất.
 
 \section{Định tuyến theo vùng nội dung}
@@ -195,8 +192,8 @@ pháp trích xuất duy nhất.
 nội dung cùng lúc. Hệ thống phát hiện các vùng văn bản, bảng, ảnh hoặc vùng
 hình học trên trang, gán loại vùng và định tuyến sang bộ xử lý phù hợp. Đối với
 văn bản, hệ thống dùng bộ trích xuất văn bản; đối với bảng, hệ thống dùng bộ
-trích xuất bảng hoặc Hybrid TATR; đối với ảnh hoặc vùng scan, hệ thống dùng
-OCR khi cần \cite{du2020ppocr}.
+trích xuất bảng hoặc Hybrid TATR; đối với ảnh hoặc vùng quét, hệ thống dùng
+OCR khi cần~\cite{du2020ppocr}.
 
 \begin{figure}[H]
 \centering
@@ -208,18 +205,18 @@ OCR khi cần \cite{du2020ppocr}.
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.82\linewidth}{\centering Phân loại vùng: đoạn văn, tiêu đề, bảng, ảnh, chú thích}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Tái dựng thứ tự đọc: bbox, bố cục một cột/hai cột}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Tái dựng thứ tự đọc: khung bao, bố cục một cột/hai cột}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.82\linewidth}{\centering Định tuyến bộ xử lý: văn bản, bảng/Hybrid TATR, OCR}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Block có cấu trúc: nội dung, trang, bbox, loại block, bộ xử lý}}\\
+\fbox{\parbox{0.82\linewidth}{\centering Khối nội dung có cấu trúc: nội dung, trang, khung bao, loại khối nội dung, bộ xử lý}}\\
 \end{tabular}
-\caption{Luồng định tuyến theo vùng nội dung trong tầng ingest}
+\caption{Luồng định tuyến theo vùng nội dung trong tầng tiếp nhận và trích xuất tài liệu}
 \label{fig:chapter4-region-routing-flow}
 \end{figure}
 
 Điểm quan trọng của thiết kế này là hệ thống xử lý từng vùng theo bản chất của
-vùng đó, thay vì áp dụng một extractor cho toàn bộ trang. Điều này đặc biệt hữu
+vùng đó, thay vì áp dụng một cách trích xuất cho toàn bộ trang. Điều này đặc biệt hữu
 ích với PDF bán cấu trúc, nơi văn bản, bảng và hình ảnh thường xuất hiện xen kẽ.
 
 \begin{table}[H]
@@ -242,33 +239,31 @@ bằng một phương pháp duy nhất. &
 Nếu phát hiện hoặc phân loại vùng sai, bộ xử lý phía sau cũng có thể xử lý sai. \\
 \hline
 Truy vết nguồn &
-Mỗi block giữ được trang, bbox, loại vùng và bộ xử lý đã dùng, giúp tạo dẫn chứng
+Mỗi khối nội dung giữ được trang, khung bao, loại vùng và bộ xử lý đã dùng, giúp tạo dẫn chứng
 chi tiết hơn. &
-Metadata phức tạp hơn và cần chuẩn hóa thống nhất giữa các bộ xử lý. \\
+Siêu dữ liệu phức tạp hơn và cần chuẩn hóa thống nhất giữa các bộ xử lý. \\
 \hline
 Xử lý bảng &
-Bảng được tách riêng để tái dựng hàng, cột và ô, hỗ trợ table-aware chunking. &
+Bảng được tách riêng để tái dựng hàng, cột và ô, hỗ trợ chia đoạn có nhận thức bảng. &
 Bảng không có đường kẻ rõ, có ô gộp hoặc nhiều cấp tiêu đề vẫn có thể lỗi. \\
 \hline
 Hiệu năng &
 Có thể tránh chạy OCR hoặc mô hình bảng trên toàn bộ trang khi không cần thiết. &
 Bước phát hiện vùng và định tuyến tạo thêm chi phí xử lý ban đầu. \\
 \hline
-Fallback &
-Khi một bộ xử lý không tạo được block hợp lệ, hệ thống có thể chuyển sang bộ xử
+Cơ chế dự phòng &
+Khi một bộ xử lý không tạo được khối nội dung hợp lệ, hệ thống có thể chuyển sang bộ xử
 lý khác. &
-Cần quy tắc kiểm tra chất lượng đầu ra để quyết định khi nào fallback. \\
+Cần quy tắc kiểm tra chất lượng đầu ra để quyết định khi nào dùng cơ chế dự phòng. \\
 \hline
 \end{tabularx}
 \end{table}
 
-\section{Tái dựng bảng trong luồng ingest}
+\section{Tái dựng bảng trong luồng tiếp nhận và trích xuất tài liệu}
 \label{section:chapter4-table-reconstruction}
 
-Bảng được xử lý như một trường hợp riêng trong luồng ingest. Hệ thống không
-chỉ lấy văn bản trong vùng bảng, mà cố gắng tái dựng quan hệ hàng, cột và ô. Đầu
-ra của bước này là table block có bảng Markdown, danh sách cell và metadata
-phục vụ table-aware chunking.
+Bảng được xử lý như một trường hợp riêng trong luồng tiếp nhận và trích xuất tài liệu. Hệ thống không chỉ trích xuất văn bản trong vùng bảng mà còn tái dựng mối quan hệ giữa các hàng, cột và ô. Kết quả của bước này là một khối nội dung, bao gồm bảng ở định dạng Markdown, danh sách các ô và siêu dữ liệu cần thiết cho quá trình chia đoạn có nhận thức về cấu trúc bảng.
+
 
 \begin{figure}[H]
 \centering
@@ -276,42 +271,42 @@ phục vụ table-aware chunking.
 \begin{tabular}{c}
 \fbox{\parbox{0.82\linewidth}{\centering Vùng bảng từ bước định tuyến vùng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Backend bảng: Default extractor, TATR-only hoặc Hybrid TATR}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Bộ xử lý bảng: bộ trích xuất mặc định, TATR-only hoặc Hybrid TATR}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Nhận diện cấu trúc: hàng, cột, ô, bbox}}\\[0.15cm]
+\fbox{\parbox{0.82\linewidth}{\centering Nhận diện cấu trúc: hàng, cột, ô, khung bao}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
 \fbox{\parbox{0.82\linewidth}{\centering Gán văn bản: hộp từ từ lớp văn bản PDF vào các ô; OCR là nguồn bổ sung khi tích hợp riêng}}\\[0.15cm]
 \(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering Block bảng: Markdown, danh sách ô, mã bảng, trang, bbox, bộ xử lý}}\\
+\fbox{\parbox{0.82\linewidth}{\centering Khối nội dung bảng: Markdown, danh sách ô, mã bảng, trang, khung bao, bộ xử lý}}\\
 \end{tabular}
-\caption{Luồng tái dựng bảng trong tầng ingest}
+\caption{Luồng tái dựng bảng trong tầng tiếp nhận và trích xuất tài liệu}
 \label{fig:chapter4-table-flow}
 \end{figure}
 
-Default extractor chủ yếu dựa trên text layer và quy tắc hình học nên nhanh, nhưng
+Truy xuất mặc định chủ yếu dựa trên lớp văn bản và quy tắc hình học nên nhanh, nhưng
 có thể sai với bảng phức tạp. TATR-only dùng tín hiệu thị giác để nhận diện cấu
-trúc bảng \cite{smock2022pubtables}, nhưng không tự gán đầy đủ nội dung chữ
+trúc bảng~\cite{smock2022pubtables}, nhưng không tự gán đầy đủ nội dung chữ
 vào từng ô. Trong triển khai hiện tại, Hybrid TATR kết hợp cấu trúc hình học từ
 TATR với các hộp từ lấy trực tiếp từ lớp văn bản PDF. Nếu vùng bảng không có
 hộp từ và chế độ chỉ dùng hình học không được bật, hệ thống giữ kết quả của bộ
 trích xuất bảng ổn định làm phương án dự phòng. OCR được xem là nguồn hộp từ
-bổ sung trong hướng tích hợp riêng cho tài liệu scan, không được gọi trực tiếp
-bên trong module Hybrid TATR. Chi tiết định lượng của các bộ xử lý được trình
+bổ sung trong hướng tích hợp riêng cho tài liệu quét, không được gọi trực tiếp
+bên trong mô-đun Hybrid TATR. Chi tiết định lượng của các bộ xử lý được trình
 bày ở chương thực nghiệm.
 
-\section{Chunking và indexing sau ingest}
+\section{Chia đoạn và lập chỉ mục sau tiếp nhận và trích xuất tài liệu}
 \label{section:chunking-indexing-after-ingest}
 
-Sau khi có block, hệ thống chuyển dữ liệu thành chunk để phục vụ truy xuất. Với
-văn bản thông thường, chunk được tạo theo thứ tự đọc và ngữ cảnh đề mục. Với
-bảng, hệ thống sinh thêm các dạng chunk có nhận thức bảng như table summary,
-table structure, table row và table cell.
+Sau khi có khối nội dung, hệ thống chuyển dữ liệu thành đơn vị truy xuất để phục vụ truy xuất. Với
+văn bản thông thường, đơn vị truy xuất được tạo theo thứ tự đọc và ngữ cảnh đề mục. Với
+bảng, hệ thống sinh thêm các đơn vị truy xuất ở mức tóm tắt bảng, cấu trúc bảng,
+hàng bảng và ô bảng.
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Các dạng chunk sinh ra sau ingest}
+\caption{Các dạng đơn vị truy xuất sinh ra sau tiếp nhận và trích xuất tài liệu}
 \label{tab:ingest-chunk-types}
 \begin{tabularx}{\textwidth}{
     |>{\raggedright\arraybackslash}p{0.24\textwidth}
@@ -319,71 +314,107 @@ table structure, table row và table cell.
     |>{\raggedright\arraybackslash}p{0.26\textwidth}|
 }
 \hline
-\textbf{Loại chunk} & \textbf{Dữ liệu chứa trong chunk} & \textbf{Vai trò} \\
+\textbf{Loại đơn vị truy xuất} & \textbf{Dữ liệu chứa trong đơn vị truy xuất} & \textbf{Vai trò} \\
 \hline
-Text chunk &
-Nội dung đoạn văn, trang, heading path, block type. &
+Đơn vị truy xuất dạng văn bản  &
+Nội dung đoạn văn, trang, đường dẫn đề mục, loại khối nội dung. &
 Truy xuất đoạn văn bản thông thường. \\
 \hline
-Table summary &
-Caption, trang, số hàng/cột và tiêu đề chính. &
+Tóm tắt bảng &
+Chú thích bảng, trang, số hàng/cột và tiêu đề chính. &
 Tìm đúng bảng liên quan. \\
 \hline
-Table structure &
+Cấu trúc bảng &
 Biểu diễn bảng dạng Markdown hoặc cấu trúc tương đương. &
 Giữ quan hệ tổng thể của bảng. \\
 \hline
-Table row &
+Hàng bảng &
 Một hàng bảng cùng các cặp cột--giá trị. &
 Trả lời câu hỏi theo một đối tượng hoặc một điều kiện. \\
 \hline
-Table cell &
-Tiêu đề hàng, tiêu đề cột, giá trị ô và citation target. &
+Ô bảng &
+Tiêu đề hàng, tiêu đề cột, giá trị ô và vị trí dẫn chứng nguồn. &
 Truy xuất và dẫn chứng đến đúng ô. \\
 \hline
 \end{tabularx}
 \end{table}
 
-Indexing là bước xây dựng cấu trúc tìm kiếm từ các chunk. Với BM25, hệ thống
-lưu thông tin phục vụ so khớp từ khóa~\cite{robertson2009bm25}. Với dense
-retrieval, hệ thống lưu embedding của chunk để tìm kiếm theo độ tương đồng ngữ
-nghĩa~\cite{karpukhin2020dpr,reimers2019sentencebert}. Các metadata như trang,
-loại block, bảng, hàng và ô được giữ kèm chunk để tầng truy vấn có thể lọc, ưu
-tiên hoặc tạo citation.
+Lập chỉ mục là bước xây dựng cấu trúc tìm kiếm từ các đơn vị truy xuất. Với BM25, hệ thống
+lưu thông tin phục vụ so khớp từ khóa~\cite{robertson2009bm25}. Với
+truy xuất ngữ nghĩa, hệ thống lưu biểu diễn vector của đơn vị truy xuất để tìm kiếm theo độ tương đồng ngữ
+nghĩa~\cite{karpukhin2020dpr,reimers2019sentencebert}. Các siêu dữ liệu như trang,
+loại khối nội dung, bảng, hàng và ô được giữ kèm đơn vị truy xuất để tầng truy vấn có thể lọc, ưu
+tiên hoặc tạo dẫn chứng nguồn.
 
-\section{Tổ chức mã nguồn của luồng ingest}
+\section{Lưu trữ đầu ra tiếp nhận và chỉ mục truy xuất}
+\label{section:ingest-storage-index}
+
+Hàm \texttt{ingest\_pdf} chỉ tạo báo cáo gồm trang, khối nội dung và đơn vị truy
+xuất trong bộ nhớ; hàm này không ghi trực tiếp vào cơ sở dữ liệu. Việc lưu bền được
+thực hiện ở bước xây dựng chỉ mục sau tiếp nhận và trích xuất tài liệu. Triển khai
+hiện tại sử dụng kho lưu trữ cục bộ trên hệ thống tệp, không sử dụng cơ sở dữ liệu
+quan hệ, NoSQL hoặc dịch vụ cơ sở dữ liệu vector.
+
+Mỗi thư mục chỉ mục có \texttt{corpus.jsonl} làm dữ liệu chuẩn, trong đó mỗi dòng
+là một đơn vị truy xuất kèm văn bản, định danh tài liệu, trang và siêu dữ liệu về
+khối nội dung hoặc bảng. Tệp \texttt{index\_manifest.json} và
+\texttt{hybrid\_config.json} lưu phiên bản định dạng, số đơn vị truy xuất và cấu
+hình bộ truy xuất. Chỉ mục BM25 lưu thêm \texttt{bm25\_config.json} và
+\texttt{bm25\_tokens.json}; khi nạp lại, BM25 được tái tạo từ
+\texttt{corpus.jsonl}. Nếu xây dựng truy xuất ngữ nghĩa, thư mục chỉ mục có thêm
+\texttt{dense\_embeddings.npy} và \texttt{dense\_config.json}; chỉ mục ColBERT
+chỉ được lưu khi cấu hình này được bật. Khi thư viện FAISS sẵn có,
+\texttt{dense.faiss} cũng được tạo trong cùng thư mục, nhưng đây vẫn là tệp chỉ
+mục cục bộ chứ không phải một dịch vụ cơ sở dữ liệu vector.
+
+Ở chế độ dòng lệnh, \texttt{scripts/build\_retrieval\_index.py} lưu chỉ mục vào
+\texttt{results/retrieval\_index/}; tên thư mục con mặc định là thời điểm tạo chỉ
+mục theo UTC nếu không chỉ định thư mục đầu ra. Ở giao diện, PDF tải lên được lưu
+tại \texttt{data/ui\_documents/} theo mã tài liệu; danh sách tài liệu được lưu
+trong \texttt{data/ui\_documents/documents.json}, còn thư mục chỉ mục tương ứng
+nằm dưới \texttt{results/ui\_document\_indexes/}. Tầng truy vấn nạp các tệp này
+qua \texttt{RetrievalService.from\_index}, nhờ đó tái sử dụng được chỉ mục mà
+không phải tiếp nhận và trích xuất lại PDF cho mỗi câu hỏi.
+
+\section{Tổ chức mã nguồn của luồng tiếp nhận và trích xuất tài liệu}
 \label{section:ingest-code-organization}
 
 \begin{table}[H]
 \centering
 \small
 \renewcommand{\arraystretch}{1.2}
-\caption{Các thành phần mã nguồn chính của luồng ingest}
+\caption{Các thành phần mã nguồn chính của luồng tiếp nhận và trích xuất tài liệu}
 \label{tab:ingest-code-organization}
 \begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.36\textwidth}
+    |>{\raggedright\arraybackslash}p{0.5\textwidth}
     |>{\raggedright\arraybackslash}X|
 }
 \hline
 \textbf{Thành phần} & \textbf{Vai trò} \\
 \hline
 \texttt{app/ingest/probe.py} &
-Thăm dò đặc trưng PDF và gợi ý chế độ ingest. \\
+Thăm dò đặc trưng PDF và gợi ý chế độ tiếp nhận và trích xuất tài liệu. \\
 \hline
 \texttt{app/ingest/region} &
-Phát hiện region, phân loại region, vẽ overlay debug và định tuyến backend. \\
+Phát hiện vùng, phân loại vùng, vẽ overlay kiểm tra lỗi và định tuyến bộ xử lý. \\
 \hline
 \texttt{app/ingest/extract} &
-Các backend trích xuất text, layout, OCR, bảng và region-routed extraction. \\
+Các bộ xử lý trích xuất văn bản, bố cục, OCR, bảng. \\
 \hline
 \texttt{app/ingest/reading\_order.py} &
-Sắp xếp block theo thứ tự đọc dựa trên hình học trang. \\
+Sắp xếp khối nội dung theo thứ tự đọc dựa trên hình học trang. \\
 \hline
 \texttt{app/ingest/table\_chunking.py} &
-Sinh table summary, table structure, table row và table cell chunk. \\
+Sinh các đơn vị truy xuất dạng tóm tắt bảng, cấu trúc bảng, hàng bảng và ô bảng. \\
 \hline
 \texttt{app/ingest/pipeline.py} &
-Điều phối ingest, validation, fallback và chuẩn hóa đầu ra. \\
+Điều phối tiếp nhận và trích xuất tài liệu, cơ chế dự phòng và chuẩn hóa đầu ra. \\
+\hline
+\texttt{app/retrieval/index\_store.py} &
+Đọc và ghi \texttt{corpus.jsonl}, \texttt{index\_manifest.json} trong thư mục chỉ mục cục bộ. \\
+\hline
+\texttt{scripts/build\_retrieval\_index.py} &
+Gọi tiếp nhận và trích xuất tài liệu, xây dựng chỉ mục BM25/truy xuất ngữ nghĩa và lưu chỉ mục. \\
 \hline
 \end{tabularx}
 \end{table}
@@ -391,11 +422,10 @@ Sinh table summary, table structure, table row và table cell chunk. \\
 \section{Tổng kết chương}
 \label{section:chapter4-ingest-summary}
 
-Chương này đã trình bày luồng ingest và trích xuất PDF của hệ thống. Thiết kế
-được tổ chức quanh ba ý chính: thăm dò tài liệu để chọn chiến lược ingest, định
+Chương này đã trình bày luồng tiếp nhận và trích xuất dữ liệu từ PDF của hệ thống. Thiết kế
+được tổ chức quanh ba ý chính: thăm dò tài liệu để chọn chiến lược tiếp nhận và trích xuất tài liệu, định
 tuyến theo vùng để xử lý các loại nội dung khác nhau, và giữ lại dữ liệu có cấu
-trúc cùng metadata nguồn. Kết quả của chương này là tập block và chunk có
-metadata, làm đầu vào cho bước xây dựng chỉ mục truy xuất và luồng xử lý truy
-vấn ở chương tiếp theo.
+trúc cùng siêu dữ liệu nguồn. Các đơn vị truy xuất sau đó được lưu trong thư mục
+chỉ mục cục bộ để làm đầu vào cho luồng xử lý truy vấn ở chương tiếp theo.
 
 \end{document}

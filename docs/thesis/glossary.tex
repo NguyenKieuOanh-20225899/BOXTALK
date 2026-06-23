@@ -28,58 +28,85 @@
 \hline
 \endlastfoot
 
-\textbf{Backend}
-& Thành phần xử lý cụ thể được chọn để thực hiện một bước trong hệ thống, ví dụ backend trích xuất văn bản, OCR hoặc tái dựng bảng. \\
+\textbf{Bộ xử lý}
+& Thành phần xử lý cụ thể được chọn để thực hiện một bước trong hệ thống, ví dụ bộ xử lý trích xuất văn bản, OCR hoặc tái dựng bảng. \\
 
-\textbf{Benchmark}
+\textbf{Bộ kiểm tra bằng chứng}
+& Thành phần đánh giá mức liên quan, độ đầy đủ và khả năng hỗ trợ câu trả lời của các bằng chứng đã truy xuất. \\
+
+\textbf{Bộ sinh câu trả lời}
+& Thành phần tổng hợp câu trả lời từ các bằng chứng đã được chọn và tạo dẫn chứng nguồn tương ứng. \\
+
+\textbf{Bảo đảm căn cứ}
+& Cơ chế ràng buộc câu trả lời với bằng chứng và dẫn chứng nguồn để có thể kiểm tra lại nguồn hỗ trợ. \\
+
+\textbf{Bằng chứng ở mức ô}
+& Đơn vị bằng chứng biểu diễn một ô bảng kèm tiêu đề hàng, tiêu đề cột và giá trị ô. \\
+
+\textbf{Cơ chế dự phòng}
+& Cơ chế chuyển sang bộ xử lý khác khi bộ xử lý ưu tiên không tạo được đầu ra hợp lệ. \\
+
+\textbf{Tập đánh giá}
 & Tập dữ liệu, câu hỏi và quy tắc đánh giá dùng để so sánh các cấu hình hệ thống. \\
 
-\textbf{Chunk}
-& Đơn vị đoạn được sinh từ block hoặc bảng để đưa vào chỉ mục và phục vụ truy xuất. \\
+\textbf{Tập đơn vị truy xuất}
+& Tập tất cả đơn vị truy xuất đã được lập chỉ mục, tạo thành không gian tìm kiếm của hệ thống truy xuất. \\
 
-\textbf{Citation}
+\textbf{Đơn vị truy xuất}
+& Đoạn văn hoặc biểu diễn bảng được sinh từ khối nội dung để đưa vào chỉ mục và phục vụ truy xuất. \\
+
+\textbf{Dẫn chứng nguồn}
 & Dẫn chứng nguồn đi kèm câu trả lời, có thể trỏ tới tài liệu, trang, đoạn văn, bảng, hàng hoặc ô bảng. \\
 
-\textbf{Corpus}
-& Tập các chunk được dùng làm không gian tìm kiếm của hệ thống truy xuất. \\
+\textbf{Khối nội dung}
+& Đơn vị nội dung có cấu trúc được tạo từ tài liệu PDF, như đoạn văn, bảng, hình hoặc chú thích; đây là đầu vào để sinh đơn vị truy xuất. \\
 
-\textbf{Dense retrieval}
-& Truy xuất ngữ nghĩa bằng cách biểu diễn câu hỏi và chunk dưới dạng vector. \\
+\textbf{Khung bao}
+& Hình chữ nhật xác định vị trí của một vùng nội dung, bảng, ô hoặc từ trên trang PDF; trong mã nguồn thường biểu diễn bằng \texttt{bbox}. \\
 
-\textbf{Evidence}
+\textbf{Hộp từ}
+& Khung bao và nội dung của một từ hoặc cụm từ được trích xuất từ lớp văn bản PDF hoặc OCR, dùng để gán văn bản vào ô bảng. \\
+
+\textbf{Truy xuất ngữ nghĩa}
+& Truy xuất ngữ nghĩa bằng cách biểu diễn câu hỏi và đơn vị truy xuất dưới dạng vector. \\
+
+\textbf{Bằng chứng}
 & Bằng chứng được truy xuất từ tài liệu và dùng để hỗ trợ câu trả lời. \\
 
-\textbf{Grounded QA}
+\textbf{Hỏi đáp có căn cứ}
 & Hỏi đáp có căn cứ, trong đó câu trả lời phải được hỗ trợ bởi bằng chứng và dẫn chứng nguồn. \\
 
-\textbf{Hybrid retrieval}
+\textbf{Truy xuất kết hợp}
 & Truy xuất kết hợp nhiều tín hiệu, thường gồm tín hiệu từ khóa và tín hiệu ngữ nghĩa. \\
 
-\textbf{Ingest}
-& Luồng tiếp nhận và trích xuất dữ liệu từ PDF, gồm phân tích trang, trích xuất văn bản, xử lý bảng và sinh metadata. \\
+\textbf{Tiếp nhận và trích xuất tài liệu}
+& Luồng tiếp nhận và trích xuất dữ liệu từ PDF, gồm phân tích trang, trích xuất văn bản, xử lý bảng và sinh siêu dữ liệu. \\
 
-\textbf{Indexing}
-& Bước lập chỉ mục từ các chunk để phục vụ truy xuất bằng từ khóa hoặc vector. \\
+\textbf{Lập chỉ mục}
+& Bước lập chỉ mục từ các đơn vị truy xuất để phục vụ truy xuất bằng từ khóa hoặc vector. \\
 
-\textbf{Metadata}
-& Siêu dữ liệu nguồn như tên tài liệu, trang, khung bao, loại block, bảng, hàng hoặc ô. \\
+\textbf{Siêu dữ liệu}
+& Siêu dữ liệu nguồn như tên tài liệu, trang, khung bao, loại khối nội dung, bảng, hàng hoặc ô. \\
 
-\textbf{Pipeline}
-& Chuỗi các bước xử lý nối tiếp nhau từ ingest PDF đến truy xuất, hỏi đáp và dẫn chứng. \\
+\textbf{Quy trình xử lý}
+& Chuỗi các bước xử lý nối tiếp nhau từ tiếp nhận và trích xuất tài liệu PDF đến truy xuất, hỏi đáp và dẫn chứng. \\
 
-\textbf{Region routing}
+\textbf{Định tuyến theo vùng nội dung}
 & Cơ chế định tuyến theo vùng nội dung, chọn cách xử lý khác nhau cho vùng văn bản, bảng hoặc ảnh. \\
 
-\textbf{Reranking}
+\textbf{Thăm dò tài liệu}
+& Bước đọc các tín hiệu ban đầu của tài liệu, như lớp văn bản, số trang, ảnh và mật độ ký tự, để chọn hướng xử lý phù hợp. \\
+
+\textbf{Sắp xếp lại}
 & Bước sắp xếp lại các kết quả truy xuất ban đầu để ưu tiên bằng chứng phù hợp hơn. \\
 
-\textbf{Table-aware chunking}
-& Cách chia đoạn có nhận thức bảng, sinh chunk ở mức bảng, hàng hoặc ô thay vì chỉ coi bảng là văn bản phẳng. \\
+\textbf{Chia đoạn có nhận thức bảng}
+& Cách chia đoạn có nhận thức bảng, sinh đơn vị truy xuất ở mức bảng, hàng hoặc ô thay vì chỉ coi bảng là văn bản phẳng. \\
 
-\textbf{Text layer}
+\textbf{Lớp văn bản}
 & Lớp văn bản có sẵn trong PDF, cho phép trích xuất chữ và tọa độ mà không cần OCR. \\
 
-\textbf{Trace}
+\textbf{Vết xử lý}
 & Vết xử lý ghi lại chiến lược truy xuất, bằng chứng được chọn, quyết định kiểm tra bằng chứng và nguồn sinh câu trả lời. \\
 
 \end{longtable}

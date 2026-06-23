@@ -1,886 +1,649 @@
+
+
 \documentclass[../DoAn.tex]{subfiles}
 
 \begin{document}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
 
-\section{Thiết kế thực nghiệm tổng thể}
-\label{section:experiment-design}
+Mục tiêu của Chương 6 là chứng minh ba điểm chính. Thứ nhất, quy trình xử lý PDF có thể tạo đầu ra đủ cấu trúc để phục vụ truy xuất và dẫn chứng nguồn. Thứ hai, các lựa chọn kỹ thuật như truy xuất kết hợp, định tuyến theo vùng nội dung, Hybrid TATR, chia đoạn có nhận thức bảng và hỏi đáp có căn cứ có đóng góp thực nghiệm rõ ràng. Thứ ba, hệ thống cần được đánh giá đúng phạm vi: QCDT là tập đánh giá chính của đồ án; SciFact và QASPER được dùng để phân tích giới hạn khi chuyển sang miền khoa học dài và nhiều ngữ cảnh.
 
-Chương này đánh giá hệ thống theo hai luồng đã trình bày ở Chương 4 và
-Chương 5: trích xuất dữ liệu từ PDF và khai thác dữ liệu đã trích xuất để truy
-xuất, hỏi đáp. Các thí nghiệm được tổ chức theo câu hỏi nghiên cứu thay vì lặp
-lại mô tả kiến trúc.
+Mục này đóng vai trò là bản đồ thực nghiệm. Các tầng trong quy trình xử lý được đánh giá theo thứ tự: tiếp nhận và trích xuất tài liệu, trích xuất bảng, chia đoạn/lập chỉ mục, truy xuất, hỏi đáp có căn cứ, thí nghiệm loại bỏ thành phần và phân tích lỗi.
+\begin{table}[H]
+\centering
+\caption{Bản đồ câu hỏi nghiên cứu và kết quả thực nghiệm}
+\label{tab:rq-experiment-map}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.08\textwidth}|
+>{\raggedright\arraybackslash}X|
+>{\raggedright\arraybackslash\hyphenpenalty=10000\exhyphenpenalty=10000}p{0.16\textwidth}|
+>{\raggedright\arraybackslash}p{0.20\textwidth}|
+>{\raggedright\arraybackslash}p{0.17\textwidth}|
+}
+\hline
+\textbf{RQ} & \textbf{Câu hỏi nghiên cứu} & \textbf{Tầng đánh giá} & \textbf{Độ đo chính} & \textbf{Bảng/Hình chính} \\
+\hline
+RQ1 & Tiếp nhận và trích xuất tài liệu cùng định tuyến theo vùng nội dung có tạo đầu ra ổn định, truy vết được và hỗ trợ bảng tốt hơn cấu hình cơ sở không? & Tiếp nhận và trích xuất tài liệu & F1@IoU, Token F1, CER/WER, Latency, số khối nội dung bảng & Bảng~\ref{tab:ingest-evaluation-data}--\ref{tab:region-routing-qcdt} \\
+\hline
+RQ2 & Hybrid TATR có cải thiện tái dựng bảng so với bộ trích xuất mặc định và TATR không? & Trích xuất bảng & Detection F1, Cell F1, Structure F1, Text Assignment F1, Exact CSV & Bảng~\ref{tab:table-backend-pubtables25}--\ref{tab:table-row-column-mae} \\
+\hline
+RQ3 & Truy xuất kết hợp có cải thiện truy xuất bằng chứng so với BM25 hoặc truy xuất ngữ nghĩa riêng lẻ không? & Truy xuất & Hit@k, Latency & Bảng~\ref{tab:retrieval-strategy-comparison}, \ref{tab:retrieval-ablation-results} \\
+\hline
+RQ4 & Hỏi đáp có căn cứ, bộ kiểm tra bằng chứng và dẫn chứng nguồn có giúp kiểm soát Hallucination Rate không? & Hỏi đáp/Dẫn chứng nguồn & Answer Match, Evidence Match, Grounded Rate, Hallucination Rate & Bảng~\ref{tab:grounded-qa-results}, \ref{tab:grounding-citation-ablation}, \ref{tab:error-cases-by-layer} \\
+\hline
+RQ5 & Chia đoạn có nhận thức bảng và bằng chứng ở mức ô có cần thiết cho câu hỏi trên bảng không? & Chia đoạn/Hỏi đáp trên bảng & Table Hit@k, Row Match@k, Column Match@k, Cell Match@k & Bảng~\ref{tab:table-aware-chunk-types}--\ref{tab:table-qa-qcdt39}; Mục~\ref{subsec:ablation-table-aware-chunking-cell-citation} \\
+\hline
+\end{tabularx}
+\end{table}
 
 \begin{table}[H]
 \centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Câu hỏi nghiên cứu và kết quả dùng để trả lời}
-\label{tab:experiment-rq}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.10\textwidth}
-    |>{\raggedright\arraybackslash}X
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\raggedright\arraybackslash}p{0.22\textwidth}|
+
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.24\textwidth}|
+>{\raggedright\arraybackslash}X|
+>{\raggedright\arraybackslash}p{0.22\textwidth}|
 }
 \hline
-\textbf{Mã} & \textbf{Câu hỏi nghiên cứu} & \textbf{Tầng đánh giá} &
-\textbf{Độ đo chính} \\
+ \textbf{Tập đánh giá} & \textbf{Vai trò trong chương} & \textbf{Phạm vi kết luận} \\
 \hline
-RQ1 &
-Luồng ingest chính với probe, định tuyến vùng, OCR, text extractor và table
-extractor tạo được dữ liệu hợp lệ đến mức nào? &
-Ingest chính và định tuyến vùng &
-Tỷ lệ thành công, route trace, token F1, metadata, thời gian xử lý \\
+ QCDT~\cite{hust2025trainingregulation} & Đánh giá hỏi đáp trên tài liệu quy chế đào tạo tiếng Việt, có điều khoản, bảng và dẫn chứng nguồn. & Phạm vi kết luận chính \\
 \hline
-RQ2 &
-Hybrid TATR có cải thiện tái dựng cấu trúc và nội dung bảng không? &
-Trích xuất bảng &
-Cell F1, Structure F1, Exact CSV \\
+ SciFact~\cite{wadden2020scifact} & Kiểm tra khả năng truy xuất và hỏi đáp có căn cứ trên bằng chứng khoa học ngắn. & Phân tích mở rộng \\
 \hline
-RQ3 &
-Truy xuất kết hợp có cải thiện khả năng tìm đúng bằng chứng so với BM25 và
-truy xuất ngữ nghĩa riêng lẻ không? &
-Truy xuất thông tin &
-Hit@k, Recall@k, MRR, NDCG \\
+ QASPER~\cite{dasigi2021qasper} & Kiểm tra giới hạn với bài báo khoa học dài, bằng chứng phân tán, câu hỏi tự nhiên và nhiều bằng chứng. & Phân tích giới hạn, không dùng để kết luận hệ thống đạt mức tốt nhất hiện có \\
 \hline
-RQ4 &
-Kiểm tra bằng chứng và dẫn chứng nguồn có giúp kiểm soát câu trả lời thiếu căn
-cứ không? &
-Hỏi đáp đầu cuối &
-Answer Match, Evidence Match, Grounded Rate, Hallucination Rate \\
+ DocLayNet~\cite{pfitzmann2022doclaynet}, PubLayNet~\cite{zhong2019publaynet}, PubTables~\cite{smock2022pubtables}, OCR/tập thay thế FUNSD~\cite{jaume2019funsd} & Đánh giá từng thành phần: bố cục, phát hiện bảng, cấu trúc bảng, OCR và hồi quy tiếp nhận và trích xuất tài liệu. & Không dùng để kết luận đầu cuối \\
 \hline
-RQ5 &
-Chia đoạn có nhận thức bảng có giúp truy xuất đúng hàng và ô không? &
-Truy xuất bảng &
-Table, Row, Column và Cell Match@k \\
-\hline
+
 \end{tabularx}
+\caption{Bản đồ tập đánh giá theo vai trò và phạm vi kết luận}
+\label{tab:benchmark-role-map}
 \end{table}
 
 \begin{figure}[H]
-\centering
-\small
-\begin{tabular}{c}
-\fbox{\parbox{0.82\linewidth}{\centering
-RQ1--RQ2: PDF \(\rightarrow\) vùng nội dung \(\rightarrow\) block bảng/văn bản}}\\[0.15cm]
-\(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering
-RQ3--RQ5: chunk và chỉ mục \(\rightarrow\) bằng chứng \(\rightarrow\) câu trả lời có dẫn chứng}}\\[0.15cm]
-\(\downarrow\)\\[-0.05cm]
-\fbox{\parbox{0.82\linewidth}{\centering
-Phân tích loại bỏ thành phần \(\rightarrow\) phân tích lỗi \(\rightarrow\) giới hạn kết quả}}
-\end{tabular}
-\caption{Bản đồ các nhóm thực nghiệm trong chương}
-\label{fig:experiment-map}
+    \centering
+    \includegraphics[width=0.92\textwidth]{Hinhve/Screenshot 2026-06-18 174512.png}
+    \caption{Luồng đọc Chương 6 theo câu hỏi nghiên cứu}
+    \label{fig:luong-doc-chuong-6}
 \end{figure}
 
 \section{Thiết lập chung}
-\label{section:experiment-setup}
 
-\subsection{Phạm vi các tập đánh giá}
 
-Các tập đánh giá được chia thành ba nhóm. QCDT được dùng để đánh giá luồng
-hỏi đáp chính và tác động đầu cuối của ingest. SciFact và QASPER được dùng như
-tập phụ để khảo sát khả năng chuyển miền sang tài liệu khoa học. PubTables-1M
-và các tập OCR được dùng để đánh giá các backend bảng/OCR được pipeline ingest
-gọi trực tiếp \cite{smock2022pubtables}. Các kết quả phát hiện bố cục bằng
-backend \texttt{model\_layout} tùy chọn không được dùng làm kết luận chính vì
-pipeline chính của đồ án là probe--region routing--OCR/text/table.
+\subsection{Cấu hình quy trình xử lý mặc định}
+
+Cấu hình mặc định của hệ thống được ký hiệu là C0 hoặc cấu hình đầy đủ. Cấu hình này gồm tiếp nhận và trích xuất tài liệu có định tuyến theo vùng nội dung, trích xuất bảng bằng Hybrid TATR khi cần xử lý cấu trúc bảng, chia đoạn có nhận thức bảng, truy xuất kết hợp BM25 và truy xuất ngữ nghĩa, bộ kiểm tra bằng chứng, bộ sinh câu trả lời có căn cứ và dẫn chứng nguồn. Các biến thể thí nghiệm loại bỏ thành phần ở mục 6.4 được định nghĩa là thay đổi một thành phần so với cấu hình C0.
 
 \begin{table}[H]
 \centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Vai trò của các tập dữ liệu trong thực nghiệm}
-\label{tab:experiment-datasets}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.21\textwidth}
-    |>{\raggedright\arraybackslash}p{0.19\textwidth}
-    |>{\raggedright\arraybackslash}X
-    |>{\raggedright\arraybackslash}p{0.20\textwidth}|
+\caption{Cấu hình mặc định và biến thể thí nghiệm loại bỏ thành phần}
+\label{tab:default-config-ablation}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.08\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.22\textwidth}|
+>{\RaggedRight\arraybackslash}X|
+>{\RaggedRight\arraybackslash}p{0.24\textwidth}|
 }
 \hline
-\textbf{Tập dữ liệu} & \textbf{Vai trò} & \textbf{Nội dung đánh giá} &
-\textbf{Phạm vi diễn giải} \\
+\textbf{ID} & \textbf{Tên cấu hình} & \textbf{Thay đổi so với cấu hình đầy đủ} & \textbf{Mục đích đánh giá} \\
 \hline
-QCDT &
-Chính &
-40 câu hỏi trên tài liệu Quy chế đào tạo của Đại học Bách khoa Hà Nội
-\cite{hust2025trainingregulation}. &
-Tài liệu quy định tiếng Việt có lớp văn bản. \\
+C0 & \texttt{full} \newline \texttt{routed\_grounded} & Không thay đổi & Cấu hình chính cho đầu cuối và so sánh thí nghiệm loại bỏ thành phần \\
 \hline
-SciFact &
-Phụ &
-300 câu hỏi dùng để đánh giá truy xuất và hỏi đáp khoa học
-\cite{wadden2020scifact}. &
-Phân tích khả năng chuyển miền. \\
+C1 & \texttt{region\_off} & Tắt định tuyến theo vùng nội dung & Đo chi phí và lợi ích của định tuyến ở tầng tiếp nhận và trích xuất tài liệu \\
 \hline
-QASPER &
-Phụ &
-100 câu hỏi dùng để đánh giá truy xuất evidence trên các đoạn trong bài báo;
-500 câu hỏi dùng để đánh giá hỏi đáp đầu cuối trên bài báo khoa học
-\cite{dasigi2021qasper}. &
-Tập dữ liệu gồm câu hỏi tự nhiên, đáp án và bằng chứng gắn với bài báo khoa học;
-dùng để phân tích giới hạn với câu hỏi dài và nhiều bằng chứng. \\
+C2 & \texttt{bm25\_only} & Chỉ dùng BM25 & Mốc so sánh cho truy xuất theo từ khóa \\
 \hline
-PubTables-1M &
-Thành phần &
-Đánh giá tái dựng cấu trúc bảng trên tập PubTables structure, gồm hàng, cột, ô,
-gán văn bản vào ô và so khớp CSV. &
-Tập 25 mẫu dùng để so sánh backend bảng; tập 100 mẫu proxy dùng để kiểm tra
-Hybrid TATR trên số lượng mẫu lớn hơn và phân tích lỗi theo nhóm bảng. \\
+C3 & \texttt{dense\_only} & Chỉ dùng truy xuất ngữ nghĩa & Mốc so sánh cho truy xuất ngữ nghĩa \\
 \hline
-OCR scan, FUNSD &
-Thành phần &
-Đánh giá backend OCR trên tập scan tổng hợp và tập biểu mẫu FUNSD đã chuyển
-về định dạng benchmark OCR. &
-Dùng để kiểm tra khả năng nhận dạng chữ của nhánh OCR; không thay thế đánh
-giá đầy đủ PDF scan tiếng Việt thực tế. \\
+C4 & \texttt{hybrid} & Kết hợp BM25 và truy xuất ngữ nghĩa & Đánh giá lợi ích của truy xuất kết hợp so với C2 và C3 \\
+\hline
+C5 & \texttt{hybrid\_rerank} & Truy xuất kết hợp có thêm bước sắp xếp lại & Đánh giá lợi ích/chi phí của sắp xếp lại \\
+\hline
+C6 & \texttt{no\_evidence\_checker} & Bỏ bước kiểm tra bằng chứng trước khi sinh câu trả lời & Đo vai trò bộ kiểm tra bằng chứng \\
+\hline
+C7 & \texttt{no\_citation\_grounding} & Bỏ cơ chế bảo đảm căn cứ bằng dẫn chứng nguồn & Đo vai trò dẫn chứng nguồn trong kiểm soát Hallucination Rate \\
+\hline
+C8 & \texttt{default\_table} \newline \texttt{tatr\_only} \newline \texttt{hybrid\_tatr} & Thay bộ xử lý tái dựng bảng & Đánh giá RQ2 \\
+\hline
+C9 & \texttt{normal\_chunking} \newline \texttt{table\_aware} \newline \texttt{cell\_level} & Thay cách biểu diễn bảng trong chỉ mục & Đánh giá RQ5 \\
 \hline
 \end{tabularx}
 \end{table}
+
+\subsection{Tập đánh giá và quy mô}
+Sau đây là mô tả quy mô và mục tiêu của các tập đánh giá được sử dụng trong từng nhóm đánh giá.
+\begin{table}[H]
+\centering
+\caption{Tập đánh giá sử dụng trong thực nghiệm}
+\label{tab:evaluation-benchmarks}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.18\textwidth}|
+>{\raggedright\arraybackslash}p{0.20\textwidth}|
+>{\raggedright\arraybackslash}p{0.24\textwidth}|
+>{\raggedright\arraybackslash}X|
+}
+\hline
+\textbf{Nhóm đánh giá} & \textbf{Tập đánh giá} & \textbf{Thiết lập} & \textbf{Mục tiêu} \\
+\hline
+
+Phát hiện bố cục & DocLayNet, PubLayNet & 49 mẫu DocLayNet; 100 mẫu PubLayNet & Đánh giá phát hiện vùng bố cục như văn bản, tiêu đề, bảng, hình, đầu trang và chân trang \\
+\hline
+OCR và PDF quét & Tập OCR quét tổng hợp, tập thay thế FUNSD & 25 mẫu tổng hợp; 25 mẫu FUNSD & Đánh giá Token F1/CER/WER và khó khăn của biểu mẫu \\
+\hline
+Trích xuất bảng & PubTables-1M phát hiện bảng & 500 mẫu phát hiện; 25 bảng cấu trúc & Đánh giá phát hiện bảng, ô, cấu trúc, gán văn bản và Exact CSV \\
+\hline
+Truy xuất và Hỏi đáp có căn cứ & QCDT, SciFact, QASPER & QCDT: 40 câu hỏi trên một PDF quy chế, \(k=10\); \newline
+SciFact: 300 câu hỏi trên 5183 đoạn tóm tắt, \(k=5\);\newline
+QASPER: 500 câu hỏi trên 234 bài báo với 11086 đơn vị truy xuất, \(k=20\) & Truy xuất: đánh giá BM25, truy xuất ngữ nghĩa, truy xuất kết hợp và truy xuất kết hợp có sắp xếp lại \newline Hỏi đáp có căn cứ: đánh giá Answer Match, Evidence Match, Grounded Rate và Hallucination Rate \\
+\hline
+Hỏi đáp trên bảng & Câu hỏi bảng tiếng Việt / các ca bảng QCDT & 39 câu hỏi trên 6 bảng QCDT & Kiểm tra truy xuất đúng bảng, hàng, cột và ô \\
+\hline
+\end{tabularx}
+\end{table}
+
+Quy trình xây dựng, gán nhãn QCDT, các ví dụ nhãn chuẩn và quy tắc tính
+\texttt{Answer Match}/\texttt{Evidence Match} được trình bày tại
+Phụ lục~\ref{appendix:qcdt-construction-labeling}.
 
 \subsection{Quy ước độ đo}
 
-Các công thức Success Rate, Token F1, CER, Latency, Hit@k, Recall@k, MRR,
-NDCG, IoU, Precision, Recall, F1, Exact CSV và Match@k ở mức bảng đã được
-định nghĩa tại Chương 3. Trong chương này, \(k\) được ghi cùng từng tập dữ
-liệu. Ký hiệu \(k\) là số kết quả đứng đầu trong danh sách truy xuất được dùng
-để tính độ đo. Ví dụ, Hit@10 kiểm tra trong 10 kết quả đầu tiên có bằng chứng
-đúng hay không. SciFact dùng \(k=5\), QCDT dùng \(k=10\), QASPER dùng
-\(k=20\), còn thực nghiệm truy xuất bảng báo cáo cả \(k=5\) và \(k=10\).
+Trong các thí nghiệm ở Chương 6, mỗi tầng của hệ thống được đánh giá bằng một nhóm độ đo riêng nhằm phản ánh đúng vai trò của tầng đó trong quy trình xử lý tổng thể. Các độ đo ở tầng truy xuất PDF tập trung vào độ ổn định và khả năng bảo toàn nội dung đầu vào; các độ đo trích xuất bảng đánh giá chất lượng nhận diện và tái dựng cấu trúc bảng, trong khi đó các độ đo truy xuất, hỏi đáp có căn cứ và hỏi đáp trên bảng được sử dụng để đo lường khả năng tìm bằng chứng, tạo câu trả lời có căn cứ và xử lý truy vấn trên dữ liệu dạng bảng. Bảng~\ref{tab:metric-groups-chapter6} trình bày bản đồ các độ đo được sử dụng cùng với ý nghĩa đánh giá tương ứng.
 
-Answer Match đo tỷ lệ câu trả lời khớp theo quy tắc của bộ đánh giá. Evidence
-Match đo tỷ lệ tìm hoặc trích dẫn được ít nhất một bằng chứng đúng. Grounded
-Rate đo tỷ lệ câu trả lời có dẫn chứng hợp lệ theo quy ước triển khai.
-Hallucination Rate đo tỷ lệ câu trả lời bị bộ đánh giá xác định là thiếu căn cứ.
-Các độ đo này không chứng minh câu trả lời đúng về mặt ngữ nghĩa trong mọi
-trường hợp; vì vậy chúng được đọc cùng Answer Match và phần phân tích lỗi ở
-Mục~\ref{section:error-analysis}.
-
-\subsection{Cấu hình so sánh}
 
 \begin{table}[H]
 \centering
+\caption{Nhóm độ đo dùng trong Chương 6}
+\label{tab:metric-groups-chapter6}
 \small
-\renewcommand{\arraystretch}{1.2}
-\caption{Các cấu hình chính trong thực nghiệm}
-\label{tab:experiment-configurations}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.13\textwidth}
-    |>{\raggedright\arraybackslash}p{0.28\textwidth}
-    |>{\raggedright\arraybackslash}X|
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.18\textwidth}|
+>{\raggedright\arraybackslash}p{0.31\textwidth}|
+>{\raggedright\arraybackslash}X|
 }
 \hline
-\textbf{Mã} & \textbf{Cấu hình} & \textbf{Mục đích} \\
+\textbf{Tầng} & \textbf{Độ đo} & \textbf{Ý nghĩa sử dụng} \\
 \hline
-C0 &
-\texttt{routed\_grounded} &
-Cấu hình hỏi đáp chính gồm định tuyến câu hỏi, truy xuất, kiểm tra bằng chứng,
-sinh câu trả lời và dẫn chứng. \\
+Tiếp nhận và trích xuất tài liệu/Bố cục & F1@IoU, Token F1, CER/WER, Latency & Đánh giá phát hiện vùng, bảo toàn token, chất lượng OCR và chi phí xử lý \\
 \hline
-C1 &
-BM25 / dense / hybrid &
-So sánh các tín hiệu truy xuất \cite{robertson2009bm25,
-reimers2019sentencebert,cormack2009rrf}. \\
+Trích xuất bảng & Detection F1, Cell F1@IoU, Structure F1, Text Assignment F1, Row/Column MAE, Exact CSV & Đánh giá tách vùng bảng, tái dựng hàng/cột/ô, gán văn bản và mức khớp tuyệt đối \\
 \hline
-C2 &
-Default / TATR / Hybrid TATR &
-So sánh các backend tái dựng bảng. \\
+Truy xuất & Hit@k, Latency & Đánh giá khả năng tìm đúng bằng chứng và chi phí truy xuất \\
 \hline
-C3 &
-Normal / table-aware / table-aware cell &
-Đo tác động của đơn vị truy xuất bảng, hàng và ô. \\
+Hỏi đáp có căn cứ & Answer Match, Evidence Match, Grounded Rate, Hallucination Rate & Đánh giá độ đúng câu trả lời, độ đúng bằng chứng/dẫn chứng nguồn, khả năng bám nguồn và kiểm soát Hallucination Rate \\
 \hline
-C4 &
-\texttt{no\_router}, \texttt{no\_evidence\_checker},
-\texttt{no\_citation\_grounding} &
-Đo vai trò của từng thành phần trong luồng hỏi đáp. \\
+Hỏi đáp trên bảng & Table Hit@k, Row Match@k, Column Match@k, Cell Match@k & Đánh giá truy xuất trên bảng ở các mức bảng, hàng, cột và ô \\
 \hline
-C5 &
-Region OFF / Region ON &
-Đo tác động của \texttt{region\_routed} trong pipeline ingest chính bằng cách
-chạy cùng một tập PDF với và không có định tuyến vùng. \\
+\end{tabularx}
+\end{table}
+Điều đáng chú ý là Hit@k phản ánh chất lượng tầng truy xuất; Answer Match phản ánh chất lượng sinh câu trả lời; Grounded Rate và Hallucination Rate phản ánh mức độ tuân thủ yêu cầu trả lời dựa trên bằng chứng. Do đó, một hệ thống có Grounded Rate cao chưa chắc có Answer Match cao nếu bằng chứng chưa đủ hoặc bước tổng hợp câu trả lời còn yếu. Các độ đo tự động về Grounded Rate và tính nhất quán sự kiện được dùng như tín hiệu kiểm tra nguồn, không thay thế đánh giá thủ công về tính đúng ngữ nghĩa~\cite{fabbri2021qafacteval,es2023ragas,ji2023hallucination}.
+
+\section{Thực nghiệm theo tầng quy trình xử lý}
+\subsection{Tiếp nhận và trích xuất tài liệu và định tuyến theo vùng nội dung}
+
+Mục tiêu của tầng tiếp nhận và trích xuất tài liệu là chuyển tài liệu PDF thành các khối nội dung có cấu trúc, có siêu dữ liệu và có khả năng truy vết về vùng nguồn trên trang. Các thí nghiệm tập trung vào ba nội dung: độ ổn định của quy trình xử lý, khả năng phát hiện bố cục/bảng và tác động của định tuyến theo vùng nội dung.
+
+\begin{table}[H]
+\centering
+\caption{Dữ liệu đánh giá tầng tiếp nhận và trích xuất tài liệu}
+\label{tab:ingest-evaluation-data}
+
+\small
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.24\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.12\textwidth}|
+>{\RaggedRight\arraybackslash}X|
+}
+\hline
+\textbf{Tập dữ liệu} & \textbf{Số mẫu} & \textbf{Mục tiêu đánh giá} \\
+\hline
+
+DocLayNet & 49 & Phát hiện các vùng bố cục trong tài liệu PDF \\
+\hline
+PubLayNet & 100 & Phát hiện bố cục trên tài liệu khoa học \\
+\hline
+PubTables phát hiện bảng & 500 & Phát hiện hộp bao của vùng bảng \\
+\hline
+Tập OCR quét tổng hợp & 25 & Kiểm tra OCR trên tài liệu quét rõ ràng \\
+\hline
+FUNSD & 25 & Đánh giá OCR trên biểu mẫu có bố cục phức tạp \\
 \hline
 \end{tabularx}
 \end{table}
 
-Kết quả được lấy trực tiếp từ các tệp JSON trong thư mục \texttt{results}. Chương
-không sử dụng cấu hình tự động thử lại tuyến truy xuất. Hai trạng thái
-\texttt{expand\_retrieval} và \texttt{switch\_strategy}, nếu xuất hiện, chỉ là
-trạng thái đánh giá bằng chứng trong luồng chuẩn.
+\begin{table}[H]
+\centering
+\caption{Kết quả tầng tiếp nhận và trích xuất tài liệu trên các tập đánh giá chính}
+\label{tab:ingest-main-results}
 
-\section{Thực nghiệm theo tầng pipeline}
-\label{section:layer-experiments}
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.23\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.10\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.24\textwidth}|
+>{\RaggedRight\arraybackslash}X|
+}
+\hline
+\textbf{Tập đánh giá} & \textbf{Số mẫu} & \textbf{Kết quả} & \textbf{Nội dung đánh giá} \\
+\hline
 
-\subsection{Probe, định tuyến và trích xuất trong luồng ingest chính}
-\label{subsection:ingest-results}
-
-Pipeline ingest chính được đánh giá theo đúng luồng
-probe--region routing--OCR/text/table. Mục tiêu của phần này không phải chứng
-minh một mô hình layout riêng, mà kiểm tra bốn điểm: probe chọn được hướng xử
-lý ban đầu, region routing tạo được vết định tuyến, các backend OCR/text/table tạo
-được block hợp lệ, và cơ chế fallback không làm pipeline thất bại khi backend đầu
-tiên không phù hợp. Kết quả được tổng hợp từ các tệp trong thư mục
-\texttt{results} bằng script \texttt{scripts/benchmark\_main\_ingest\_pipeline.py}.
+DocLayNet & 49 & F1@0.50 = 0.849; F1@0.75 = 0.807 & Khả năng phát hiện vùng bố cục \\
+\hline
+PubLayNet & 100 & F1@0.50 = 0.739; F1@0.75 = 0.708 & Khả năng xử lý bố cục tài liệu khoa học \\
+\hline
+PubTables phát hiện bảng & 500 & F1@0.50 = 0.975; F1@0.75 = 0.914 & Khả năng phát hiện và định vị vùng bảng \\
+\hline
+Tập OCR quét tổng hợp & 25 & Token F1 = 1.000 & OCR trên dữ liệu quét tương đối sạch \\
+\hline
+FUNSD & 25 & Token F1 = 0.826; CER = 0.466; WER = 0.515 & OCR trên biểu mẫu có bố cục phức tạp \\
+\hline
+\end{tabularx}
+\end{table}
 
 \begin{table}[H]
 \centering
+\caption{So sánh tiếp nhận và trích xuất tài liệu khi bật và tắt định tuyến theo vùng nội dung trên QCDT}
+\label{tab:region-routing-qcdt}
+
+\small
+\begin{tabularx}{\textwidth}{| >{\RaggedRight\arraybackslash}X| >{\RaggedRight\arraybackslash}p{0.24\textwidth}| >{\RaggedRight\arraybackslash}p{0.24\textwidth}| }
+\hline
+\textbf{Chỉ số} & \textbf{Region OFF} & \textbf{Region ON} \\
+\hline
+Bộ xử lý & text & region\_routed \\
+\hline
+Thời gian xử lý & 0.349 s & 16.595 s \\
+\hline
+Số khối nội dung & 517 & 494 \\
+\hline
+Số đơn vị truy xuất & 246 & 238 \\
+\hline
+Số khối nội dung bảng & 0 & 9 \\
+\hline
+Khối nội dung có siêu dữ liệu vùng/định tuyến & 0 & 494 \\
+\hline
+\end{tabularx}
+\end{table}
+
+Kết quả cho thấy định tuyến theo vùng nội dung làm tăng thời gian tiếp nhận và trích xuất tài liệu do phải phát hiện, phân loại và xử lý từng vùng nội dung. Tuy nhiên, cơ chế này tạo được 9 khối nội dung bảng và gắn siêu dữ liệu vùng/định tuyến cho toàn bộ 494 khối nội dung đầu ra. Vì vậy, kết luận cho \textbf{RQ1} không phải là định tuyến luôn nhanh hơn, mà là định tuyến đánh đổi chi phí xử lý để có đầu ra giàu cấu trúc và truy vết tốt hơn, đặc biệt hữu ích cho bảng và dẫn chứng nguồn.
+
+Giới hạn của thí nghiệm là số lượng tài liệu PDF tiếng Việt thực tế còn nhỏ và kết quả OCR trên dữ liệu tổng hợp không đại diện cho mọi tài liệu quét ngoài thực tế. Nếu bộ phát hiện vùng dự đoán sai hộp bao hoặc loại vùng, bộ xử lý phía sau có thể nhận sai đầu vào.
+
+\subsection{Trích xuất và tái dựng bảng}
+
+Tầng xử lý bảng gồm hai bài toán khác nhau: phát hiện vùng bảng trên trang và tái dựng cấu trúc hàng/cột/ô bên trong bảng. Ba bộ xử lý được so sánh gồm bộ trích xuất mặc định, TATR-only và Hybrid TATR. Bộ trích xuất mặc định tận dụng lớp văn bản và quy tắc hình học; TATR-only nhận diện cấu trúc hình học nhưng không trực tiếp đọc nội dung chữ; Hybrid TATR kết hợp hình học từ TATR với các hộp từ lấy từ lớp văn bản hoặc OCR.
+
+
+\begin{table}[H]
+\centering
+\caption{So sánh các bộ xử lý trên tập con cấu trúc PubTables gồm 25 bảng}
+\label{tab:table-backend-pubtables25}
+
 \scriptsize
-\renewcommand{\arraystretch}{1.2}
-\caption{Đánh giá luồng ingest chính theo probe, định tuyến và backend}
-\label{tab:ingest-component-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.21\textwidth}
-    |>{\raggedright\arraybackslash}p{0.18\textwidth}
-    |>{\raggedright\arraybackslash}p{0.20\textwidth}
-    |>{\raggedright\arraybackslash}X|
-}
+\begin{tabularx}{\textwidth}{| >{\RaggedRight\arraybackslash}X| >{\centering\arraybackslash}p{0.12\textwidth}| >{\centering\arraybackslash}p{0.12\textwidth}| >{\centering\arraybackslash}p{0.12\textwidth}| >{\centering\arraybackslash}p{0.13\textwidth}| >{\centering\arraybackslash}p{0.10\textwidth}| }
 \hline
-\textbf{Nội dung kiểm tra} & \textbf{Dữ liệu} & \textbf{Độ đo} &
-\textbf{Kết quả và diễn giải} \\
+\textbf{Bộ xử lý} & \textbf{Detection F1} & \textbf{Cell F1@0.75} & \textbf{Structure F1} & \textbf{Text Assignment F1} & \textbf{Exact CSV} \\
 \hline
-Probe và chọn backend cấp tài liệu &
-31 PDF gồm QCDT, PDF bảng và scan tổng hợp &
-Probe accuracy, backend routing accuracy &
-Probe chọn đúng hướng xử lý cho 31/31 tài liệu, đạt accuracy 1,000. Backend
-cấp tài liệu sau probe/fallback cũng đúng 31/31: 30 tài liệu đi qua OCR và tài
-liệu QCDT đi qua \texttt{region\_routed} khi bật định tuyến vùng. \\
+Mặc định & 0.940 & 0.149 & 0.199 & 0.909 & 0.000 \\
 \hline
-Định tuyến vùng trên QCDT &
-Một tài liệu QCDT có text layer và bảng &
-Route expectation, route trace, route backend &
-Kỳ vọng QCDT cần cả nhánh text và nhánh bảng; hệ thống đạt 1/1 ở mức tài liệu.
-Bật region routing tạo 9 block bảng và 494 block có vết định tuyến. Trong đó
-484 block đi qua nhánh text, 8 block qua nhánh table, 1 block qua Hybrid TATR
-và 1 block placeholder. \\
+TATR-only & 0.987 & 0.103 & 0.010 & 0.015 & 0.000 \\
 \hline
-Backend OCR &
-25 mẫu scan tổng hợp và 25 mẫu FUNSD OCR &
-Token F1, CER &
-Scan tổng hợp đạt Token F1 1,000 và CER 0,000. FUNSD đạt Token F1 0,826 và
-CER 0,466, cho thấy OCR giảm chất lượng rõ rệt trên dữ liệu nhiễu hơn
-\cite{du2020ppocr}. \\
-\hline
-Backend bảng &
-100 mẫu PubTables-1M proxy &
-Cell F1, Structure F1, Text Assignment F1, Exact CSV &
-Hybrid TATR đạt Cell F1@0,50 là 0,947, Structure F1 là 0,778,
-Text Assignment F1 là 0,997 và Exact CSV là 0,530. Đây là đánh giá backend
-bảng được pipeline gọi khi gặp vùng bảng, không phải đánh giá OCR đầu cuối. \\
-\hline
-Đầu ra block/chunk/metadata &
-31 PDF ở thí nghiệm Region OFF/ON &
-Block success rate, metadata completeness &
-Region ON đạt block/chunk success rate 1,000, tạo trung bình 64,45 block,
-53,23 chunk và 15,94 block có route trace trên mỗi tài liệu. Trên các block mẫu,
-tỷ lệ có page id, bbox, block type, text và route trace đều đạt 1,000. \\
-\hline
-Fallback và chi phí xử lý &
-31 PDF ở thí nghiệm Region OFF/ON &
-Fallback count, fallback success rate, latency &
-Fallback được kích hoạt ở 30 tài liệu và thành công 30/30, không có tài liệu lỗi.
-Đổi lại, latency trung bình tăng từ 6,189 s lên 16,556 s khi bật region routing. \\
+Hybrid TATR & 0.987 & 0.944 & 0.772 & 0.999 & 0.480 \\
 \hline
 \end{tabularx}
 \end{table}
 
-Bảng~\ref{tab:ingest-component-results} không báo F1 phát hiện bbox bố cục vì
-thí nghiệm này không dùng nhãn vùng thủ công cho region routing. Các giá trị
-accuracy trong bảng được hiểu ở mức tài liệu hoặc mức kỳ vọng route của tài
-liệu QCDT, không phải Precision/Recall/F1 cho từng bbox vùng. Nếu muốn đo F1
-theo từng loại vùng, cần bổ sung một tập PDF thật có nhãn chuẩn cho vùng text,
-bảng, ảnh và caption. Trong phạm vi đồ án, chất lượng ingest chính được đọc qua
-success rate, backend được chọn, số block bảng, vết định tuyến, metadata đầu ra,
-OCR, backend bảng và ảnh hưởng đầu cuối ở Mục~\ref{subsection:region-routing-results}.
-Kết quả OCR 1,000 trên scan tổng hợp chỉ được xem là kiểm tra chức năng trên dữ
-liệu sạch, không dùng để khẳng định hệ thống đã xử lý hoàn chỉnh PDF scan tiếng
-Việt trong mọi trường hợp.
-
-\subsection{Định tuyến theo vùng}
-\label{subsection:region-routing-results}
-
-Thực nghiệm theo cặp gồm 31 PDF: một tài liệu QCDT, 25 PDF đại diện cho bảng
-và 5 PDF scan tổng hợp. Trên 30 PDF scan hoặc đại diện, cả hai cấu hình chủ yếu
-chuyển sang OCR theo cơ chế dự phòng.
-Trên QCDT, bật định tuyến vùng làm backend thay đổi từ \texttt{text} sang
-\texttt{region\_routed}.
-
 \begin{table}[H]
 \centering
+\caption{Sai lệch số hàng và cột giữa các bộ xử lý}
+\label{tab:table-row-column-mae}
+
 \small
-\renewcommand{\arraystretch}{1.2}
-\caption{So sánh định tuyến vùng trên 31 PDF}
-\label{tab:region-routing-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.26\textwidth}
-    |>{\centering\arraybackslash}p{0.19\textwidth}
-    |>{\centering\arraybackslash}p{0.19\textwidth}
-    |>{\raggedright\arraybackslash}X|
-}
+\begin{tabularx}{\textwidth}{| >{\RaggedRight\arraybackslash}X| >{\centering\arraybackslash}p{0.25\textwidth}| >{\centering\arraybackslash}p{0.25\textwidth}| }
 \hline
-\textbf{Độ đo} & \textbf{Tắt region} & \textbf{Bật region} &
-\textbf{Chênh lệch} \\
+\textbf{Bộ xử lý} & \textbf{Row MAE} & \textbf{Column MAE} \\
 \hline
-Success rate & 1,000 & 1,000 & Không đổi \\
+Mặc định & 1.960 & 0.800 \\
 \hline
-Số block bảng trung bình & 0,97 & 1,26 & \(+0,29\) \\
+TATR-only & 0.600 & 0.000 \\
 \hline
-Block có route trace trung bình & 0,00 & 15,94 & \(+15,94\) \\
-\hline
-Thời gian trung bình & 6,189 s & 16,556 s & \(+10,367\) s \\
+Hybrid TATR & 0.600 & 0.000 \\
 \hline
 \end{tabularx}
 \end{table}
 
-Riêng QCDT, cấu hình tắt region tạo 0 block bảng, còn cấu hình bật region tạo
-9 block bảng và gắn route trace cho 494 block. Đổi lại, thời gian tăng từ
-0,286 s lên 70,189 s trong lần chạy cold-run có tải backend bảng. Kết quả này
-chứng minh vai trò điều phối và truy vết của region routing trên QCDT, nhưng
-chưa chứng minh định tuyến vùng luôn cải thiện chất lượng hoặc tốc độ trên mọi
-PDF.
+Hybrid TATR đạt Cell F1@0.75 = 0.944, Structure F1 = 0.772 và Text Assignment F1 = 0.999, cao hơn rõ rệt so với hai cấu hình còn lại. Điều này trả lời \textbf{RQ2}: tái dựng bảng không thể chỉ dựa vào hình học hoặc chỉ dựa vào lớp văn bản; cần kết hợp cấu trúc không gian với hộp từ để tạo bảng vừa có hình học đúng, vừa có nội dung trong ô.
 
-Để kiểm tra ảnh hưởng đầu cuối, đồ án chạy thêm một thí nghiệm trên cùng 40
-câu hỏi QCDT: tắt region rồi ingest--index--retrieval--QA, sau đó bật region và
-chạy lại toàn bộ luồng. Cả hai cấu hình dùng index BM25 để cô lập tác động của
-ingest và region routing.
+Tuy nhiên, Exact CSV mới đạt 0.480 cho thấy Hybrid TATR cải thiện rõ rệt trên tập được đánh giá, nhưng chưa giải quyết hoàn chỉnh bài toán tái dựng mọi bảng PDF.
+
+\subsection{Chia đoạn và lập chỉ mục cho bảng}
+
+Sau khi bảng được trích xuất, hệ thống cần biểu diễn bảng trong chỉ mục truy xuất. Nếu chỉ lưu bảng dưới dạng văn bản phẳng hoặc Markdown, truy xuất có thể tìm đúng bảng nhưng không bảo đảm xác định đúng hàng, cột hoặc ô chứa đáp án. Vì vậy, quy trình xử lý bổ sung chia đoạn có nhận thức bảng để tạo nhiều mức bằng chứng khác nhau.
 
 \begin{table}[H]
 \centering
+\caption{Các dạng đơn vị truy xuất có nhận thức bảng dùng cho truy xuất trên bảng}
+\label{tab:table-aware-chunk-types}
+
 \small
-\renewcommand{\arraystretch}{1.2}
-\caption{Thực nghiệm đầu cuối region OFF/ON trên QCDT}
-\label{tab:region-routing-e2e-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.21\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}X|
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.25\textwidth}|
+>{\RaggedRight\arraybackslash}X|
 }
 \hline
-\textbf{Cấu hình} & \textbf{Chunk} & \textbf{Bảng} & \textbf{Hit@10} &
-\textbf{Answer Match} & \textbf{Evidence Match} & \textbf{QA latency} \\
+\textbf{Loại đơn vị truy xuất} & \textbf{Vai trò} \\
 \hline
-Region OFF & 246 & 0 & 0,550 & 0,775 & 1,000 & 73,032 ms \\
+Tóm tắt bảng & Tóm tắt bảng, gồm chú thích bảng, trang, số hàng/cột và các tiêu đề chính \\
 \hline
-Region ON & 326 & 9 & 0,475 & 0,700 & 1,000 & 73,515 ms \\
+Cấu trúc bảng & Biểu diễn bảng ở dạng Markdown hoặc CSV để giữ quan hệ hàng-cột tổng thể \\
+\hline
+Hàng bảng & Biểu diễn từng hàng cùng các cặp cột-giá trị, phù hợp với câu hỏi hỏi theo một đối tượng hoặc một hàng cụ thể \\
+\hline
+Ô bảng & Biểu diễn từng ô cùng tiêu đề hàng, tiêu đề cột và giá trị ô, phục vụ truy xuất và dẫn chứng nguồn chính xác đến từng ô \\
 \hline
 \end{tabularx}
 \end{table}
 
-Kết quả đầu cuối cho thấy region routing làm giàu dữ liệu bảng và tăng số chunk,
-nhưng không tự động cải thiện truy xuất hoặc hỏi đáp trên mọi câu hỏi QCDT.
-Trong cấu hình BM25-only, nhiều chunk bảng mới làm không gian truy xuất rộng
-hơn, khiến Hit@10 và Answer Match giảm nhẹ. Vì vậy, region routing nên được
-diễn giải là tầng trích xuất và truy vết nguồn; để chuyển lợi ích bảng thành chất
-lượng QA cần thêm table-aware retrieval hoặc reranking phù hợp. Thí nghiệm này
-cố ý giữ index BM25-only để cô lập tác động của ingest; vì vậy nó chưa phủ hết
-các cấu hình truy vấn có ưu tiên metadata bảng.
-
-\subsection{Tái dựng bảng}
-\label{subsection:table-reconstruction-results}
-
-Ba backend được chạy trên cùng 25 mẫu PubTables-1M. Hybrid TATR trong thực
-nghiệm này kết hợp cấu trúc hình học từ Table Transformer với hộp từ lấy từ lớp
-văn bản PDF; OCR không được gọi trực tiếp bên trong module Hybrid TATR
-\cite{smock2022pubtables}.
-
 \begin{table}[H]
 \centering
+\caption{Kết quả truy xuất bảng trên hệ thống thật với tập 39 câu hỏi trên 6 bảng QCDT}
+\label{tab:table-qa-qcdt39}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{| >{\RaggedRight\arraybackslash}X| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| }
+\hline
+{\centering\textbf{Cấu hình}\par} & \textbf{Table Hit@5} & \textbf{Row Match@5} & \textbf{Column Match@5} & \textbf{Cell Match@5} \\
+\hline
+Chia đoạn thông thường & 1.000 & 0.000 & 1.000 & 0.000 \\
+\hline
+Chia đoạn có nhận thức bảng & 1.000 & 0.974 & 1.000 & 0.000 \\
+\hline
+Chia đoạn có nhận thức bảng + bằng chứng ở mức ô & 1.000 & 1.000 & 1.000 & 0.487 \\
+\hline
+\end{tabularx}
+\end{table}
+
+Kết quả cho thấy cả ba cấu hình đều tìm đúng bảng trong 5 kết quả đầu, thể hiện qua Table Hit@5 bằng 1.000. Tuy nhiên, cấu hình chia đoạn thông thường chỉ giúp truy xuất đúng bảng ở mức tổng thể, chưa tạo được bằng chứng ở mức hàng và ô; do đó Row Match@5 và Cell Match@5 đều bằng 0.000. Khi bổ sung chia đoạn có nhận thức bảng, hệ thống xác định được đúng hàng với Row Match@5 đạt 0.974, cho thấy biểu diễn bảng theo từng hàng giúp cải thiện rõ rệt khả năng truy xuất bằng chứng trong bảng. Tuy nhiên, Cell Match@5 vẫn bằng 0.000 vì cấu hình này chưa tạo đơn vị truy xuất ở mức ô. Khi bổ sung bằng chứng ở mức ô, Cell Match@5 tăng lên 0.487, đồng thời Row Match@5 và Column Match@5 đều đạt 1.000. Kết quả này cho thấy bằng chứng ở mức ô là cần thiết đối với các câu hỏi yêu cầu đáp án chính xác trong bảng, đặc biệt khi hệ thống cần dẫn chứng nguồn đến đúng vị trí chứa giá trị trả lời. Nói cách khác, tìm đúng bảng mới chỉ là điều kiện ban đầu; để trả lời câu hỏi bảng một cách kiểm chứng được, hệ thống cần biểu diễn bảng ở mức hàng và ô. Tuy vậy, Cell Match@5 chưa đạt mức cao tuyệt đối. Kết quả Cell Match@10 đạt 0.821 cho thấy nhiều ô đúng đã tồn tại trong chỉ mục nhưng chưa được xếp đủ cao trong 5 kết quả đầu. Vì vậy, hạn chế chính của cấu hình hiện tại không nằm ở việc thiếu dữ liệu ô, mà nằm ở bước xếp hạng bằng chứng ở mức ô. Hướng cải thiện phù hợp là bổ sung cơ chế sắp xếp lại hoặc tăng trọng số cho quan hệ giữa câu hỏi, tiêu đề hàng, tiêu đề cột và giá trị ô. Từ các kết quả trên, có thể trả lời RQ5 rằng chia đoạn có nhận thức bảng là cần thiết cho câu hỏi trên bảng. Cơ chế này giúp hệ thống chuyển từ mức chỉ tìm đúng bảng sang mức tìm đúng hàng và đúng ô chứa đáp án. Tuy nhiên, để đạt hiệu quả cao hơn ở Cell Match@5, quy trình xử lý cần tiếp tục cải thiện chiến lược xếp hạng và ưu tiên bằng chứng ở mức ô.
+
+\subsection{Truy xuất}
+
+Tầng truy xuất được đánh giá bằng cách so sánh BM25, truy xuất ngữ nghĩa, truy xuất kết hợp và truy xuất kết hợp có sắp xếp lại.
+\begin{table}[H]
+\centering
+\caption{So sánh các cấu hình truy xuất BM25, truy xuất ngữ nghĩa, truy xuất kết hợp và truy xuất kết hợp có sắp xếp lại}
+\label{tab:retrieval-strategy-comparison}
+
 \scriptsize
-\renewcommand{\arraystretch}{1.15}
-\caption{Kết quả tái dựng bảng trên 25 mẫu PubTables-1M}
-\label{tab:table-reconstruction-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.15\textwidth}
-    |>{\centering\arraybackslash}p{0.10\textwidth}
-    |>{\centering\arraybackslash}p{0.10\textwidth}
-    |>{\centering\arraybackslash}p{0.10\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.13\textwidth}
-    |>{\centering\arraybackslash}X|
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.11\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.04\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.08\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.08\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.09\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.13\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.13\textwidth}|
+>{\RaggedRight\arraybackslash}X|
 }
 \hline
-\textbf{Backend} & \textbf{Detect F1} & \textbf{Cell F1@0,50} &
-\textbf{Cell F1@0,75} & \textbf{Structure F1} &
-\textbf{Text Assignment F1} & \textbf{Exact CSV} \\
+\textbf{Tập đánh giá} & \textbf{k} & \textbf{BM25 Hit} & \textbf{Dense Hit} & \textbf{Hybrid Hit} & \textbf{Hybrid + rerank Hit} & \textbf{$\Delta$ Hybrid so với BM25} & \textbf{Latency} \\
 \hline
-Default & 0,940 & 0,650 & 0,149 & 0,199 & 0,909 & 0,000 \\
+SciFact & 5 & 0.713 & 0.713 & 0.793 & 0.780 & +0.080 & BM25 0.027s; Dense 0.068s; Hybrid 0.039s; Hybrid+rerank 0.047s \\
+
 \hline
-TATR & 0,987 & 0,491 & 0,103 & 0,010 & 0,015 & 0,000 \\
-\hline
-\textbf{Hybrid TATR} & \textbf{0,987} & \textbf{0,958} & \textbf{0,944} &
-\textbf{0,772} & \textbf{0,999} & \textbf{0,480} \\
+QASPER & 20 & 0.378 & 0.316 & 0.392 & 0.392 & +0.014 & BM25 0.026s; Dense 0.044s; Hybrid 0.042s; Hybrid+rerank 0.049s \\
 \hline
 \end{tabularx}
 \end{table}
 
-Hybrid TATR cải thiện rõ Cell F1, Structure F1 và khả năng gán chữ vào ô.
-Tuy nhiên, Exact CSV chỉ đạt 0,480. Các lỗi còn lại tập trung ở ô gộp, tiêu đề
-nhiều hàng và sai khác nhỏ trong thứ tự hàng--cột. Vì vậy, kết quả trả lời RQ2
-theo hướng tích cực nhưng không cho phép kết luận bài toán tái dựng bảng đã được
-giải quyết hoàn toàn.
 
-Để kiểm tra kết luận này trên tập lớn hơn, đồ án chạy thêm 100 mẫu
-PubTables-1M proxy. Thực nghiệm mở rộng tập trung vào TATR-only và Hybrid
-TATR, vì mục tiêu là kiểm tra vai trò của việc gán hộp từ vào cấu trúc hình học.
+Kết quả cho thấy truy xuất kết hợp đạt kết quả tốt nhất hoặc tương đương tốt nhất trên cả hai tập đánh giá. Trên SciFact, BM25 và truy xuất ngữ nghĩa có cùng Hit@5 là 0.713, trong khi truy xuất kết hợp tăng lên 0.793, tương ứng mức cải thiện +0.080 so với BM25. Điều này cho thấy việc kết hợp tín hiệu truy xuất theo từ khóa và truy xuất ngữ nghĩa giúp hệ thống tìm được bằng chứng tốt hơn so với khi sử dụng từng phương pháp riêng lẻ. Tuy nhiên, khi bổ sung sắp xếp lại, Hit@5 giảm nhẹ từ 0.793 xuống 0.780, cho thấy sắp xếp lại chưa mang lại lợi ích ổn định trên tập đánh giá này.
+
+Trên QASPER, truy xuất kết hợp đạt Hit@20 = 0.392, cao hơn BM25 = 0.378 và truy xuất ngữ nghĩa = 0.316. Mức cải thiện so với BM25 chỉ là +0.014, nhỏ hơn so với SciFact. Nguyên nhân do  tài liệu QASPER là các bài báo khoa học dài, bằng chứng thường phân tán ở nhiều đoạn và câu hỏi có thể yêu cầu tổng hợp nhiều thông tin. Trong bối cảnh này, việc kết hợp BM25 và truy xuất ngữ nghĩa vẫn giúp cải thiện kết quả, nhưng chưa đủ để giải quyết hoàn toàn khó khăn của truy xuất trên tài liệu dài.
+Về chi phí thời gian, BM25 có độ trễ thấp nhất trên cả hai tập đánh giá do chỉ dựa trên chỉ mục từ khóa. Truy xuất ngữ nghĩa có độ trễ cao hơn do cần so sánh biểu diễn vector. Truy xuất kết hợp có chi phí cao hơn BM25 nhưng vẫn ở mức chấp nhận được, đồng thời đem lại Hit@k cao hơn. Truy xuất kết hợp có sắp xếp lại làm tăng thêm chi phí xử lý nhưng không cải thiện ổn định Hit@k trong bảng kết quả này.
+
+Từ các kết quả trên, có thể trả lời \textbf{RQ3} rằng truy xuất kết hợp có cải thiện khả năng truy xuất bằng chứng so với BM25 hoặc truy xuất ngữ nghĩa riêng lẻ. Cấu hình này là lựa chọn hợp lý cho tầng truy xuất của quy trình xử lý trong phạm vi được đề xuất ở chương 1 vì tận dụng được ưu điểm của truy xuất theo từ khóa và truy xuất ngữ nghĩa.
+
+
+
+\subsection{Hỏi đáp có căn cứ}
+
+Hỏi đáp có căn cứ là tầng sinh câu trả lời dựa trên các bằng chứng được truy xuất trả về. Mục tiêu của tầng này không chỉ là trả lời đúng mà còn phải chỉ ra câu trả lời được hỗ trợ bởi đoạn văn, bảng hoặc ô dữ liệu nào trong tài liệu.
+
+Các kết quả đầu cuối của tầng hỏi đáp được trình bày ở mục 6.3 để tách rõ giữa thí nghiệm theo tầng và phạm vi kết luận chính của đồ án. Ở đây, điểm quan trọng là phân biệt hai loại lỗi: nếu Evidence Match thấp, lỗi chủ yếu thuộc truy xuất; nếu Evidence Match cao nhưng Answer Match thấp, lỗi chủ yếu thuộc bước tổng hợp câu trả lời hoặc suy luận từ nhiều bằng chứng.
+
+\section{Thực nghiệm đầu cuối trên tập đánh giá chính}
+
+Mục này tập trung vào kết quả đầu cuối. QCDT là tập đánh giá chính vì thuộc phạm vi đồ án: tài liệu PDF có lớp văn bản, cấu trúc bán hình thức, thông tin quy định/quy trình và yêu cầu trả lời có dẫn chứng nguồn. SciFact và QASPER được trình bày sau như tập đánh giá phân tích giới hạn, không dùng để kết luận rằng hệ thống đạt chất lượng cao trên hỏi đáp khoa học tổng quát.
 
 \begin{table}[H]
 \centering
+\caption{Kết quả hỏi đáp có căn cứ trên các tập đánh giá}
+\label{tab:grounded-qa-results}
+
 \scriptsize
-\renewcommand{\arraystretch}{1.15}
-\caption{Kết quả tái dựng bảng mở rộng trên 100 mẫu PubTables-1M}
-\label{tab:table-reconstruction-100-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.18\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}X|
-}
+\begin{tabularx}{\textwidth}{| >{\RaggedRight\arraybackslash}p{0.16\textwidth}| >{\RaggedRight\arraybackslash}p{0.16\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| >{\centering\arraybackslash}p{0.14\textwidth}| }
 \hline
-\textbf{Backend} & \textbf{Detect F1} & \textbf{Cell F1@0,50} &
-\textbf{Structure F1} & \textbf{Text Assignment F1} & \textbf{Exact CSV} &
-\textbf{Latency} \\
+\textbf{Tập đánh giá} & \textbf{Vai trò} & \textbf{Answer Match} & \textbf{Evidence Match} & \textbf{Grounded Rate} & \textbf{Hallucination Rate} \\
 \hline
-TATR-only & 0,980 & 0,505 & 0,021 & 0,032 & 0,000 & 0,304 s \\
+QCDT & Chính & 0.725 & 1.000 & 1.000 & 0.000 \\
 \hline
-\textbf{Hybrid TATR} & \textbf{0,980} & \textbf{0,947} & \textbf{0,778} &
-\textbf{0,997} & \textbf{0,530} & \textbf{0,268 s} \\
+SciFact & Phụ & 0.220 & 0.727 & 1.000 & 0.000 \\
+\hline
+QASPER & Phụ/Giới hạn & 0.084 & 0.240 & 1.000 & 0.054 \\
 \hline
 \end{tabularx}
 \end{table}
 
-Trên 100 mẫu, Hybrid TATR tiếp tục cải thiện mạnh so với TATR-only ở các độ đo
-liên quan đến nội dung bảng. Exact CSV tăng từ 0,480 trên tập 25 mẫu lên 0,530
-trên tập 100 mẫu, nhưng vẫn thấp hơn nhiều so với Cell F1 và Text Assignment F1.
-Điều này cho thấy hệ thống thường gán đúng phần lớn ô và văn bản, nhưng chỉ cần
-một sai khác nhỏ trong cấu trúc hoặc thứ tự ô là toàn bộ CSV bị tính sai. Cần lưu
-ý rằng tập 100 mẫu này là tập proxy dùng hộp từ chuẩn hóa của PubTables-1M,
-không phải đánh giá OCR đầu cuối trên tài liệu scan thực tế.
+\subsection{QCDT}
+
+QCDT là tập đánh giá chính trên tài liệu quy chế đào tạo tiếng Việt gồm 40 câu hỏi. Đây là miền dữ liệu gần nhất với mục tiêu của đồ án vì chứa điều khoản, mục, bảng và yêu cầu dẫn chứng nguồn theo trang hoặc vùng nội dung. Hệ thống đạt Answer Match 0.725, Evidence Match 1.000, Grounded Rate 1.000 và Hallucination Rate 0.000.
+
+Hệ thống truy xuất được ít nhất một kết quả khớp với trang hoặc mục/điều chuẩn cho toàn bộ câu hỏi QCDT theo quy tắc đánh giá hiện tại. Grounded Rate bằng 1.000 chỉ cho thấy câu trả lời có dẫn chứng nguồn hợp lệ theo quy tắc triển khai. Tuy nhiên, Answer Match chưa đạt tuyệt đối do một số câu hỏi yêu cầu tổng hợp nhiều ý, diễn giải điều kiện hoặc phân biệt các tiểu mục gần nhau. Do đó, lỗi còn lại trên QCDT chủ yếu thuộc tầng tổng hợp câu trả lời, không phải tầng truy xuất bằng chứng.
+
+
+
+\subsection{SciFact và QASPER như tập đánh giá giới hạn}
+
+SciFact và QASPER được sử dụng để kiểm tra khả năng chuyển miền và xác định giới hạn. Trên SciFact, Evidence Match đạt 0.727 và Grounded Rate đạt 1.000, nhưng Answer Match chỉ đạt 0.220. Điều này cho thấy hệ thống tìm và gắn dẫn chứng nguồn cho bằng chứng khoa học ở mức tương đối, nhưng bước tổng hợp câu trả lời trong miền khoa học vẫn là nút thắt.
+
+QASPER là tập đánh giá khó nhất vì câu hỏi tự nhiên trên bài báo khoa học dài, bằng chứng có thể phân tán ở nhiều đoạn và câu trả lời thường cần tổng hợp ngữ nghĩa. Hệ thống đạt Answer Match 0.084, Evidence Match 0.240 và Hallucination Rate 0.054. Vì vậy, QASPER nên được diễn giải như bằng chứng về giới hạn của quy trình xử lý hiện tại, không phải tập đánh giá để kết luận hệ thống đạt mức tốt nhất hiện có hoặc đạt chất lượng hỏi đáp cao trên tài liệu khoa học dài.
+
+\section{Thí nghiệm loại bỏ thành phần và phân tích thành phần}
+
+Thí nghiệm loại bỏ thành phần trả lời câu hỏi "nếu bỏ hoặc thay đổi một thành phần thì hệ thống mất gì?" Phần này so sánh các biến thể cần thiết để chứng minh vai trò của từng thành phần.
 
 \begin{table}[H]
 \centering
+\caption{Tổng hợp vai trò của các thành phần trong quy trình xử lý}
+\label{tab:component-ablation-summary}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.20\textwidth}|
+>{\raggedright\arraybackslash}p{0.22\textwidth}|
+>{\raggedright\arraybackslash}X|
+>{\raggedright\arraybackslash}p{0.24\textwidth}|
+}
+\hline
+\textbf{Thành phần} & \textbf{So sánh} & \textbf{Kết quả quan sát} & \textbf{Kết luận} \\
+\hline
+Truy xuất kết hợp & BM25 so với truy xuất ngữ nghĩa so với truy xuất kết hợp & Truy xuất kết hợp cải thiện so với từng thành phần riêng lẻ trên nhiều tập đánh giá & Kết hợp tín hiệu từ khóa và ngữ nghĩa là lựa chọn hợp lý cho quy trình xử lý chính \\
+\hline
+Dẫn chứng nguồn & \texttt{routed\_grounded} so với \texttt{no\_citation\_grounding} & Bỏ dẫn chứng nguồn làm Grounded Rate giảm và Hallucination Rate tăng & Dẫn chứng nguồn giúp duy trì khả năng kiểm chứng và tuân thủ yêu cầu bảo đảm căn cứ \\
+\hline
+Bộ kiểm tra bằng chứng & \texttt{routed\_grounded} so với \texttt{no\_evidence\_checker} & Trên QCDT, Answer Match tăng từ 0.725 lên 0.750, còn Evidence Match, Grounded Rate và Hallucination Rate không đổi & Chưa chứng minh tác động độc lập của bộ kiểm tra bằng chứng lên Hallucination Rate trên QCDT \\
+\hline
+Hybrid TATR & Mặc định so với TATR so với Hybrid TATR & Hybrid TATR tăng mạnh Cell F1, Structure F1 và Exact CSV & Tái dựng bảng cần kết hợp cấu trúc hình học và hộp từ \\
+\hline
+Chia đoạn có nhận thức bảng & Chia đoạn thông thường so với chia đoạn có nhận thức bảng so với bằng chứng ở mức ô & Cấu hình thông thường tìm đúng bảng nhưng không có bằng chứng ở mức hàng/ô; bằng chứng ở mức ô hỗ trợ dẫn chứng nguồn đến từng ô & Bảng cần được lập chỉ mục theo cấu trúc để phục vụ hỏi đáp trên bảng \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Thí nghiệm loại bỏ thành phần định tuyến theo vùng nội dung}
+
+So sánh C0 với C1 cho thấy Region OFF nhanh hơn đáng kể nhưng không tạo được khối nội dung bảng và không có siêu dữ liệu vùng/định tuyến. Region ON tạo được 9 khối nội dung bảng, đồng thời toàn bộ khối nội dung đầu ra đều có siêu dữ liệu để truy vết về vùng nguồn. Vì vậy, định tuyến theo vùng nội dung không được kết luận là tối ưu tốc độ; vai trò của nó là tạo đầu ra có cấu trúc, bảo toàn loại nội dung và hỗ trợ dẫn chứng nguồn tốt hơn.
+
+\subsection{Thí nghiệm loại bỏ thành phần truy xuất}
+
+\begin{table}[H]
+\centering
+\caption{Thí nghiệm loại bỏ thành phần truy xuất trên các tập đánh giá}
+\label{tab:retrieval-ablation-results}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.15\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.10\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.12\textwidth}|
+>{\RaggedRight\arraybackslash}p{0.12\textwidth}|
+>{\RaggedRight\arraybackslash}X|
+}
+\hline
+\textbf{Tập đánh giá} & \textbf{Top-k} & \textbf{BM25} & \textbf{Kết hợp} & \textbf{Nhận xét} \\
+\hline
+SciFact & 5 & 0.713 & 0.793 & Truy xuất kết hợp cải thiện rõ rệt so với BM25 và truy xuất ngữ nghĩa riêng lẻ \\
+\hline
+
+QASPER & 20 & 0.378 & 0.392 & Truy xuất kết hợp cải thiện nhỏ, nhưng bài toán vẫn khó do bằng chứng dài và phân tán \\
+\hline
+\end{tabularx}
+\end{table}
+
+Kết luận của thí nghiệm loại bỏ thành phần truy xuất là truy xuất kết hợp phù hợp với quy trình xử lý chính vì cân bằng giữa khớp từ khóa của BM25 và khớp ngữ nghĩa. BM25 vẫn là cấu hình cơ sở mạnh trong miền pháp quy, còn truy xuất ngữ nghĩa hỗ trợ các trường hợp câu hỏi và bằng chứng khác từ vựng. Truy xuất kết hợp hai tín hiệu nên ổn định hơn trên nhiều miền.
+
+\subsection{Thí nghiệm loại bỏ thành phần bảo đảm căn cứ, dẫn chứng nguồn và bộ kiểm tra bằng chứng}
+
+\begin{table}[H]
+\centering
+\caption{Thí nghiệm loại bỏ thành phần bảo đảm căn cứ, dẫn chứng nguồn và bộ kiểm tra bằng chứng trên QCDT}
+\label{tab:grounding-citation-ablation}
+
 \scriptsize
-\renewcommand{\arraystretch}{1.15}
-\caption{Phân tích Hybrid TATR theo nhóm bảng trên 100 mẫu}
-\label{tab:hybrid-tatr-group-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\centering\arraybackslash}p{0.08\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.13\textwidth}
-    |>{\centering\arraybackslash}X|
+\begin{tabularx}{\textwidth}{|
+>{\RaggedRight\arraybackslash}p{0.14\textwidth}|
+>{\RaggedRight\arraybackslash}X|
+>{\centering\arraybackslash}p{0.14\textwidth}|
+>{\centering\arraybackslash}p{0.14\textwidth}|
+>{\centering\arraybackslash}p{0.12\textwidth}|
+>{\centering\arraybackslash}p{0.14\textwidth}|
 }
 \hline
-\textbf{Nhóm bảng} & \textbf{Số mẫu} & \textbf{Exact CSV} &
-\textbf{Cell F1@0,50} & \textbf{Structure F1} & \textbf{Text Assignment F1} \\
+\textbf{Tập đánh giá} & \textbf{Cấu hình} & \textbf{Answer Match} & \textbf{Evidence Match} & \textbf{Grounded Rate} & \textbf{Hallucination Rate} \\
 \hline
-Bảng đơn giản & 4 & 0,750 & 0,795 & 0,795 & 1,000 \\
+QCDT & \texttt{routed\_grounded} & 0.725 & 1.000 & 1.000 & 0.000 \\
 \hline
-Bảng có ô gộp & 48 & 0,229 & 0,942 & 0,630 & 0,998 \\
+QCDT & \texttt{no\_evidence\_checker} & 0.750 & 1.000 & 1.000 & 0.000 \\
 \hline
-Tiêu đề nhiều hàng & 26 & 0,385 & 0,963 & 0,610 & 0,998 \\
-\hline
-Bảng không có đường kẻ & 88 & 0,545 & 0,951 & 0,773 & 0,997 \\
+QCDT & \texttt{no\_citation\_grounding} & 0.725 & 1.000 & 0.000 & 1.000 \\
+
 \hline
 \end{tabularx}
 \end{table}
 
-Các nhóm trong Bảng~\ref{tab:hybrid-tatr-group-results} có thể chồng lấp, ví dụ
-một bảng vừa có ô gộp vừa không có đường kẻ. Nhãn ``không có đường kẻ'' được
-xác định bằng heuristic trên ảnh bảng, không phải nhãn chính thức của PubTables.
-Kết quả cho thấy lỗi Exact CSV tập trung nhiều ở bảng có ô gộp và tiêu đề nhiều
-hàng; đây là hai nhóm cần cải thiện nếu muốn tái dựng bảng chính xác tuyệt đối.
-Do các nhóm chồng lấp, tổng số mẫu trong các nhóm không cộng đúng bằng 100.
+Trên QCDT, bỏ bộ kiểm tra bằng chứng làm Answer Match tăng nhẹ từ 0.725 lên 0.750, trong khi Evidence Match, Grounded Rate và Hallucination Rate đều không đổi. Do đó, thí nghiệm này chưa chứng minh bộ kiểm tra bằng chứng làm giảm Hallucination Rate trên QCDT. Ngược lại, bỏ cơ chế bảo đảm căn cứ bằng dẫn chứng nguồn không làm Answer Match hoặc Evidence Match giảm ngay, nhưng làm Grounded Rate giảm xuống 0.000 và Hallucination Rate tăng lên 1.000 theo quy tắc đánh giá. Kết quả này cho thấy dẫn chứng nguồn là thành phần quyết định khả năng kiểm chứng trong phạm vi thí nghiệm; tác động của bộ kiểm tra bằng chứng cần được đánh giá thêm trên tập câu hỏi có bằng chứng không đủ hoặc gây nhiễu.
 
-\subsection{Chia đoạn có nhận thức bảng}
-\label{subsection:table-aware-results}
+\subsection{Thí nghiệm loại bỏ thành phần bộ xử lý bảng}
 
-Thực nghiệm mở rộng gồm 39 câu hỏi bảng trên 6 bảng của tài liệu QCDT, dùng
-BM25 trên ba corpus được tạo từ cùng dữ liệu ingest. Các câu hỏi bao gồm tra ô
-trực tiếp, tra ngược theo giá trị, tra theo khoảng điều kiện và một nhóm bảng có
-header rộng. Kết quả top-5 là kết quả chính; top-10 được báo cáo để kiểm tra liệu
-bằng chứng ô có tồn tại ở thứ hạng thấp hơn.
+Thí nghiệm loại bỏ thành phần bộ xử lý bảng đã được trình bày ở Bảng~\ref{tab:table-backend-pubtables25} và Bảng~\ref{tab:table-row-column-mae}. Bộ trích xuất mặc định giữ được chữ nhưng thường sai hàng/cột; TATR-only nắm tốt hình học nhưng không gán tốt nội dung; Hybrid TATR kết hợp hai nguồn nên cải thiện đồng thời Structure F1 và Text Assignment F1. Do Exact CSV vẫn chỉ đạt 0.480, kết luận nên giới hạn ở mức Hybrid TATR cải thiện rõ rệt trên tập con được đánh giá, chưa phải lời giải hoàn chỉnh cho mọi bảng PDF.
 
-\begin{table}[H]
-\centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Ảnh hưởng của chia đoạn có nhận thức bảng}
-\label{tab:table-aware-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.31\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}X|
-}
-\hline
-\textbf{Cấu hình} & \textbf{Table@5} & \textbf{Row@5} &
-\textbf{Column@5} & \textbf{Cell@5} \\
-\hline
-Chunk thông thường & 1,000 & 0,000 & 1,000 & 0,000 \\
-\hline
-Table-aware, không có cell chunk & 1,000 & 0,974 & 1,000 & 0,000 \\
-\hline
-Table-aware và cell chunk & 1,000 & 1,000 & 1,000 & 0,487 \\
-\hline
-\end{tabularx}
-\end{table}
+\subsection{Thí nghiệm loại bỏ thành phần chia đoạn có nhận thức bảng và dẫn chứng nguồn ở mức ô}
+\label{subsec:ablation-table-aware-chunking-cell-citation}
 
-Khi tăng lên top-10, cấu hình có cell chunk đạt Cell Match 0,821 trên 39 câu hỏi.
-Kết quả cho thấy biểu diễn hàng và ô là cần thiết để tạo bằng chứng chi tiết,
-nhưng Cell Match@5 còn 0,487 nên thứ hạng của cell chunk vẫn cần được cải thiện.
-Tập 39 câu có độ khó cao hơn vì bao phủ nhiều bảng, nhiều dạng truy vấn và các
-câu tra cứu theo khoảng điều kiện. Vì vậy, kết luận RQ5 được giới hạn trong phạm
-vi tài liệu QCDT và các bảng đã gán nhãn.
 
-\subsection{Truy xuất thông tin}
-\label{subsection:retrieval-results}
 
-BM25, dense, hybrid và hybrid có sắp xếp lại được so sánh trên ba miền dữ liệu.
-Các tập SciFact và QASPER được dùng để kiểm tra khả năng chuyển miền, không
-phải cơ sở cho tuyên bố đạt kết quả tốt nhất hiện có
-\cite{thakur2021beir,wadden2020scifact,dasigi2021qasper}.
-
-\begin{table}[H]
-\centering
-\scriptsize
-\renewcommand{\arraystretch}{1.12}
-\caption{Kết quả truy xuất trên SciFact, QCDT và QASPER}
-\label{tab:retrieval-master-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.14\textwidth}
-    |>{\raggedright\arraybackslash}p{0.19\textwidth}
-    |>{\centering\arraybackslash}p{0.09\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}X|
-}
-\hline
-\textbf{Tập} & \textbf{Chiến lược} & \textbf{Hit@k} &
-\textbf{Recall@k} & \textbf{MRR@k} & \textbf{NDCG@k} \\
-\hline
-SciFact, \(k=5\) & BM25 & 0,713 & 0,693 & 0,569 & 0,594 \\
-& Dense & 0,713 & 0,697 & 0,580 & 0,604 \\
-& \textbf{Hybrid} & \textbf{0,793} & \textbf{0,771} & 0,654 & \textbf{0,675} \\
-& Hybrid + rerank & 0,780 & 0,762 & \textbf{0,654} & 0,674 \\
-\hline
-QCDT, \(k=10\) & BM25 & 0,550 & 0,550 & 0,387 & 0,469 \\
-& Dense & 0,400 & 0,400 & 0,258 & 0,331 \\
-& \textbf{Hybrid} & \textbf{0,600} & \textbf{0,600} & 0,407 & \textbf{0,492} \\
-& Hybrid + rerank & 0,575 & 0,575 & \textbf{0,413} & 0,490 \\
-\hline
-QASPER, \(k=20\) & BM25 & 0,570 & 0,502 & \textbf{0,290} & \textbf{0,717} \\
-& Dense & 0,420 & 0,370 & 0,170 & 0,571 \\
-& Hybrid & 0,570 & \textbf{0,518} & 0,250 & 0,670 \\
-& Hybrid + rerank & 0,570 & \textbf{0,518} & 0,281 & 0,691 \\
-\hline
-\end{tabularx}
-\end{table}
-
-Hybrid đạt Hit@k cao nhất trên SciFact và QCDT, đồng thời tăng Recall@20 trên
-QASPER. Tuy nhiên, reranking không cải thiện ổn định và BM25 vẫn có MRR,
-NDCG tốt hơn trên QASPER. Trên QCDT, dense-only thấp hơn BM25, phù hợp với
-đặc trưng thuật ngữ pháp quy cần khớp từ khóa chính xác. Kết quả RQ3 vì vậy là:
-hybrid hữu ích nhưng không chiếm ưu thế trên mọi độ đo và mọi miền.
-
-\section{Thực nghiệm đầu cuối}
-\label{section:end-to-end-results}
-
-\subsection{Tập đánh giá chính}
-
-Cấu hình C0 dùng một lần truy xuất theo kế hoạch đã chọn, sau đó kiểm tra bằng
-chứng, sinh câu trả lời và tạo dẫn chứng. Cấu hình này không tự động truy xuất
-lại khi bộ kiểm tra trả về \texttt{expand\_retrieval} hoặc
-\texttt{switch\_strategy}.
-
-\begin{table}[H]
-\centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Kết quả hỏi đáp đầu cuối trên tập đánh giá chính}
-\label{tab:primary-e2e-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.22\textwidth}
-    |>{\centering\arraybackslash}p{0.13\textwidth}
-    |>{\centering\arraybackslash}p{0.16\textwidth}
-    |>{\centering\arraybackslash}p{0.16\textwidth}
-    |>{\centering\arraybackslash}X|
-}
-\hline
-\textbf{Tập} & \textbf{Answer Match} & \textbf{Evidence Match} &
-\textbf{Grounded Rate} & \textbf{Hallucination Rate} \\
-\hline
-QCDT, 40 câu & 0,725 & 1,000 & 1,000 & 0,000 \\
-\hline
-\end{tabularx}
-\end{table}
-
-Trên QCDT, bằng chứng được tìm đúng nhưng Answer Match chỉ đạt 0,725. Phân
-tích từng câu cho thấy lỗi chủ yếu nằm ở việc tổng hợp thiếu một phần điều kiện
-hoặc chọn câu trả lời ngắn chưa khớp đầy đủ đáp án chuẩn. Hallucination Rate bằng 0,000
-chỉ có nghĩa không phát hiện ca thiếu căn cứ theo bộ đánh giá và cấu hình này;
-đây không phải bảo đảm loại bỏ hallucination trên mọi tài liệu.
-
-\subsection{Tập đánh giá phụ và giới hạn chuyển miền}
-
-\begin{table}[H]
-\centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Kết quả hỏi đáp trên dữ liệu khoa học}
-\label{tab:secondary-e2e-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.15\textwidth}
-    |>{\centering\arraybackslash}p{0.09\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.14\textwidth}
-    |>{\centering\arraybackslash}X|
-}
-\hline
-\textbf{Tập} & \textbf{Số câu} & \textbf{Answer} & \textbf{Evidence} &
-\textbf{Grounded} & \textbf{Hallucination} & \textbf{E2E success} \\
-\hline
-SciFact & 300 & 0,220 & 0,727 & 1,000 & 0,000 & 0,203 \\
-\hline
-QASPER & 500 & 0,084 & 0,240 & 1,000 & 0,054 & 0,050 \\
-\hline
-\end{tabularx}
-\end{table}
-
-Grounded Rate cao nhưng Answer Match và E2E success thấp cho thấy câu trả lời
-có thể bám vào bằng chứng đã chọn mà vẫn thiếu ý hoặc không khớp đáp án chuẩn.
-QASPER thường yêu cầu tổng hợp nhiều đoạn và trả lời tự do, trong khi bộ sinh
-hiện tại thiên về câu trả lời ngắn, có kiểm soát. Do đó, SciFact và QASPER được
-dùng để chỉ ra giới hạn, không được gộp với kết luận chính trên QCDT.
-
-\section{Ablation và phân tích thành phần}
-\label{section:ablation-results}
-
-Bảng~\ref{tab:ablation-summary} tóm tắt các ablation chính. Các kết quả chi tiết
-về backend bảng, table-aware chunking và chiến lược truy xuất đã được trình bày
-ở các bảng trước để tránh lặp số liệu.
-
-\begin{table}[H]
-\centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Tổng hợp vai trò của các thành phần}
-\label{tab:ablation-summary}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\raggedright\arraybackslash}p{0.27\textwidth}
-    |>{\raggedright\arraybackslash}X|
-}
-\hline
-\textbf{Thành phần} & \textbf{So sánh} & \textbf{Kết luận trong phạm vi thí nghiệm} \\
-\hline
-Region routing &
-Bật so với tắt trên 31 PDF &
-Tăng số block bảng và route trace trên QCDT, nhưng tăng thời gian xử lý; trong
-thực nghiệm đầu cuối BM25-only, Hit@10 và Answer Match không tăng. \\
-\hline
-Hybrid TATR &
-So với Default và TATR &
-Cải thiện Cell F1, Structure F1 và Text Assignment F1; trên 100 mẫu, Exact CSV
-đạt 0,530 và còn yếu ở ô gộp, tiêu đề nhiều hàng. \\
-\hline
-Hybrid retrieval &
-So với BM25 và dense &
-Tăng Hit@k trên SciFact và QCDT; không tốt nhất trên mọi độ đo QASPER. \\
-\hline
-Table-aware chunking &
-So với chunk thông thường &
-Cải thiện Row Match từ 0,000 lên 0,974 và Cell Match@5 từ 0,000 lên 0,487 trên
-39 câu hỏi. \\
-\hline
-Router, evidence checker, citation &
-C0 so với các cấu hình tắt từng thành phần &
-Router cải thiện QCDT; citation grounding quyết định Grounded Rate. Evidence
-checker chưa làm tăng Answer Match trên QCDT trong lần chạy này. \\
-\hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[H]
-\centering
-\scriptsize
-\renewcommand{\arraystretch}{1.15}
-\caption{Ablation của luồng hỏi đáp trên QCDT}
-\label{tab:qa-ablation-results}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.13\textwidth}
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\centering\arraybackslash}p{0.11\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}p{0.12\textwidth}
-    |>{\centering\arraybackslash}X|
-}
-\hline
-\textbf{Tập} & \textbf{Cấu hình} & \textbf{Answer} & \textbf{Evidence} &
-\textbf{Grounded} & \textbf{Hallucination} \\
-\hline
-QCDT & C0: routed grounded & 0,725 & 1,000 & 1,000 & 0,000 \\
-& Không có router & 0,675 & 0,950 & 1,000 & 0,000 \\
-& Không có evidence checker & 0,750 & 1,000 & 1,000 & 0,000 \\
-& Không grounding citation & 0,725 & 1,000 & 0,000 & 1,000 \\
-\hline
-\end{tabularx}
-\end{table}
-
-Trên QCDT, tắt evidence checker làm Answer Match tăng nhẹ từ 0,725 lên 0,750,
-nên không thể kết luận evidence checker luôn làm tăng độ chính xác câu trả lời.
-Tắt citation grounding không làm thay đổi Answer Match nhưng làm giảm mạnh
-Grounded Rate và làm Hallucination Rate tăng theo quy tắc đánh giá. Điều đó
-cho thấy độ đúng nội dung và khả năng kiểm chứng là hai tiêu chí khác nhau.
+Từ Bảng~\ref{tab:table-qa-qcdt39}, kết quả cho thấy chia đoạn có nhận thức bảng không thay thế trích xuất bảng mà là bước tiếp theo sau trích xuất bảng. Nó biến bảng đã trích xuất thành các đơn vị bằng chứng phù hợp cho truy xuất và dẫn chứng nguồn. Bằng chứng ở mức ô là điều kiện cần để tạo dẫn chứng nguồn chính xác đến từng ô, nhưng vẫn cần sắp xếp lại tốt hơn để ưu tiên ô giá trị thay vì ô tiêu đề.
 
 \section{Phân tích lỗi và giới hạn}
-\label{section:error-analysis}
+
+Các kết quả trên cho thấy hệ thống hoạt động tốt nhất trong phạm vi tài liệu PDF có lớp văn bản, cấu trúc bán hình thức, bằng chứng rõ và câu hỏi cần trả lời theo nguồn. Tuy nhiên, các lỗi còn lại có thể phát sinh ở nhiều tầng khác nhau. Mục này tổng hợp các trường hợp lỗi điển hình để làm rõ giới hạn của quy trình xử lý và hướng cải thiện.
 
 \begin{table}[H]
 \centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Các nhóm lỗi chính quan sát được}
-\label{tab:error-cases}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.20\textwidth}
-    |>{\raggedright\arraybackslash}p{0.24\textwidth}
-    |>{\raggedright\arraybackslash}X
-    |>{\raggedright\arraybackslash}p{0.23\textwidth}|
+\caption{Các trường hợp lỗi điển hình theo tầng quy trình xử lý}
+\label{tab:error-cases-by-layer}
+
+\scriptsize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.06\textwidth}|
+>{\raggedright\arraybackslash}p{0.19\textwidth}|
+>{\raggedright\arraybackslash}p{0.13\textwidth}|
+>{\raggedright\arraybackslash}p{0.17\textwidth}|
+>{\raggedright\arraybackslash}p{0.19\textwidth}|
+>{\raggedright\arraybackslash}X|
 }
 \hline
-\textbf{Nhóm lỗi} & \textbf{Biểu hiện} & \textbf{Nguyên nhân quan sát được} &
-\textbf{Hướng cải thiện} \\
+\textbf{Mã ca} & \textbf{Loại câu hỏi/tình huống} & \textbf{Tầng lỗi chính} & \textbf{Hiện tượng} & \textbf{Nguyên nhân} & \textbf{Hướng xử lý} \\
 \hline
-Câu hỏi quy chế nhiều điều kiện &
-Evidence đúng nhưng câu trả lời thiếu một ý hoặc điều kiện. &
-Chunk ngắn và bộ sinh ưu tiên câu trả lời trích xuất ngắn; Answer Match QCDT
-chỉ đạt 0,725. &
-Truy xuất phân cấp theo mục, tổng hợp nhiều bằng chứng. \\
+1 & Câu hỏi QCDT cần tổng hợp nhiều điều kiện hoặc nhiều tiểu mục & Tổng hợp câu trả lời & Bằng chứng đúng nhưng Answer Match chưa đạt tuyệt đối & Bộ sinh câu trả lời chưa tổng hợp đầy đủ thông tin hoặc cách diễn giải chưa khớp với đáp án chuẩn & Tách câu hỏi thành các ý nhỏ, kiểm tra từng ý với bằng chứng và sinh câu trả lời theo gạch đầu dòng, mỗi ý kèm dẫn chứng riêng \\
 \hline
-Truy xuất dense trên QCDT &
-Dense Hit@10 đạt 0,400, thấp hơn BM25 0,550. &
-Thuật ngữ pháp quy và tên điều khoản cần khớp từ khóa chính xác. &
-Embedding tiếng Việt theo miền và hard-negative phù hợp. \\
+2 & Bảng có ô gộp, nhiều hàng tiêu đề hoặc cấu trúc không đều & Trích xuất bảng & Structure F1 và Exact CSV chưa tuyệt đối dù nhận diện bảng tốt & Khó khôi phục quan hệ giữa hàng, cột và các ô gộp từ cấu trúc PDF & Tinh chỉnh mô hình và bổ sung hậu xử lý cho ô gộp \\
 \hline
-Bảng có ô gộp hoặc tiêu đề nhiều hàng &
-Cell F1 cao nhưng Exact CSV của Hybrid TATR chỉ đạt 0,530 trên 100 mẫu. &
-Sai khác nhỏ trong tách hàng, gán span và thứ tự ô làm toàn bộ CSV không khớp. &
-Tái dựng bằng đồ thị và ràng buộc cấu trúc. \\
+3 & Câu hỏi trên bảng yêu cầu đúng một ô giá trị
+& Chia đoạn / xếp hạng truy xuất
+& Ô đúng đã có trong chỉ mục nhưng không luôn nằm trong 5 kết quả đầu
+& Ô tiêu đề hoặc tóm tắt hàng có thể được BM25 xếp cao hơn ô giá trị
+& Xếp hạng lại theo cấu trúc bảng, ưu tiên ô khớp đồng thời với tiêu đề hàng, tiêu đề cột và câu hỏi; kiểm tra dẫn chứng ở mức ô \\
 \hline
-Ô bảng nằm ngoài top-5 &
-Cell Match@5 đạt 0,487 nhưng Cell Match@10 đạt 0,821 trên 39 câu hỏi. &
-Nhiều cell chunk đã tồn tại nhưng điểm xếp hạng chưa đủ cao. &
-Reranker chuyên biệt cho row/column header và giá trị ô. \\
+4 & QASPER hoặc câu hỏi khoa học dài, bằng chứng phân tán & Truy xuất và suy luận từ nhiều bằng chứng & Evidence Match và Answer Match thấp & Câu hỏi dài, nhiều phần, cần tổng hợp nhiều đoạn và suy luận ngữ nghĩa & Tách câu hỏi, truy xuất có nhận thức theo phần tài liệu, tổng hợp bằng chứng nhiều bước và mô hình tổng hợp chuyên cho hỏi đáp khoa học \\
 \hline
-QASPER nhiều bằng chứng &
-Answer Match 0,084 và E2E success 0,050. &
-Câu hỏi dài, đáp án tự do và cần kết hợp nhiều đoạn trong bài báo. &
-Lập kế hoạch bằng chứng và sinh tóm tắt có kiểm chứng. \\
+
+\end{tabularx}
+\end{table}
+
+
+
+Giới hạn quan trọng nhất của hệ thống là Grounded Rate cao không đồng nghĩa mọi câu trả lời đều đúng. Grounded Rate chỉ xác nhận câu trả lời có gắn bằng chứng/dẫn chứng nguồn; Answer Match còn phụ thuộc vào chất lượng bằng chứng, độ bao phủ bằng chứng và khả năng tổng hợp của bộ sinh câu trả lời. Điều này thể hiện rõ ở SciFact và QASPER: hệ thống có dẫn chứng nguồn nhưng Answer Match vẫn thấp.
+
+Giới hạn thứ hai nằm ở bảng. Hybrid TATR và chia đoạn có nhận thức bảng cải thiện mạnh so với cấu hình cơ sở, nhưng Exact CSV và Cell Match@5 chưa đạt tuyệt đối. Vì vậy, kết quả bảng là bằng chứng thực nghiệm cho hướng thiết kế, không khẳng định hệ thống giải quyết toàn diện mọi dạng bảng PDF.
+
+Giới hạn thứ ba là quy mô của một số tập đánh giá nội bộ còn nhỏ. Do đó, cần mở rộng thêm số lượng câu hỏi, số lượng tài liệu và các dạng bảng khác nhau để đánh giá độ ổn định của hệ thống một cách đầy đủ hơn. Đối với QASPER, kết quả thấp cho thấy hệ thống cần được cải thiện ở khả năng truy xuất theo từng phần của tài liệu, tách câu hỏi phức tạp thành các câu hỏi nhỏ hơn và tổng hợp câu trả lời từ nhiều bằng chứng trước khi mở rộng phạm vi kết luận sang nhóm tài liệu khoa học dài.
+
+\section{Tổng kết chương}
+
+Chương 6 đã đánh giá hệ thống theo cả hai hướng: theo tầng quy trình xử lý và theo kết luận đầu cuối. Các kết quả chính được tổng hợp theo từng câu hỏi nghiên cứu như sau.
+
+\begin{table}[H]
+\centering
+\caption{Tổng kết RQ - kết luận - giới hạn}
+\label{tab:rq-summary-chapter6}
+
+\footnotesize
+\begin{tabularx}{\textwidth}{|
+>{\raggedright\arraybackslash}p{0.08\textwidth}|
+>{\raggedright\arraybackslash}X|
+>{\raggedright\arraybackslash}p{0.28\textwidth}|
+>{\raggedright\arraybackslash}p{0.24\textwidth}|
+}
 \hline
-OCR tài liệu thực tế &
-Token F1 FUNSD 0,826, thấp hơn tập scan tổng hợp 1,000. &
-Nhiễu ảnh, phông chữ, bố cục và căn chỉnh bbox phức tạp hơn. &
-Thêm tập scan tiếng Việt gán nhãn và truyền độ tin cậy OCR. \\
+\textbf{RQ} & \textbf{Kết luận thực nghiệm} & \textbf{Bằng chứng chính} & \textbf{Giới hạn} \\
+\hline
+RQ1 & Định tuyến theo vùng nội dung tạo đầu ra giàu siêu dữ liệu và phát hiện được khối nội dung bảng, đổi lại thời gian tiếp nhận và trích xuất tài liệu tăng. & Region ON tạo 9 khối nội dung bảng và 494 khối nội dung có siêu dữ liệu. \newline Thời gian 16.595s so với 0.349s Region OFF. & Chưa chứng minh định tuyến tối ưu mọi độ đo. \newline Phụ thuộc chất lượng bộ phát hiện vùng. \\
+\hline
+RQ2 & Hybrid TATR cải thiện rõ rệt tái dựng bảng vì kết hợp hình học và hộp từ. & Cell F1@0.75 = 0.944; Structure F1 = 0.772; Text Assignment F1 = 0.999; Exact CSV = 0.480. & Exact CSV chưa tuyệt đối; tập con mới 25 bảng. \\
+\hline
+RQ3 & Truy xuất kết hợp là cấu hình truy xuất chính hợp lý vì cải thiện so với BM25 hoặc truy xuất ngữ nghĩa riêng lẻ trên nhiều tập đánh giá.
+& So với BM25, Hit@k tăng 0.080 trên SciFact  và 0.014 trên QASPER.
+& Sắp xếp lại kết quả chưa luôn cải thiện \newline QASPER vẫn khó do tài liệu dài và bằng chứng phân tán. \\
+\hline
+RQ4 & Dẫn chứng nguồn giúp duy trì khả năng kiểm chứng của câu trả lời; tác động độc lập của bộ kiểm tra bằng chứng chưa được chứng minh trên QCDT. & Bỏ dẫn chứng nguồn làm Grounded Rate giảm từ 1.000 xuống 0.000 và Hallucination Rate tăng từ 0.000 lên 1.000; bỏ bộ kiểm tra bằng chứng giữ Hallucination Rate ở 0.000. & Cần đánh giá bộ kiểm tra bằng chứng trên tập có bằng chứng thiếu hoặc gây nhiễu. \\
+\hline
+RQ5 & Chia đoạn có nhận thức bảng và bằng chứng ở mức ô cần thiết cho hỏi đáp trên bảng vì chia đoạn thông thường chỉ tìm đúng bảng, không đủ bằng chứng ở mức hàng/ô. & Row Match@5 tăng 0.000 -> 1.000 \newline Cell Match@5 đạt 0,487 khi có bằng chứng ở mức ô. & Cần cải thiện xếp hạng ô và mở rộng tập đánh giá bảng. \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsection{Các ca lỗi tiêu biểu}
+Tổng hợp lại, kết quả thực nghiệm ủng hộ thiết kế quy trình xử lý theo hướng kết hợp xử lý cấu trúc PDF, truy xuất kết hợp, kiểm tra bằng chứng, dẫn chứng nguồn và biểu diễn bảng có cấu trúc. Hệ thống đạt kết quả tốt nhất trên tập đánh giá chính thuộc phạm vi đồ án là QCDT, trong đó câu trả lời có Evidence Match và Grounded Rate cao, đồng thời Hallucination Rate được kiểm soát. Các tập đánh giá SciFact và QASPER cho thấy hướng tiếp cận có thể mở rộng sang miền khoa học nhưng vẫn còn giới hạn ở truy xuất trên tài liệu dài, suy luận từ nhiều bằng chứng và tổng hợp câu trả lời.
 
-\textbf{Ca QCDT q11.} Câu hỏi yêu cầu phân biệt học phần tiên quyết, học trước
-và song hành. Hệ thống tìm được bằng chứng liên quan nhưng câu trả lời chủ yếu
-nêu điều kiện của đồ án tốt nghiệp và chỉ giải thích học phần song hành. Đây là
-trường hợp Evidence Match đúng nhưng Answer Match sai vì chưa tổng hợp đủ ba
-khái niệm.
+Các kết quả này là cơ sở cho Chương 7 tổng kết mức độ hoàn thành mục tiêu đề tài và đề xuất hướng phát triển: mở rộng tập đánh giá tiếng Việt, cải thiện sắp xếp lại và xếp hạng ô, tăng khả năng xử lý bảng phức tạp và nâng cấp cơ chế tổng hợp câu trả lời từ nhiều bằng chứng.
 
-\textbf{Ca QCDT q17.} Câu hỏi hỏi hậu quả khi người học không nộp học phí đúng
-hạn. Hệ thống chỉ trả lại nghĩa vụ ``nộp học phí đầy đủ và đúng thời hạn'', không
-trả lời hậu quả. Ca này cho thấy khớp từ khóa có thể đưa về đúng đoạn chủ đề nhưng
-không bảo đảm đoạn được chọn chứa quan hệ mà câu hỏi yêu cầu.
-
-\textbf{Ca Table QA real\_table\_q006.} Với câu hỏi về cột ``1--2'', cấu hình
-table-aware có cell chunk tìm đúng bảng, hàng và cột nhưng cell chưa nằm trong
-top-5. Khi tăng lên top-10, cell đúng được thu hồi. Lỗi nằm ở thứ hạng bằng chứng,
-không phải thiếu dữ liệu ô trong corpus.
-
-\textbf{Ca Table QA real\_table\_q037.} Câu hỏi về hàng ``thang 10'' trong bảng
-quy đổi điểm học phần vẫn chưa khớp cell ở top-10. Bảng này có header rộng và
-một ô chứa nhiều giá trị, nên bộ truy xuất dễ tìm đúng bảng nhưng khó đưa đúng
-cell lên thứ hạng cao.
-
-\textbf{Ca QASPER về bảy ngôn ngữ Ấn Độ.} Hệ thống lấy một đoạn cùng bài báo
-nhưng đoạn đó mô tả chiến lược pooling, không liệt kê bảy ngôn ngữ được hỏi.
-Trường hợp này minh họa giới hạn của truy xuất và tổng hợp bằng chứng trên bài
-báo dài.
-
-Các kết quả còn hai giới hạn chính. Thứ nhất, tập cấu trúc bảng mở rộng gồm 100
-mẫu PubTables proxy với hộp từ chuẩn hóa, nhưng phân nhóm ``không có đường
-kẻ'' được xác định bằng heuristic ảnh; tập Table QA mở rộng mới có 39 câu hỏi
-trên một tài liệu QCDT. Thứ hai, Grounded Rate và Hallucination Rate phụ thuộc
-quy tắc đánh giá; chúng không
-thay thế đánh giá thủ công về tính đúng, đầy đủ và phù hợp ngữ cảnh.
-
-\section{Kết luận chương}
-\label{section:experiment-conclusion}
-
-\begin{table}[H]
-\centering
-\small
-\renewcommand{\arraystretch}{1.2}
-\caption{Kết luận theo câu hỏi nghiên cứu}
-\label{tab:rq-conclusions}
-\begin{tabularx}{\textwidth}{
-    |>{\raggedright\arraybackslash}p{0.10\textwidth}
-    |>{\raggedright\arraybackslash}X
-    |>{\raggedright\arraybackslash}p{0.31\textwidth}|
-}
-\hline
-\textbf{RQ} & \textbf{Kết luận} & \textbf{Giới hạn} \\
-\hline
-RQ1 &
-Luồng ingest chính đạt success rate 1,000 trên 31 PDF thử nghiệm; bật region
-routing tạo route trace, block bảng và metadata nguồn rõ hơn. &
-Region routing tăng khả năng truy vết nhưng chưa chứng minh cải thiện QA ở cấu
-hình BM25-only; chưa có tập nhãn thủ công để tính Routing Accuracy theo từng
-loại vùng. \\
-\hline
-RQ2 &
-Hybrid TATR cải thiện rõ tái dựng bảng so với hai backend còn lại. &
-Exact CSV 0,530 trên 100 mẫu; lỗi còn tập trung ở ô gộp và tiêu đề nhiều hàng. \\
-\hline
-RQ3 &
-Hybrid retrieval tăng Hit@k trên SciFact và QCDT. &
-Không tốt nhất trên mọi độ đo QASPER; reranking chưa ổn định. \\
-\hline
-RQ4 &
-Cấu hình chính đạt Answer Match 0,725 trên QCDT, đồng thời giữ Evidence Match
-1,000 và Grounded Rate 1,000 theo bộ đánh giá. &
-Không bảo đảm loại bỏ hallucination ngoài các tập và quy tắc đã đánh giá. \\
-\hline
-RQ5 &
-Table-aware chunking giúp truy xuất đúng hàng và tạo khả năng truy xuất ô. &
-Cell Match@5 còn 0,487; tập mở rộng 39 câu mới bao phủ một tài liệu QCDT. \\
-\hline
-\end{tabularx}
-\end{table}
-
-Nhìn chung, kết quả hỗ trợ lựa chọn thiết kế của đồ án: trích xuất PDF theo vùng,
-kết hợp hình học bảng với hộp từ, giữ metadata nguồn và đánh giá câu trả lời cùng
-bằng chứng. Đồng thời, kết quả trên QASPER, OCR thực tế và Exact CSV cho thấy
-hệ thống vẫn còn hạn chế ở tổng hợp nhiều bằng chứng, xử lý scan và tái dựng
-bảng phức tạp. Các kết luận trong chương chỉ áp dụng cho dữ liệu, cấu hình và
-các tệp kết quả thực nghiệm đã nêu.
 
 \end{document}

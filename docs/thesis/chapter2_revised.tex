@@ -72,8 +72,8 @@ nào cũng lưu nội dung theo cấu trúc thuận lợi cho xử lý tự đ�
 chứa văn bản, bảng, hình ảnh, chú thích, tiêu đề đầu trang, chân trang, số trang và
 bố cục nhiều cột. Khi trích xuất tự động, nội dung có thể bị sai thứ tự đọc, mất ngữ
 cảnh hoặc lẫn các thành phần không thuộc nội dung chính. Các bộ dữ liệu phân
-tích bố cục tài liệu như DocLayNet và PubTables-1M cũng cho thấy xử lý layout và
-bảng là những bài toán riêng trong khai thác tài liệu PDF
+tích bố cục tài liệu như DocLayNet và PubTables-1M cũng cho thấy xử lý bố cục và
+bảng là những bài toán riêng trong khai thác tài liệu PDF~
 \cite{pfitzmann2022doclaynet,smock2022pubtables}.
 
 Bảng biểu là một thách thức quan trọng vì thông tin trong bảng phụ thuộc vào quan
@@ -81,7 +81,7 @@ hệ giữa hàng, cột và ô. Nếu bảng chỉ được nối thành văn b
 thể giữ được một phần từ khóa nhưng mất quan hệ giữa điều kiện và giá trị. Điều
 này ảnh hưởng trực tiếp đến các câu hỏi dạng tra cứu như quy đổi điểm, tìm khoảng
 giá trị hoặc xác định điều kiện áp dụng. Với PDF được quét từ ảnh, hệ thống còn
-cần nhận dạng ký tự quang học để lấy nội dung và vị trí từ trên trang
+cần nhận dạng ký tự quang học để lấy nội dung và vị trí từ trên trang~
 \cite{du2020ppocr}.
 
 Từ các đặc điểm trên, đồ án tập trung vào bốn thách thức chính: trích xuất nội dung
@@ -111,18 +111,18 @@ kết quả.
 
 Các hệ thống truy xuất và hỏi đáp trên tài liệu thường kết hợp nhiều hướng tiếp
 cận. Truy xuất theo từ khóa như BM25 có ưu điểm nhanh, dễ triển khai và bám sát
-thuật ngữ trong tài liệu \cite{robertson2009bm25}. Truy xuất ngữ nghĩa biểu diễn
+thuật ngữ trong tài liệu~\cite{robertson2009bm25}. Truy xuất ngữ nghĩa biểu diễn
 câu hỏi và đoạn văn bản trong không gian vector, nhờ đó có thể tìm các đoạn liên
-quan ngay cả khi câu hỏi không trùng từ khóa với tài liệu
+quan ngay cả khi câu hỏi không trùng từ khóa với tài liệu~
 \cite{karpukhin2020dpr,reimers2019sentencebert}. Tuy nhiên, trong tài liệu quy
 định, chỉ dùng một trong hai hướng có thể chưa đủ: từ khóa có thể bỏ sót cách diễn
 đạt khác, còn truy xuất ngữ nghĩa có thể lấy nhầm đoạn gần nghĩa nhưng sai điều
 kiện.
 
 Hướng hỏi đáp tăng cường bằng truy xuất sử dụng các đoạn đã truy xuất làm ngữ
-cảnh cho bước sinh câu trả lời \cite{lewis2020rag}. Các hướng gần đây cũng nhấn
+cảnh cho bước sinh câu trả lời~\cite{lewis2020rag}. Các hướng gần đây cũng nhấn
 mạnh vai trò của việc kiểm tra lại quá trình truy xuất, sinh và phê bình câu trả lời
-nhằm giảm nguy cơ tạo thông tin thiếu căn cứ \cite{asai2024selfrag}. Trong phạm
+nhằm giảm nguy cơ tạo thông tin thiếu căn cứ~\cite{asai2024selfrag}. Trong phạm
 vi đồ án, các hướng tiếp cận này được sử dụng như nền tảng để thiết kế quy trình
 truy xuất, kiểm tra bằng chứng và sinh câu trả lời có dẫn chứng.
 
@@ -139,7 +139,7 @@ truy xuất, kiểm tra bằng chứng và sinh câu trả lời có dẫn chứ
     |>{\raggedright\arraybackslash}p{0.18\textwidth}|
 }
 \hline
-\textbf{Hướng tiếp cận} & \textbf{Điểm mạnh} & \textbf{Hạn chế trong bài toán PDF QA} & \textbf{Nguồn} \\
+\textbf{Hướng tiếp cận} & \textbf{Điểm mạnh} & \textbf{Hạn chế trong bài toán hỏi đáp trên PDF} & \textbf{Nguồn} \\
 \hline
 Truy xuất theo từ khóa &
 Nhanh, bám sát thuật ngữ và điều khoản trong tài liệu. &
@@ -207,8 +207,8 @@ Hệ thống cho phép xử lý tài liệu PDF đầu vào và xác định th�
 tài liệu. \\
 \hline
 FR-02 & Trích xuất nội dung &
-Hệ thống trích xuất văn bản, bảng và metadata nguồn như tài liệu, trang, vùng
-nội dung và loại block. \\
+Hệ thống trích xuất văn bản, bảng và siêu dữ liệu nguồn như tài liệu, trang, vùng
+nội dung và loại khối nội dung. \\
 \hline
 FR-03 & Định tuyến theo vùng nội dung &
 Hệ thống có khả năng lựa chọn cách xử lý phù hợp cho vùng văn bản, bảng hoặc
@@ -231,7 +231,7 @@ Câu trả lời cần đi kèm dẫn chứng tới tài liệu, trang, đoạn 
 bảng khi có thể. \\
 \hline
 FR-08 & Đánh giá thực nghiệm &
-Hệ thống hỗ trợ chạy benchmark để đánh giá ingest, trích xuất bảng, truy xuất,
+Hệ thống hỗ trợ chạy tập đánh giá để đánh giá tiếp nhận và trích xuất tài liệu, trích xuất bảng, truy xuất,
 hỏi đáp và dẫn chứng. \\
 \hline
 \end{tabularx}
@@ -261,7 +261,7 @@ Câu trả lời phải bám vào bằng chứng được truy xuất và hạn 
 không có trong tài liệu. \\
 \hline
 NFR-03 & Tính mô-đun &
-Các tầng ingest, chunking, retrieval và QA cần được tách riêng để dễ kiểm thử,
+Các tầng tiếp nhận và trích xuất tài liệu, chia đoạn, truy xuất và hỏi đáp cần được tách riêng để dễ kiểm thử,
 thay thế và đánh giá. \\
 \hline
 NFR-04 & Hiệu năng chấp nhận được &
@@ -269,7 +269,7 @@ Thời gian truy xuất và trả lời cần phù hợp với kịch bản hỏ
 một hoặc một nhóm tài liệu. \\
 \hline
 NFR-05 & Khả năng mở rộng đánh giá &
-Hệ thống cần cho phép thêm benchmark hoặc cấu hình mới để phục vụ so sánh và
+Hệ thống cần cho phép thêm tập đánh giá hoặc cấu hình mới để phục vụ so sánh và
 phân tích lỗi. \\
 \hline
 \end{tabularx}
@@ -282,7 +282,7 @@ Phạm vi chính của đồ án là các tài liệu PDF có lớp văn bản v
 thức, ví dụ quy chế, quy định, thông tư, sổ tay hướng dẫn, báo cáo và tài liệu
 nghiệp vụ. Đây là nhóm tài liệu thường có nhu cầu tra cứu cao và cần câu trả lời
 có dẫn chứng. Đồ án có khảo sát thêm tài liệu được quét từ ảnh và tài liệu chứa
-bảng để đánh giá giới hạn của pipeline, nhưng chưa đặt mục tiêu xử lý hoàn chỉnh
+bảng để đánh giá giới hạn của quy trình xử lý, nhưng chưa đặt mục tiêu xử lý hoàn chỉnh
 mọi dạng PDF.
 
 Các trường hợp ngoài phạm vi chính gồm tài liệu ảnh chất lượng thấp, biểu đồ yêu
@@ -296,14 +296,14 @@ nêu ở Chương 6.
 
 Đồ án đánh giá hệ thống theo nhiều tầng thay vì chỉ đo câu trả lời cuối cùng. Ở
 tầng xử lý tài liệu, tiêu chí quan trọng là khả năng trích xuất đúng nội dung, nhận
-diện vùng bảng, giữ thứ tự đọc và bảo toàn metadata nguồn. Ở tầng truy xuất, hệ
+diện vùng bảng, giữ thứ tự đọc và bảo toàn siêu dữ liệu nguồn. Ở tầng truy xuất, hệ
 thống được đánh giá theo khả năng tìm đúng bằng chứng và xếp bằng chứng phù
 hợp ở vị trí cao. Ở tầng hỏi đáp, các tiêu chí chính là độ khớp câu trả lời, độ khớp
 bằng chứng, tỷ lệ câu trả lời có căn cứ và tỷ lệ sinh thông tin thiếu căn cứ. Đối với
 dữ liệu bảng, đồ án đánh giá thêm khả năng truy xuất đúng bảng, hàng, cột hoặc ô
 liên quan.
 
-Các định nghĩa metric và công thức được trình bày tập trung tại Chương 3; quy
+Các định nghĩa độ đo và công thức được trình bày tập trung tại Chương 3 và quy
 ước tính điểm theo từng tập dữ liệu được nêu trong Chương 6 để tránh lặp lại giữa
 phần khảo sát và phần thực nghiệm.
 
@@ -330,36 +330,36 @@ yêu cầu quan trọng đều có thành phần triển khai và tiêu chí đ�
 \textbf{Mã} & \textbf{Yêu cầu} & \textbf{Thiết kế liên quan} & \textbf{Thực nghiệm liên quan} \\
 \hline
 FR-01, FR-02 & Tiếp nhận và trích xuất PDF &
-Tầng ingest tài liệu PDF &
-Mục~\ref{subsection:ingest-results} và Mục~\ref{subsection:region-routing-results} \\
+Tầng tiếp nhận và trích xuất tài liệu PDF &
+Mục 6.2.1 và Mục 6.2.2\\
 \hline
 FR-03 & Định tuyến theo vùng nội dung &
-Region-level routing, metadata vùng &
-Mục~\ref{subsection:region-routing-results} \\
+Định tuyến theo vùng nội dung, siêu dữ liệu vùng &
+Mục 6.2.1 và Mục 6.4.1\\
 \hline
 FR-04 & Chia đoạn và lập chỉ mục &
-Chunking văn bản, table-aware chunking, indexing &
-Mục~\ref{subsection:table-aware-results} và Mục~\ref{subsection:retrieval-results} \\
+Chia đoạn văn bản, chia đoạn có nhận thức bảng, lập chỉ mục &
+Mục 6.2.3 và Mục 6.4.5 \\
 \hline
 FR-05 & Truy xuất bằng chứng &
-BM25, dense retrieval, hybrid retrieval, reranking &
-Mục~\ref{subsection:retrieval-results} \\
+BM25, truy xuất ngữ nghĩa, truy xuất kết hợp, sắp xếp lại &
+Mục 6.2.4 và Mục 6.4.2 \\
 \hline
 FR-06, FR-07 & Hỏi đáp có căn cứ và dẫn chứng &
-Evidence checker, answer generator, citation &
-Mục~\ref{section:end-to-end-results} và Mục~\ref{section:ablation-results} \\
+Bộ kiểm tra bằng chứng, bộ sinh câu trả lời, dẫn chứng nguồn &
+Mục 6.2.5 và Mục 6.4.3 \\
 \hline
 FR-08, NFR-05 & Đánh giá thực nghiệm &
-Script benchmark, cấu hình ablation &
-Chương 6, các mục thực nghiệm theo tầng và ablation \\
+Tập lệnh đánh giá, cấu hình thí nghiệm loại bỏ thành phần &
+Chương 6, đặc biệt Mục 6.2, Mục 6.3 và Mục 6.4 \\
 \hline
 NFR-01, NFR-02 & Khả năng kiểm chứng và tính có căn cứ &
-Metadata nguồn, citation target, cell-level evidence &
-Mục~\ref{subsection:table-aware-results}, Mục~\ref{section:end-to-end-results} \\
+Siêu dữ liệu nguồn, vị trí dẫn chứng nguồn, bằng chứng ở mức ô &
+Mục 6.2.5, Mục 6.4.3 và Mục 6.4.5 \\
 \hline
 NFR-03, NFR-04 & Tính mô-đun và hiệu năng &
-Tổ chức pipeline theo tầng, lưu index tách biệt &
-Mục~\ref{subsection:region-routing-results} và Mục~\ref{section:error-analysis} \\
+Tổ chức quy trình xử lý theo tầng, lưu chỉ mục tách biệt &
+Mục 6.1.1, Mục 6.1.3 và Mục 6.2 \\
 \hline
 \end{tabularx}
 \end{table}
