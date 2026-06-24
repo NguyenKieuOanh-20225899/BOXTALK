@@ -113,6 +113,7 @@ def build_pipeline(args: argparse.Namespace) -> GroundedQAPipeline:
 def print_result(result: Any, *, show_evidence: int = 5, prefer_cell_answer: bool = True) -> None:
     cell_answer = extract_cell_answer(result.question, result.retrieved_hits) if prefer_cell_answer else None
     display_answer = cell_answer["answer"] if cell_answer else result.answer
+    hit_text_by_chunk_id = {hit.chunk_id: hit.text for hit in result.retrieved_hits}
     print("\n" + "=" * 96)
     print(f"Question: {result.question}")
     print(f"Route: {result.query_type} | strategy: {result.retrieval_strategy} | decision: {result.decision}")
@@ -142,6 +143,10 @@ def print_result(result: Any, *, show_evidence: int = 5, prefer_cell_answer: boo
         print("Citations:")
         for idx, citation in enumerate(result.citations, start=1):
             print(f"[{idx}] {format_citation(citation)}")
+            chunk_text = hit_text_by_chunk_id.get(str(citation.get("chunk_id") or ""))
+            if chunk_text:
+                print("    chunk:")
+                print(f"    {format_chunk_text(chunk_text)}")
 
     if result.explanation:
         print("-" * 96)
@@ -175,7 +180,7 @@ def print_result(result: Any, *, show_evidence: int = 5, prefer_cell_answer: boo
                 f"strategy={meta.get('chunking_strategy')}{cell}"
             )
             print(f"   chunk_id={hit.chunk_id}")
-            print(f"   {snippet(hit.text)}")
+            print(f"   {format_chunk_text(hit.text)}")
     print("=" * 96 + "\n")
 
 
@@ -198,6 +203,10 @@ def snippet(text: str, limit: int = 280) -> str:
     if len(clean) <= limit:
         return clean
     return clean[: limit - 3] + "..."
+
+
+def format_chunk_text(text: str) -> str:
+    return " ".join((text or "").split())
 
 
 def extract_cell_answer(question: str, hits: list[Any]) -> dict[str, Any] | None:

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+python demo/run_ingest_demo.py \
+  --pdf demo/input/sample_table_page.pdf \
+  --page 1 \
+  --table-extractor tatr \
+  --save-overlay \
+  --output demo/output/table_tatr
+

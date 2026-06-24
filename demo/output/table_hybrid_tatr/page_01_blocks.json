@@ -1,0 +1,4075 @@
+{
+  "document": {
+    "name": "sample_table_page.pdf",
+    "path": "demo\\input\\sample_table_page.pdf",
+    "page_count": 1,
+    "probe_mode": "layout",
+    "probe": {
+      "file_path": "demo\\input\\sample_table_page.pdf",
+      "page_count": 1,
+      "total_chars": 2315,
+      "total_blocks": 28,
+      "total_images": 0,
+      "avg_chars_per_page": 2315.0,
+      "avg_blocks_per_page": 28.0,
+      "avg_images_per_page": 0.0,
+      "pages_with_text": 1,
+      "pages_without_text": 0,
+      "text_layer_ratio": 1.0,
+      "empty_text_ratio": 0.0,
+      "likely_scanned_ratio": 0.0,
+      "image_heavy_ratio": 0.0,
+      "avg_text_quality": 0.3311698416558582,
+      "probe_detected_mode": "layout",
+      "notes": [
+        "Rich text layer with many blocks suggests layout-aware extraction."
+      ],
+      "errors": []
+    }
+  },
+  "page": {
+    "number": 1,
+    "page_index": 0,
+    "width": 595.32,
+    "height": 841.92,
+    "has_text_layer": true,
+    "embedded_image_count": 0
+  },
+  "summary": {
+    "text_blocks": 13,
+    "image_blocks": 0,
+    "table_blocks": 2,
+    "total_blocks": 15,
+    "region_counts": {
+      "text": 3,
+      "title": 0,
+      "list": 10,
+      "image": 0,
+      "table": 2,
+      "unknown": 0
+    },
+    "total_regions": 15
+  },
+  "regions": [
+    {
+      "region_id": "p0000_text_0000",
+      "block_id": "p0000_b0000",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        70.944,
+        36.693,
+        311.33,
+        66.759
+      ],
+      "confidence": 1.0,
+      "reading_order": 1,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "5"
+    },
+    {
+      "region_id": "p0000_text_0002",
+      "block_id": "p0000_b0001",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        70.944,
+        68.153,
+        541.483,
+        98.939
+      ],
+      "confidence": 1.0,
+      "reading_order": 2,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "trình, cách thức đánh giá học phần, nội dung học tập, phương thức và ngôn ngữ giảng dạy, giáo trình và tài liệu tham khảo."
+    },
+    {
+      "region_id": "p0000_text_0003",
+      "block_id": "p0000_b0002",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        104.9,
+        112.91,
+        244.16,
+        128.453
+      ],
+      "confidence": 1.0,
+      "reading_order": 3,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "Điều 5. Điểm học phần"
+    },
+    {
+      "region_id": "p0000_text_0004",
+      "block_id": "p0000_b0003",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        135.113,
+        541.883,
+        198.779
+      ],
+      "confidence": 1.0,
+      "reading_order": 4,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "1. Một học phần từ 2 TC trở lên được đánh giá từ hai điểm thành phần là điểm quá trình và điểm cuối kỳ, trong đó điểm cuối kỳ có trọng số từ 0,5 đến 0,8 theo..."
+    },
+    {
+      "region_id": "p0000_text_0005",
+      "block_id": "p0000_b0004",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        206.873,
+        541.89,
+        287.009
+      ],
+      "confidence": 1.0,
+      "reading_order": 5,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "2. Điểm quá trình được đánh giá qua thi giữa kỳ, kiểm tra thường kỳ, kết hợp thi giữa kỳ và kiểm tra thường kỳ hoặc kết hợp các thành phần khác (thí nghiệm, ..."
+    },
+    {
+      "region_id": "p0000_table_0000",
+      "block_id": "p0000_b0005",
+      "type": "table",
+      "original_type": "table",
+      "bbox": [
+        122.1,
+        294.61,
+        488.18,
+        334.29
+      ],
+      "confidence": 1.0,
+      "reading_order": 6,
+      "planned_route": "table",
+      "actual_route": "hybrid_tatr",
+      "detection_source": "native_or_text_cluster",
+      "text_preview": "Số lần vắng mặt: 0 1-2 3-4 ≥ 5 Điểm quá trình được cộng/trừ: +1 0 -1 -2"
+    },
+    {
+      "region_id": "p0000_text_0008",
+      "block_id": "p0000_b0006",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        341.183,
+        541.576,
+        371.969
+      ],
+      "confidence": 1.0,
+      "reading_order": 7,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "3. Hình thức đánh giá để cho điểm cuối kỳ và trọng số đánh giá được quy định cụ thể trong đề cương chi tiết học phần."
+    },
+    {
+      "region_id": "p0000_text_0009",
+      "block_id": "p0000_b0007",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        380.063,
+        541.795,
+        410.869
+      ],
+      "confidence": 1.0,
+      "reading_order": 8,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "4. Hình thức đánh giá trực tuyến được áp dụng khi đảm bảo trung thực, công bằng và khách quan như đánh giá trực tiếp và được quy định bằng văn bản riêng."
+    },
+    {
+      "region_id": "p0000_text_0010",
+      "block_id": "p0000_b0008",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        418.963,
+        541.589,
+        449.749
+      ],
+      "confidence": 1.0,
+      "reading_order": 9,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "5. Điểm quá trình và điểm cuối kỳ là điểm số được cho theo thang 10 và có thể lẻ tới 0,5:"
+    },
+    {
+      "region_id": "p0000_text_0011",
+      "block_id": "p0000_b0009",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        457.843,
+        541.714,
+        488.629
+      ],
+      "confidence": 1.0,
+      "reading_order": 10,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "a) Điểm số dưới 5 đối với học phần đồ án tốt nghiệp/khóa luận tốt nghiệp cử nhân, đồ án tốt nghiệp kỹ sư được coi là điểm liệt;"
+    },
+    {
+      "region_id": "p0000_text_0012",
+      "block_id": "p0000_b0010",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        496.723,
+        541.734,
+        527.509
+      ],
+      "confidence": 1.0,
+      "reading_order": 11,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "b) Điểm số dưới 3 đối với các học phần khác với quy định tại điểm a khoản 5 Điều này được coi là điểm liệt;"
+    },
+    {
+      "region_id": "p0000_text_0013",
+      "block_id": "p0000_b0011",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        535.603,
+        541.592,
+        566.389
+      ],
+      "confidence": 1.0,
+      "reading_order": 12,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "c) Trường hợp người học không dự thi đúng lịch thi đã ấn định và không có lý do chính đáng thì điểm thi là điểm 0."
+    },
+    {
+      "region_id": "p0000_text_0014",
+      "block_id": "p0000_b0012",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        574.513,
+        541.755,
+        638.179
+      ],
+      "confidence": 1.0,
+      "reading_order": 13,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "6. Điểm học phần được tính từ tổng điểm thành phần với trọng số tương ứng, làm tròn tới một chữ số thập phân và quy đổi thành điểm chữ theo quy tắc dưới đây,..."
+    },
+    {
+      "region_id": "p0000_table_0001",
+      "block_id": "p0000_b0013",
+      "type": "table",
+      "original_type": "table",
+      "bbox": [
+        88.764,
+        639.798,
+        521.175,
+        717.602
+      ],
+      "confidence": 1.0,
+      "reading_order": 14,
+      "planned_route": "table",
+      "actual_route": "hybrid_tatr",
+      "detection_source": "native_or_text_cluster",
+      "text_preview": "Điểm học phần theo 0,0÷ 4,0÷ 5,0÷ 5,5÷ 6,5÷ 7,0÷ 8,0÷ 8,5÷ 9,5÷ thang 10 3,9 4,9 5,4 6,4 6,9 7,9 8,4 9,4 10 Điểm chữ quy đổi F D D+ C C+ B B+ A A+ Điểm số qu..."
+    },
+    {
+      "region_id": "p0000_text_0027",
+      "block_id": "p0000_b0014",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        99.264,
+        724.533,
+        361.39,
+        738.879
+      ],
+      "confidence": 1.0,
+      "reading_order": 15,
+      "planned_route": "text",
+      "actual_route": "text",
+      "detection_source": "pdf_text_block",
+      "text_preview": "7. Điểm đạt của học phần được quy định như sau:"
+    }
+  ],
+  "route_plan": [
+    {
+      "region_id": "p0000_text_0000",
+      "block_id": "p0000_b0000",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        70.944,
+        36.693,
+        311.33,
+        66.759
+      ],
+      "confidence": 1.0,
+      "reading_order": 1,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0002",
+      "block_id": "p0000_b0001",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        70.944,
+        68.153,
+        541.483,
+        98.939
+      ],
+      "confidence": 1.0,
+      "reading_order": 2,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0003",
+      "block_id": "p0000_b0002",
+      "type": "text",
+      "original_type": "paragraph",
+      "bbox": [
+        104.9,
+        112.91,
+        244.16,
+        128.453
+      ],
+      "confidence": 1.0,
+      "reading_order": 3,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0004",
+      "block_id": "p0000_b0003",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        135.113,
+        541.883,
+        198.779
+      ],
+      "confidence": 1.0,
+      "reading_order": 4,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0005",
+      "block_id": "p0000_b0004",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        206.873,
+        541.89,
+        287.009
+      ],
+      "confidence": 1.0,
+      "reading_order": 5,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_table_0000",
+      "block_id": "p0000_b0005",
+      "type": "table",
+      "original_type": "table",
+      "bbox": [
+        122.1,
+        294.61,
+        488.18,
+        334.29
+      ],
+      "confidence": 1.0,
+      "reading_order": 6,
+      "planned_route": "table",
+      "actual_route": "hybrid_tatr",
+      "ocr_applied": false,
+      "reason": "detected_table_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0008",
+      "block_id": "p0000_b0006",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        341.183,
+        541.576,
+        371.969
+      ],
+      "confidence": 1.0,
+      "reading_order": 7,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0009",
+      "block_id": "p0000_b0007",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        380.063,
+        541.795,
+        410.869
+      ],
+      "confidence": 1.0,
+      "reading_order": 8,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0010",
+      "block_id": "p0000_b0008",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        418.963,
+        541.589,
+        449.749
+      ],
+      "confidence": 1.0,
+      "reading_order": 9,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0011",
+      "block_id": "p0000_b0009",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        457.843,
+        541.714,
+        488.629
+      ],
+      "confidence": 1.0,
+      "reading_order": 10,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0012",
+      "block_id": "p0000_b0010",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        496.723,
+        541.734,
+        527.509
+      ],
+      "confidence": 1.0,
+      "reading_order": 11,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0013",
+      "block_id": "p0000_b0011",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        535.603,
+        541.592,
+        566.389
+      ],
+      "confidence": 1.0,
+      "reading_order": 12,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0014",
+      "block_id": "p0000_b0012",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        70.944,
+        574.513,
+        541.755,
+        638.179
+      ],
+      "confidence": 1.0,
+      "reading_order": 13,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_table_0001",
+      "block_id": "p0000_b0013",
+      "type": "table",
+      "original_type": "table",
+      "bbox": [
+        88.764,
+        639.798,
+        521.175,
+        717.602
+      ],
+      "confidence": 1.0,
+      "reading_order": 14,
+      "planned_route": "table",
+      "actual_route": "hybrid_tatr",
+      "ocr_applied": false,
+      "reason": "detected_table_region",
+      "error": null
+    },
+    {
+      "region_id": "p0000_text_0027",
+      "block_id": "p0000_b0014",
+      "type": "list",
+      "original_type": "list_item",
+      "bbox": [
+        99.264,
+        724.533,
+        361.39,
+        738.879
+      ],
+      "confidence": 1.0,
+      "reading_order": 15,
+      "planned_route": "text",
+      "actual_route": "text",
+      "ocr_applied": false,
+      "reason": "detected_text_region",
+      "error": null
+    }
+  ],
+  "blocks": [
+    {
+      "block_id": "p0000_b0000",
+      "type": "text",
+      "original_type": "paragraph",
+      "content": "5",
+      "markdown": "5",
+      "bbox": [
+        70.944,
+        36.693,
+        311.33,
+        66.759
+      ],
+      "confidence": 1.0,
+      "reading_order": 1,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0000",
+        "region_type": "paragraph",
+        "region_kind": "paragraph",
+        "region_bbox": [
+          70.94400024414062,
+          36.692630767822266,
+          311.3299865722656,
+          66.75932312011719
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0001",
+      "type": "text",
+      "original_type": "paragraph",
+      "content": "trình, cách thức đánh giá học phần, nội dung học tập, phương thức và ngôn ngữ giảng dạy, \ngiáo trình và tài liệu tham khảo.",
+      "markdown": "trình, cách thức đánh giá học phần, nội dung học tập, phương thức và ngôn ngữ giảng dạy, \ngiáo trình và tài liệu tham khảo.",
+      "bbox": [
+        70.944,
+        68.153,
+        541.483,
+        98.939
+      ],
+      "confidence": 1.0,
+      "reading_order": 2,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0002",
+        "region_type": "paragraph",
+        "region_kind": "paragraph",
+        "region_bbox": [
+          70.94400024414062,
+          68.15264892578125,
+          541.482666015625,
+          98.93931579589844
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0002",
+      "type": "text",
+      "original_type": "paragraph",
+      "content": "Điều 5. Điểm học phần",
+      "markdown": "Điều 5. Điểm học phần",
+      "bbox": [
+        104.9,
+        112.91,
+        244.16,
+        128.453
+      ],
+      "confidence": 1.0,
+      "reading_order": 3,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0003",
+        "region_type": "paragraph",
+        "region_kind": "paragraph",
+        "region_bbox": [
+          104.9000015258789,
+          112.91033935546875,
+          244.1599884033203,
+          128.45262145996094
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0003",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "1. Một học phần từ 2 TC trở lên được đánh giá từ hai điểm thành phần là điểm quá \ntrình và điểm cuối kỳ, trong đó điểm cuối kỳ có trọng số từ 0,5 đến 0,8 theo quy định trong \nđề cương chi tiết học phần. Các học phần có khối lượng dưới 2 TC có thể đánh giá kết hợp \nđiểm quá trình và điểm cuối kỳ, hoặc chỉ điểm cuối kỳ.",
+      "markdown": "- 1. Một học phần từ 2 TC trở lên được đánh giá từ hai điểm thành phần là điểm quá \ntrình và điểm cuối kỳ, trong đó điểm cuối kỳ có trọng số từ 0,5 đến 0,8 theo quy định trong \nđề cương chi tiết học phần. Các học phần có khối lượng dưới 2 TC có thể đánh giá kết hợp \nđiểm quá trình và điểm cuối kỳ, hoặc chỉ điểm cuối kỳ.",
+      "bbox": [
+        70.944,
+        135.113,
+        541.883,
+        198.779
+      ],
+      "confidence": 1.0,
+      "reading_order": 4,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0004",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          135.11260986328125,
+          541.8831787109375,
+          198.7793426513672
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0004",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "2. Điểm quá trình được đánh giá qua thi giữa kỳ, kiểm tra thường kỳ, kết hợp thi giữa \nkỳ và kiểm tra thường kỳ hoặc kết hợp các thành phần khác (thí nghiệm, bài tập lớn, tiểu \nluận, chuyên cần…); hình thức và trọng số đánh giá các thành phần được quy định cụ thể \ntrong đề cương chi tiết học phần. Đối với các giờ lên lớp, kết quả điểm danh có thể được \nsử dụng để cộng/trừ vào điểm quá trình của học phần như sau:",
+      "markdown": "- 2. Điểm quá trình được đánh giá qua thi giữa kỳ, kiểm tra thường kỳ, kết hợp thi giữa \nkỳ và kiểm tra thường kỳ hoặc kết hợp các thành phần khác (thí nghiệm, bài tập lớn, tiểu \nluận, chuyên cần…); hình thức và trọng số đánh giá các thành phần được quy định cụ thể \ntrong đề cương chi tiết học phần. Đối với các giờ lên lớp, kết quả điểm danh có thể được \nsử dụng để cộng/trừ vào điểm quá trình của học phần như sau:",
+      "bbox": [
+        70.944,
+        206.873,
+        541.89,
+        287.009
+      ],
+      "confidence": 1.0,
+      "reading_order": 5,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0005",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          206.87261962890625,
+          541.8903198242188,
+          287.0093078613281
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0005",
+      "type": "table",
+      "original_type": "table",
+      "content": "Số lần vắng mặt: | 0 | 1-2 | 3-4 | ≥ 5\nĐiểm quá trình được cộng/trừ: | +1 | 0 | -1 | -2",
+      "markdown": "| Số lần vắng mặt: | 0 | 1-2 | 3-4 | ≥ 5 |\n| --- | --- | --- | --- | --- |\n| Điểm quá trình được cộng/trừ: | +1 | 0 | -1 | -2 |",
+      "bbox": [
+        122.1,
+        294.61,
+        488.18,
+        334.29
+      ],
+      "confidence": 1.0,
+      "reading_order": 6,
+      "source_mode": "layout",
+      "heading_path": [],
+      "extraction": {
+        "route": "hybrid_tatr",
+        "source": "native_or_text_cluster",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "hybrid_tatr_region",
+        "region_id": "p0000_table_0000",
+        "region_type": "table",
+        "region_kind": "table",
+        "region_bbox": [
+          122.10000356038411,
+          294.60996500651044,
+          488.1800003051758,
+          334.2899856567383
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "native_or_text_cluster",
+        "detection_source": "native_or_text_cluster",
+        "fallback_used": false,
+        "route_backend": "hybrid_tatr",
+        "route_reason": "detected_table_region",
+        "table_backend": "hybrid_tatr",
+        "table_row_count": 2,
+        "table_col_count": 5,
+        "table_headers": [
+          "Số lần vắng mặt:",
+          "0",
+          "1-2",
+          "3-4",
+          "≥ 5"
+        ],
+        "table_body_row_count": 1,
+        "table_rows": [
+          [
+            "Số lần vắng mặt:",
+            "0",
+            "1-2",
+            "3-4",
+            "≥ 5"
+          ],
+          [
+            "Điểm quá trình được cộng/trừ:",
+            "+1",
+            "0",
+            "-1",
+            "-2"
+          ]
+        ],
+        "table_records": [
+          {
+            "Số lần vắng mặt:": "Điểm quá trình được cộng/trừ:",
+            "0": "+1",
+            "1-2": "0",
+            "3-4": "-1",
+            "≥ 5": "-2"
+          }
+        ],
+        "table_csv": "Số lần vắng mặt:,0,1-2,3-4,≥ 5\nĐiểm quá trình được cộng/trừ:,+1,0,-1,-2",
+        "table_markdown": "| Số lần vắng mặt: | 0 | 1-2 | 3-4 | ≥ 5 |\n| --- | --- | --- | --- | --- |\n| Điểm quá trình được cộng/trừ: | +1 | 0 | -1 | -2 |",
+        "table_html": "<table>\n  <tr><th>Số lần vắng mặt:</th><th>0</th><th>1-2</th><th>3-4</th><th>≥ 5</th></tr>\n  <tr><td>Điểm quá trình được cộng/trừ:</td><td>+1</td><td>0</td><td>-1</td><td>-2</td></tr>\n</table>",
+        "table_bbox": [
+          122.10000356038411,
+          294.60996500651044,
+          488.1800003051758,
+          334.2899856567383
+        ],
+        "table_column_bounds": [],
+        "table_row_bboxes": [
+          [
+            128.17999267578125,
+            297.14263916015625,
+            471.37506103515625,
+            311.4893493652344
+          ],
+          [
+            127.58000183105469,
+            316.942626953125,
+            468.3399963378906,
+            331.18852106730145
+          ]
+        ],
+        "table_cells": [
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              128.17999267578125,
+              297.14263916015625,
+              215.81288146972656,
+              311.4893493652344
+            ],
+            "text": "Số lần vắng mặt:",
+            "confidence": 0.9998118281364441,
+            "source_boxes": [
+              [
+                128.17999267578125,
+                297.14263916015625,
+                141.86575317382812,
+                311.4893493652344
+              ],
+              [
+                145.1057586669922,
+                297.14263916015625,
+                160.94287109375,
+                311.4893493652344
+              ],
+              [
+                164.18287658691406,
+                297.14263916015625,
+                189.4807891845703,
+                311.4893493652344
+              ],
+              [
+                192.72079467773438,
+                297.14263916015625,
+                215.81288146972656,
+                311.4893493652344
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "Số",
+                "bbox": [
+                  128.17999267578125,
+                  297.14263916015625,
+                  141.86575317382812,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "lần",
+                "bbox": [
+                  145.1057586669922,
+                  297.14263916015625,
+                  160.94287109375,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "vắng",
+                "bbox": [
+                  164.18287658691406,
+                  297.14263916015625,
+                  189.4807891845703,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "mặt:",
+                "bbox": [
+                  192.72079467773438,
+                  297.14263916015625,
+                  215.81288146972656,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              127.00640805562337,
+              294.98022905985516,
+              300.19080861409503,
+              313.36218516031903
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": null,
+            "col_header": "Số lần vắng mặt:",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              319.989990234375,
+              297.14263916015625,
+              326.4700012207031,
+              311.4893493652344
+            ],
+            "text": "0",
+            "confidence": 0.9998615086078644,
+            "source_boxes": [
+              [
+                319.989990234375,
+                297.14263916015625,
+                326.4700012207031,
+                311.4893493652344
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "0",
+                "bbox": [
+                  319.989990234375,
+                  297.14263916015625,
+                  326.4700012207031,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              301.05997975667316,
+              294.98022905985516,
+              340.2860844930013,
+              313.36218516031903
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": null,
+            "col_header": "0",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              352.8699951171875,
+              297.14263916015625,
+              370.1500244140625,
+              311.4893493652344
+            ],
+            "text": "1-2",
+            "confidence": 0.9998670518398285,
+            "source_boxes": [
+              [
+                352.8699951171875,
+                297.14263916015625,
+                370.1500244140625,
+                311.4893493652344
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "1-2",
+                "bbox": [
+                  352.8699951171875,
+                  297.14263916015625,
+                  370.1500244140625,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              341.78248341878253,
+              294.98022905985516,
+              385.6609471638997,
+              313.36218516031903
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": null,
+            "col_header": "1-2",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              401.95001220703125,
+              297.14263916015625,
+              419.2300109863281,
+              311.4893493652344
+            ],
+            "text": "3-4",
+            "confidence": 0.999879390001297,
+            "source_boxes": [
+              [
+                401.95001220703125,
+                297.14263916015625,
+                419.2300109863281,
+                311.4893493652344
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "3-4",
+                "bbox": [
+                  401.95001220703125,
+                  297.14263916015625,
+                  419.2300109863281,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              386.53942616780597,
+              294.98022905985516,
+              436.9988072713216,
+              313.36218516031903
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": null,
+            "col_header": "3-4",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              454.5400085449219,
+              297.14263916015625,
+              471.37506103515625,
+              311.4893493652344
+            ],
+            "text": "≥ 5",
+            "confidence": 0.9997977614402771,
+            "source_boxes": [
+              [
+                454.5400085449219,
+                297.14263916015625,
+                461.6550598144531,
+                311.4893493652344
+              ],
+              [
+                464.8950500488281,
+                297.14263916015625,
+                471.37506103515625,
+                311.4893493652344
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "≥",
+                "bbox": [
+                  454.5400085449219,
+                  297.14263916015625,
+                  461.6550598144531,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "5",
+                "bbox": [
+                  464.8950500488281,
+                  297.14263916015625,
+                  471.37506103515625,
+                  311.4893493652344
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              437.3946812947591,
+              294.98022905985516,
+              471.43676503499347,
+              313.36218516031903
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": null,
+            "col_header": "≥ 5",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 4
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              127.58000183105469,
+              316.942626953125,
+              286.3287048339844,
+              331.18852106730145
+            ],
+            "text": "Điểm quá trình được cộng/trừ:",
+            "confidence": 0.9992004334926605,
+            "source_boxes": [
+              [
+                127.58000183105469,
+                316.942626953125,
+                156.38577270507812,
+                331.2893371582031
+              ],
+              [
+                159.6315155029297,
+                316.942626953125,
+                178.3515167236328,
+                331.2893371582031
+              ],
+              [
+                181.59727478027344,
+                316.942626953125,
+                206.18093872070312,
+                331.2893371582031
+              ],
+              [
+                209.4499969482422,
+                316.942626953125,
+                235.603271484375,
+                331.2893371582031
+              ],
+              [
+                238.84327697753906,
+                316.942626953125,
+                286.3287048339844,
+                331.2893371582031
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "Điểm",
+                "bbox": [
+                  127.58000183105469,
+                  316.942626953125,
+                  156.38577270507812,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "quá",
+                "bbox": [
+                  159.6315155029297,
+                  316.942626953125,
+                  178.3515167236328,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "trình",
+                "bbox": [
+                  181.59727478027344,
+                  316.942626953125,
+                  206.18093872070312,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "được",
+                "bbox": [
+                  209.4499969482422,
+                  316.942626953125,
+                  235.603271484375,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "cộng/trừ:",
+                "bbox": [
+                  238.84327697753906,
+                  316.942626953125,
+                  286.3287048339844,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              127.00640805562337,
+              313.0608336130778,
+              300.19080861409503,
+              331.18852106730145
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": "Điểm quá trình được cộng/trừ:",
+            "col_header": "Số lần vắng mặt:",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 0
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              316.2699890136719,
+              316.942626953125,
+              330.0700378417969,
+              331.18852106730145
+            ],
+            "text": "+1",
+            "confidence": 0.9992501139640808,
+            "source_boxes": [
+              [
+                316.2699890136719,
+                316.942626953125,
+                330.0700378417969,
+                331.2893371582031
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "+1",
+                "bbox": [
+                  316.2699890136719,
+                  316.942626953125,
+                  330.0700378417969,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              301.05997975667316,
+              313.0608336130778,
+              340.2860844930013,
+              331.18852106730145
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": "Điểm quá trình được cộng/trừ:",
+            "col_header": "0",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 1
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              358.2699890136719,
+              316.942626953125,
+              364.75,
+              331.18852106730145
+            ],
+            "text": "0",
+            "confidence": 0.9992556571960449,
+            "source_boxes": [
+              [
+                358.2699890136719,
+                316.942626953125,
+                364.75,
+                331.2893371582031
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "0",
+                "bbox": [
+                  358.2699890136719,
+                  316.942626953125,
+                  364.75,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              341.78248341878253,
+              313.0608336130778,
+              385.6609471638997,
+              331.18852106730145
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": "Điểm quá trình được cộng/trừ:",
+            "col_header": "1-2",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 2
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              405.19000244140625,
+              316.942626953125,
+              415.9900207519531,
+              331.18852106730145
+            ],
+            "text": "-1",
+            "confidence": 0.9992679953575134,
+            "source_boxes": [
+              [
+                405.19000244140625,
+                316.942626953125,
+                415.9900207519531,
+                331.2893371582031
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "-1",
+                "bbox": [
+                  405.19000244140625,
+                  316.942626953125,
+                  415.9900207519531,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              386.53942616780597,
+              313.0608336130778,
+              436.9988072713216,
+              331.18852106730145
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": "Điểm quá trình được cộng/trừ:",
+            "col_header": "3-4",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 3
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              457.5400085449219,
+              316.942626953125,
+              468.3399963378906,
+              331.18852106730145
+            ],
+            "text": "-2",
+            "confidence": 0.9991863667964935,
+            "source_boxes": [
+              [
+                457.5400085449219,
+                316.942626953125,
+                468.3399963378906,
+                331.2893371582031
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "-2",
+                "bbox": [
+                  457.5400085449219,
+                  316.942626953125,
+                  468.3399963378906,
+                  331.2893371582031
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              437.3946812947591,
+              313.0608336130778,
+              471.43676503499347,
+              331.18852106730145
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0005",
+            "row_header": "Điểm quá trình được cộng/trừ:",
+            "col_header": "≥ 5",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 4
+          }
+        ],
+        "table_cell_count": 10,
+        "extraction_trace": {
+          "backend": "hybrid_tatr_region",
+          "row_count": 2,
+          "col_count": 5,
+          "cell_count": 10,
+          "has_cell_geometry": true
+        },
+        "citation_metadata": {
+          "block_type": "table",
+          "citation_target": "table",
+          "table_bbox": [
+            122.10000356038411,
+            294.60996500651044,
+            488.1800003051758,
+            334.2899856567383
+          ]
+        },
+        "text_source": "pdf_text_words",
+        "text_source_missing_count": 0,
+        "word_box_count": 18,
+        "source_model_name": {
+          "detection": "microsoft/table-transformer-detection",
+          "structure": "microsoft/table-transformer-structure-recognition-v1.1-all"
+        },
+        "tatr_mode": "region_structure_recognition",
+        "tatr_rows": [
+          {
+            "label": "table row",
+            "bbox": [
+              122.10000356038411,
+              294.98022905985516,
+              488.1800003051758,
+              313.36218516031903
+            ],
+            "score": 0.9997965693473816
+          },
+          {
+            "label": "table row",
+            "bbox": [
+              122.10000356038411,
+              313.0608336130778,
+              488.1800003051758,
+              331.18852106730145
+            ],
+            "score": 0.9985737800598145
+          }
+        ],
+        "tatr_columns": [
+          {
+            "label": "table column",
+            "bbox": [
+              127.00640805562337,
+              294.60996500651044,
+              300.19080861409503,
+              334.2899856567383
+            ],
+            "score": 0.9998270869255066
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              301.05997975667316,
+              294.60996500651044,
+              340.2860844930013,
+              334.2899856567383
+            ],
+            "score": 0.9999264478683472
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              341.78248341878253,
+              294.60996500651044,
+              385.6609471638997,
+              334.2899856567383
+            ],
+            "score": 0.9999375343322754
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              386.53942616780597,
+              294.60996500651044,
+              436.9988072713216,
+              334.2899856567383
+            ],
+            "score": 0.9999622106552124
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              437.3946812947591,
+              294.60996500651044,
+              471.43676503499347,
+              334.2899856567383
+            ],
+            "score": 0.9997989535331726
+          }
+        ],
+        "tatr_spanning_cells": [],
+        "coordinate_space": "pdf_page",
+        "cell_bbox_mode": "content_bbox_with_grid_bbox"
+      },
+      "table": {
+        "backend": "hybrid_tatr",
+        "row_count": 2,
+        "column_count": 5,
+        "cell_count": 10,
+        "markdown": "| Số lần vắng mặt: | 0 | 1-2 | 3-4 | ≥ 5 |\n| --- | --- | --- | --- | --- |\n| Điểm quá trình được cộng/trừ: | +1 | 0 | -1 | -2 |",
+        "csv": "Số lần vắng mặt:,0,1-2,3-4,≥ 5\nĐiểm quá trình được cộng/trừ:,+1,0,-1,-2"
+      }
+    },
+    {
+      "block_id": "p0000_b0006",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "3. Hình thức đánh giá để cho điểm cuối kỳ và trọng số đánh giá được quy định cụ thể \ntrong đề cương chi tiết học phần.",
+      "markdown": "- 3. Hình thức đánh giá để cho điểm cuối kỳ và trọng số đánh giá được quy định cụ thể \ntrong đề cương chi tiết học phần.",
+      "bbox": [
+        70.944,
+        341.183,
+        541.576,
+        371.969
+      ],
+      "confidence": 1.0,
+      "reading_order": 7,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0008",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          341.1826171875,
+          541.5758056640625,
+          371.9693298339844
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0007",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "4. Hình thức đánh giá trực tuyến được áp dụng khi đảm bảo trung thực, công bằng và \nkhách quan như đánh giá trực tiếp và được quy định bằng văn bản riêng.",
+      "markdown": "- 4. Hình thức đánh giá trực tuyến được áp dụng khi đảm bảo trung thực, công bằng và \nkhách quan như đánh giá trực tiếp và được quy định bằng văn bản riêng.",
+      "bbox": [
+        70.944,
+        380.063,
+        541.795,
+        410.869
+      ],
+      "confidence": 1.0,
+      "reading_order": 8,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0009",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          380.0626220703125,
+          541.7946166992188,
+          410.86932373046875
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0008",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "5. Điểm quá trình và điểm cuối kỳ là điểm số được cho theo thang 10 và có thể lẻ tới \n0,5:",
+      "markdown": "- 5. Điểm quá trình và điểm cuối kỳ là điểm số được cho theo thang 10 và có thể lẻ tới \n0,5:",
+      "bbox": [
+        70.944,
+        418.963,
+        541.589,
+        449.749
+      ],
+      "confidence": 1.0,
+      "reading_order": 9,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0010",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          418.9626159667969,
+          541.5887451171875,
+          449.74932861328125
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0009",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "a) Điểm số dưới 5 đối với học phần đồ án tốt nghiệp/khóa luận tốt nghiệp cử nhân, \nđồ án tốt nghiệp kỹ sư được coi là điểm liệt;",
+      "markdown": "- a) Điểm số dưới 5 đối với học phần đồ án tốt nghiệp/khóa luận tốt nghiệp cử nhân, \nđồ án tốt nghiệp kỹ sư được coi là điểm liệt;",
+      "bbox": [
+        70.944,
+        457.843,
+        541.714,
+        488.629
+      ],
+      "confidence": 1.0,
+      "reading_order": 10,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0011",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          457.8426208496094,
+          541.713623046875,
+          488.62933349609375
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0010",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "b) Điểm số dưới 3 đối với các học phần khác với quy định tại điểm a khoản 5 Điều \nnày được coi là điểm liệt;",
+      "markdown": "- b) Điểm số dưới 3 đối với các học phần khác với quy định tại điểm a khoản 5 Điều \nnày được coi là điểm liệt;",
+      "bbox": [
+        70.944,
+        496.723,
+        541.734,
+        527.509
+      ],
+      "confidence": 1.0,
+      "reading_order": 11,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0012",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          496.7226257324219,
+          541.734130859375,
+          527.5093383789062
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0011",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "c) Trường hợp người học không dự thi đúng lịch thi đã ấn định và không có lý do \nchính đáng thì điểm thi là điểm 0.",
+      "markdown": "- c) Trường hợp người học không dự thi đúng lịch thi đã ấn định và không có lý do \nchính đáng thì điểm thi là điểm 0.",
+      "bbox": [
+        70.944,
+        535.603,
+        541.592,
+        566.389
+      ],
+      "confidence": 1.0,
+      "reading_order": 12,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0013",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          535.6026611328125,
+          541.5917358398438,
+          566.3893432617188
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0012",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "6. Điểm học phần được tính từ tổng điểm thành phần với trọng số tương ứng, làm \ntròn tới một chữ số thập phân và quy đổi thành điểm chữ theo quy tắc dưới đây, trừ trường \nhợp có một điểm thành phần là điểm liệt thì điểm học phần là điểm F. Để tính các điểm \ntrung bình, điểm học phần được quy đổi thành điểm số theo thang 4.",
+      "markdown": "- 6. Điểm học phần được tính từ tổng điểm thành phần với trọng số tương ứng, làm \ntròn tới một chữ số thập phân và quy đổi thành điểm chữ theo quy tắc dưới đây, trừ trường \nhợp có một điểm thành phần là điểm liệt thì điểm học phần là điểm F. Để tính các điểm \ntrung bình, điểm học phần được quy đổi thành điểm số theo thang 4.",
+      "bbox": [
+        70.944,
+        574.513,
+        541.755,
+        638.179
+      ],
+      "confidence": 1.0,
+      "reading_order": 13,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0014",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          70.94400024414062,
+          574.5126342773438,
+          541.7548828125,
+          638.1793823242188
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    },
+    {
+      "block_id": "p0000_b0013",
+      "type": "table",
+      "original_type": "table",
+      "content": "Điểm học phần theo thang 10 | 0,0÷ 3,9 | 4,0÷ 4,9 | 5,0÷ 5,4 | 5,5÷ 6,4 | 6,5÷ 6,9 | 7,0÷ 7,9 | 8,0÷ 8,4 | 8,5÷ 9,4 | 9,5÷ 10\nĐiểm chữ quy đổi | F | D | D+ | C | C+ | B | B+ | A | A+\nĐiểm số quy đổi | 0 | 1 | 1,5 | 2,0 | 2,5 | 3,0 | 3,5 | 4,0 | 4,0",
+      "markdown": "| Điểm học phần theo thang 10 | 0,0÷ 3,9 | 4,0÷ 4,9 | 5,0÷ 5,4 | 5,5÷ 6,4 | 6,5÷ 6,9 | 7,0÷ 7,9 | 8,0÷ 8,4 | 8,5÷ 9,4 | 9,5÷ 10 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Điểm chữ quy đổi | F | D | D+ | C | C+ | B | B+ | A | A+ |\n| Điểm số quy đổi | 0 | 1 | 1,5 | 2,0 | 2,5 | 3,0 | 3,5 | 4,0 | 4,0 |",
+      "bbox": [
+        88.764,
+        639.798,
+        521.175,
+        717.602
+      ],
+      "confidence": 1.0,
+      "reading_order": 14,
+      "source_mode": "layout",
+      "heading_path": [],
+      "extraction": {
+        "route": "hybrid_tatr",
+        "source": "native_or_text_cluster",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "hybrid_tatr_region",
+        "region_id": "p0000_table_0001",
+        "region_type": "table",
+        "region_kind": "table",
+        "region_bbox": [
+          88.76400089263916,
+          639.7981567382812,
+          521.175048828125,
+          717.6018343838779
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "native_or_text_cluster",
+        "detection_source": "native_or_text_cluster",
+        "fallback_used": false,
+        "route_backend": "hybrid_tatr",
+        "route_reason": "detected_table_region",
+        "table_backend": "hybrid_tatr",
+        "table_row_count": 3,
+        "table_col_count": 10,
+        "table_headers": [
+          "Điểm học phần theo thang 10",
+          "0,0÷ 3,9",
+          "4,0÷ 4,9",
+          "5,0÷ 5,4",
+          "5,5÷ 6,4",
+          "6,5÷ 6,9",
+          "7,0÷ 7,9",
+          "8,0÷ 8,4",
+          "8,5÷ 9,4",
+          "9,5÷ 10"
+        ],
+        "table_body_row_count": 2,
+        "table_rows": [
+          [
+            "Điểm học phần theo thang 10",
+            "0,0÷ 3,9",
+            "4,0÷ 4,9",
+            "5,0÷ 5,4",
+            "5,5÷ 6,4",
+            "6,5÷ 6,9",
+            "7,0÷ 7,9",
+            "8,0÷ 8,4",
+            "8,5÷ 9,4",
+            "9,5÷ 10"
+          ],
+          [
+            "Điểm chữ quy đổi",
+            "F",
+            "D",
+            "D+",
+            "C",
+            "C+",
+            "B",
+            "B+",
+            "A",
+            "A+"
+          ],
+          [
+            "Điểm số quy đổi",
+            "0",
+            "1",
+            "1,5",
+            "2,0",
+            "2,5",
+            "3,0",
+            "3,5",
+            "4,0",
+            "4,0"
+          ]
+        ],
+        "table_records": [
+          {
+            "Điểm học phần theo thang 10": "Điểm chữ quy đổi",
+            "0,0÷ 3,9": "F",
+            "4,0÷ 4,9": "D",
+            "5,0÷ 5,4": "D+",
+            "5,5÷ 6,4": "C",
+            "6,5÷ 6,9": "C+",
+            "7,0÷ 7,9": "B",
+            "8,0÷ 8,4": "B+",
+            "8,5÷ 9,4": "A",
+            "9,5÷ 10": "A+"
+          },
+          {
+            "Điểm học phần theo thang 10": "Điểm số quy đổi",
+            "0,0÷ 3,9": "0",
+            "4,0÷ 4,9": "1",
+            "5,0÷ 5,4": "1,5",
+            "5,5÷ 6,4": "2,0",
+            "6,5÷ 6,9": "2,5",
+            "7,0÷ 7,9": "3,0",
+            "8,0÷ 8,4": "3,5",
+            "8,5÷ 9,4": "4,0",
+            "9,5÷ 10": "4,0"
+          }
+        ],
+        "table_csv": "Điểm học phần theo thang 10,\"0,0÷ 3,9\",\"4,0÷ 4,9\",\"5,0÷ 5,4\",\"5,5÷ 6,4\",\"6,5÷ 6,9\",\"7,0÷ 7,9\",\"8,0÷ 8,4\",\"8,5÷ 9,4\",\"9,5÷ 10\"\nĐiểm chữ quy đổi,F,D,D+,C,C+,B,B+,A,A+\nĐiểm số quy đổi,0,1,\"1,5\",\"2,0\",\"2,5\",\"3,0\",\"3,5\",\"4,0\",\"4,0\"",
+        "table_markdown": "| Điểm học phần theo thang 10 | 0,0÷ 3,9 | 4,0÷ 4,9 | 5,0÷ 5,4 | 5,5÷ 6,4 | 6,5÷ 6,9 | 7,0÷ 7,9 | 8,0÷ 8,4 | 8,5÷ 9,4 | 9,5÷ 10 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Điểm chữ quy đổi | F | D | D+ | C | C+ | B | B+ | A | A+ |\n| Điểm số quy đổi | 0 | 1 | 1,5 | 2,0 | 2,5 | 3,0 | 3,5 | 4,0 | 4,0 |",
+        "table_html": "<table>\n  <tr><th>Điểm học phần theo thang 10</th><th>0,0÷ 3,9</th><th>4,0÷ 4,9</th><th>5,0÷ 5,4</th><th>5,5÷ 6,4</th><th>6,5÷ 6,9</th><th>7,0÷ 7,9</th><th>8,0÷ 8,4</th><th>8,5÷ 9,4</th><th>9,5÷ 10</th></tr>\n  <tr><td>Điểm chữ quy đổi</td><td>F</td><td>D</td><td>D+</td><td>C</td><td>C+</td><td>B</td><td>B+</td><td>A</td><td>A+</td></tr>\n  <tr><td>Điểm số quy đổi</td><td>0</td><td>1</td><td>1,5</td><td>2,0</td><td>2,5</td><td>3,0</td><td>3,5</td><td>4,0</td><td>4,0</td></tr>\n</table>",
+        "table_bbox": [
+          88.76400089263916,
+          639.7981567382812,
+          521.175048828125,
+          717.6018343838779
+        ],
+        "table_column_bounds": [],
+        "table_row_bboxes": [
+          [
+            91.7040023803711,
+            640.7526245117188,
+            517.2816400527954,
+            671.6593627929688
+          ],
+          [
+            91.7040023803711,
+            677.47265625,
+            513.20947265625,
+            691.8193969726562
+          ],
+          [
+            91.7040023803711,
+            699.5526123046875,
+            512.97998046875,
+            713.8993530273438
+          ]
+        ],
+        "table_cells": [
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              91.7040023803711,
+              640.7526245117188,
+              196.67710876464844,
+              671.6593627929688
+            ],
+            "text": "Điểm học phần theo thang 10",
+            "confidence": 0.9956083595752716,
+            "source_boxes": [
+              [
+                91.7040023803711,
+                640.7526245117188,
+                120.50975799560547,
+                655.099365234375
+              ],
+              [
+                123.75552368164062,
+                640.7526245117188,
+                142.47552490234375,
+                655.099365234375
+              ],
+              [
+                145.72128295898438,
+                640.7526245117188,
+                171.01487731933594,
+                655.099365234375
+              ],
+              [
+                174.26063537597656,
+                640.7526245117188,
+                196.67710876464844,
+                655.099365234375
+              ],
+              [
+                91.7040023803711,
+                657.3126220703125,
+                120.4896011352539,
+                671.6593627929688
+              ],
+              [
+                123.72383880615234,
+                657.3126220703125,
+                136.6809539794922,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "Điểm",
+                "bbox": [
+                  91.7040023803711,
+                  640.7526245117188,
+                  120.50975799560547,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "học",
+                "bbox": [
+                  123.75552368164062,
+                  640.7526245117188,
+                  142.47552490234375,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "phần",
+                "bbox": [
+                  145.72128295898438,
+                  640.7526245117188,
+                  171.01487731933594,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "theo",
+                "bbox": [
+                  174.26063537597656,
+                  640.7526245117188,
+                  196.67710876464844,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "thang",
+                "bbox": [
+                  91.7040023803711,
+                  657.3126220703125,
+                  120.4896011352539,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "10",
+                "bbox": [
+                  123.72383880615234,
+                  657.3126220703125,
+                  136.6809539794922,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              90.89305996894836,
+              640.5874161720276,
+              211.30603122711182,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "Điểm học phần theo thang 10",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 0
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              227.69000244140625,
+              640.7526245117188,
+              251.00503540039062,
+              671.6593627929688
+            ],
+            "text": "0,0÷ 3,9",
+            "confidence": 0.9956154525279999,
+            "source_boxes": [
+              [
+                227.69000244140625,
+                640.7526245117188,
+                251.00503540039062,
+                655.099365234375
+              ],
+              [
+                227.69000244140625,
+                657.3126220703125,
+                243.88999938964844,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "0,0÷",
+                "bbox": [
+                  227.69000244140625,
+                  640.7526245117188,
+                  251.00503540039062,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "3,9",
+                "bbox": [
+                  227.69000244140625,
+                  657.3126220703125,
+                  243.88999938964844,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              212.68921756744385,
+              640.5874161720276,
+              256.8754663467407,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "0,0÷ 3,9",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 1
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              261.1700134277344,
+              640.7526245117188,
+              284.4850769042969,
+              671.6593627929688
+            ],
+            "text": "4,0÷ 4,9",
+            "confidence": 0.9956250488758087,
+            "source_boxes": [
+              [
+                261.1700134277344,
+                640.7526245117188,
+                284.4850769042969,
+                655.099365234375
+              ],
+              [
+                261.1700134277344,
+                657.3126220703125,
+                277.3700256347656,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "4,0÷",
+                "bbox": [
+                  261.1700134277344,
+                  640.7526245117188,
+                  284.4850769042969,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "4,9",
+                "bbox": [
+                  261.1700134277344,
+                  657.3126220703125,
+                  277.3700256347656,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              257.99565982818604,
+              640.5874161720276,
+              290.87098026275635,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "4,0÷ 4,9",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 2
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              294.5299987792969,
+              640.7526245117188,
+              317.8450622558594,
+              671.6593627929688
+            ],
+            "text": "5,0÷ 5,4",
+            "confidence": 0.9956072270870209,
+            "source_boxes": [
+              [
+                294.5299987792969,
+                640.7526245117188,
+                317.8450622558594,
+                655.099365234375
+              ],
+              [
+                294.5299987792969,
+                657.3126220703125,
+                310.7300109863281,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "5,0÷",
+                "bbox": [
+                  294.5299987792969,
+                  640.7526245117188,
+                  317.8450622558594,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "5,4",
+                "bbox": [
+                  294.5299987792969,
+                  657.3126220703125,
+                  310.7300109863281,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              289.31206607818604,
+              640.5874161720276,
+              320.2602319717407,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "5,0÷ 5,4",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 3
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              328.0299987792969,
+              640.7526245117188,
+              350.5468683242798,
+              671.6593627929688
+            ],
+            "text": "5,5÷ 6,4",
+            "confidence": 0.9908744990825653,
+            "source_boxes": [
+              [
+                328.0299987792969,
+                640.7526245117188,
+                351.3450622558594,
+                655.099365234375
+              ],
+              [
+                328.0299987792969,
+                657.3126220703125,
+                344.2300109863281,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "5,5÷",
+                "bbox": [
+                  328.0299987792969,
+                  640.7526245117188,
+                  351.3450622558594,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "6,4",
+                "bbox": [
+                  328.0299987792969,
+                  657.3126220703125,
+                  344.2300109863281,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              320.25713443756104,
+              640.5874161720276,
+              350.5468683242798,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "5,5÷ 6,4",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 4
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              361.510009765625,
+              640.7526245117188,
+              384.8250732421875,
+              671.6593627929688
+            ],
+            "text": "6,5÷ 6,9",
+            "confidence": 0.9955164790153503,
+            "source_boxes": [
+              [
+                361.510009765625,
+                640.7526245117188,
+                384.8250732421875,
+                655.099365234375
+              ],
+              [
+                361.510009765625,
+                657.3126220703125,
+                377.71002197265625,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "6,5÷",
+                "bbox": [
+                  361.510009765625,
+                  640.7526245117188,
+                  384.8250732421875,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "6,9",
+                "bbox": [
+                  361.510009765625,
+                  657.3126220703125,
+                  377.71002197265625,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              356.4090814590454,
+              640.5874161720276,
+              389.5986566543579,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "6,5÷ 6,9",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 5
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              394.989990234375,
+              640.7526245117188,
+              418.3050537109375,
+              671.6593627929688
+            ],
+            "text": "7,0÷ 7,9",
+            "confidence": 0.9956031143665314,
+            "source_boxes": [
+              [
+                394.989990234375,
+                640.7526245117188,
+                418.3050537109375,
+                655.099365234375
+              ],
+              [
+                394.989990234375,
+                657.3126220703125,
+                411.19000244140625,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "7,0÷",
+                "bbox": [
+                  394.989990234375,
+                  640.7526245117188,
+                  418.3050537109375,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "7,9",
+                "bbox": [
+                  394.989990234375,
+                  657.3126220703125,
+                  411.19000244140625,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              390.5787591934204,
+              640.5874161720276,
+              423.61028385162354,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "7,0÷ 7,9",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 6
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              428.3500061035156,
+              640.7526245117188,
+              451.6650695800781,
+              671.6593627929688
+            ],
+            "text": "8,0÷ 8,4",
+            "confidence": 0.9956280291080475,
+            "source_boxes": [
+              [
+                428.3500061035156,
+                640.7526245117188,
+                451.6650695800781,
+                655.099365234375
+              ],
+              [
+                428.3500061035156,
+                657.3126220703125,
+                444.5500183105469,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "8,0÷",
+                "bbox": [
+                  428.3500061035156,
+                  640.7526245117188,
+                  451.6650695800781,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "8,4",
+                "bbox": [
+                  428.3500061035156,
+                  657.3126220703125,
+                  444.5500183105469,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              424.37447452545166,
+              640.5874161720276,
+              456.4381036758423,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "8,0÷ 8,4",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 7
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              461.8599853515625,
+              640.7526245117188,
+              485.175048828125,
+              671.6593627929688
+            ],
+            "text": "8,5÷ 9,4",
+            "confidence": 0.9956256449222565,
+            "source_boxes": [
+              [
+                461.8599853515625,
+                640.7526245117188,
+                485.175048828125,
+                655.099365234375
+              ],
+              [
+                461.8599853515625,
+                657.3126220703125,
+                478.05999755859375,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "8,5÷",
+                "bbox": [
+                  461.8599853515625,
+                  640.7526245117188,
+                  485.175048828125,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "9,4",
+                "bbox": [
+                  461.8599853515625,
+                  657.3126220703125,
+                  478.05999755859375,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              457.1690912246704,
+              640.5874161720276,
+              490.06841373443604,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "8,5÷ 9,4",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 8
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              494.6199951171875,
+              640.7526245117188,
+              517.2816400527954,
+              671.6593627929688
+            ],
+            "text": "9,5÷ 10",
+            "confidence": 0.9956071078777313,
+            "source_boxes": [
+              [
+                494.6199951171875,
+                640.7526245117188,
+                517.93505859375,
+                655.099365234375
+              ],
+              [
+                494.6199951171875,
+                657.3126220703125,
+                507.58001708984375,
+                671.6593627929688
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "9,5÷",
+                "bbox": [
+                  494.6199951171875,
+                  640.7526245117188,
+                  517.93505859375,
+                  655.099365234375
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "10",
+                "bbox": [
+                  494.6199951171875,
+                  657.3126220703125,
+                  507.58001708984375,
+                  671.6593627929688
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              489.64400577545166,
+              640.5874161720276,
+              517.2816400527954,
+              673.8588638305664
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": null,
+            "col_header": "9,5÷ 10",
+            "is_header": true,
+            "metadata": {},
+            "row": 0,
+            "col": 9
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              91.7040023803711,
+              677.47265625,
+              185.64239501953125,
+              691.8193969726562
+            ],
+            "text": "Điểm chữ quy đổi",
+            "confidence": 0.9997292459011078,
+            "source_boxes": [
+              [
+                91.7040023803711,
+                677.47265625,
+                120.50975799560547,
+                691.8193969726562
+              ],
+              [
+                123.75552368164062,
+                677.47265625,
+                143.0198516845703,
+                691.8193969726562
+              ],
+              [
+                146.29153442382812,
+                677.47265625,
+                165.73728942871094,
+                691.8193969726562
+              ],
+              [
+                169.07376098632812,
+                677.47265625,
+                185.64239501953125,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "Điểm",
+                "bbox": [
+                  91.7040023803711,
+                  677.47265625,
+                  120.50975799560547,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "chữ",
+                "bbox": [
+                  123.75552368164062,
+                  677.47265625,
+                  143.0198516845703,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "quy",
+                "bbox": [
+                  146.29153442382812,
+                  677.47265625,
+                  165.73728942871094,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "đổi",
+                "bbox": [
+                  169.07376098632812,
+                  677.47265625,
+                  185.64239501953125,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              90.89305996894836,
+              673.8295478820801,
+              211.30603122711182,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "Điểm học phần theo thang 10",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 0
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              234.2899932861328,
+              677.47265625,
+              241.49575805664062,
+              691.8193969726562
+            ],
+            "text": "F",
+            "confidence": 0.9997363388538361,
+            "source_boxes": [
+              [
+                234.2899932861328,
+                677.47265625,
+                241.49575805664062,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "F",
+                "bbox": [
+                  234.2899932861328,
+                  677.47265625,
+                  241.49575805664062,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              212.68921756744385,
+              673.8295478820801,
+              256.8754663467407,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "0,0÷ 3,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 1
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              266.69000244140625,
+              677.47265625,
+              276.047119140625,
+              691.8193969726562
+            ],
+            "text": "D",
+            "confidence": 0.9997459352016449,
+            "source_boxes": [
+              [
+                266.69000244140625,
+                677.47265625,
+                276.047119140625,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "D",
+                "bbox": [
+                  266.69000244140625,
+                  677.47265625,
+                  276.047119140625,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              257.99565982818604,
+              673.8295478820801,
+              290.87098026275635,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "4,0÷ 4,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 2
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              296.45001220703125,
+              677.47265625,
+              313.11944580078125,
+              691.8193969726562
+            ],
+            "text": "D+",
+            "confidence": 0.9997281134128571,
+            "source_boxes": [
+              [
+                296.45001220703125,
+                677.47265625,
+                313.11944580078125,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "D+",
+                "bbox": [
+                  296.45001220703125,
+                  677.47265625,
+                  313.11944580078125,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              289.31206607818604,
+              673.8295478820801,
+              320.2602319717407,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "5,0÷ 5,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 3
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              333.9100036621094,
+              677.47265625,
+              342.5543212890625,
+              691.8193969726562
+            ],
+            "text": "C",
+            "confidence": 0.9949953854084015,
+            "source_boxes": [
+              [
+                333.9100036621094,
+                677.47265625,
+                342.5543212890625,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "C",
+                "bbox": [
+                  333.9100036621094,
+                  677.47265625,
+                  342.5543212890625,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              320.25713443756104,
+              673.8295478820801,
+              350.5468683242798,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "5,5÷ 6,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 4
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              363.7900085449219,
+              677.47265625,
+              379.7394714355469,
+              691.8193969726562
+            ],
+            "text": "C+",
+            "confidence": 0.9996373653411865,
+            "source_boxes": [
+              [
+                363.7900085449219,
+                677.47265625,
+                379.7394714355469,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "C+",
+                "bbox": [
+                  363.7900085449219,
+                  677.47265625,
+                  379.7394714355469,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              356.4090814590454,
+              673.8295478820801,
+              389.5986566543579,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "6,5÷ 6,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 5
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              400.8699951171875,
+              677.47265625,
+              409.5143127441406,
+              691.8193969726562
+            ],
+            "text": "B",
+            "confidence": 0.9997240006923676,
+            "source_boxes": [
+              [
+                400.8699951171875,
+                677.47265625,
+                409.5143127441406,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "B",
+                "bbox": [
+                  400.8699951171875,
+                  677.47265625,
+                  409.5143127441406,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              390.5787591934204,
+              673.8295478820801,
+              423.61028385162354,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "7,0÷ 7,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 6
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              430.6300048828125,
+              677.47265625,
+              446.5794677734375,
+              691.8193969726562
+            ],
+            "text": "B+",
+            "confidence": 0.9997489154338837,
+            "source_boxes": [
+              [
+                430.6300048828125,
+                677.47265625,
+                446.5794677734375,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "B+",
+                "bbox": [
+                  430.6300048828125,
+                  677.47265625,
+                  446.5794677734375,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              424.37447452545166,
+              673.8295478820801,
+              456.4381036758423,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "8,0÷ 8,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 7
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              467.3800048828125,
+              677.47265625,
+              476.73712158203125,
+              691.8193969726562
+            ],
+            "text": "A",
+            "confidence": 0.9997465312480927,
+            "source_boxes": [
+              [
+                467.3800048828125,
+                677.47265625,
+                476.73712158203125,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "A",
+                "bbox": [
+                  467.3800048828125,
+                  677.47265625,
+                  476.73712158203125,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              457.1690912246704,
+              673.8295478820801,
+              490.06841373443604,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "8,5÷ 9,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 8
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              496.5400085449219,
+              677.47265625,
+              513.20947265625,
+              691.8193969726562
+            ],
+            "text": "A+",
+            "confidence": 0.9997279942035675,
+            "source_boxes": [
+              [
+                496.5400085449219,
+                677.47265625,
+                513.20947265625,
+                691.8193969726562
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "A+",
+                "bbox": [
+                  496.5400085449219,
+                  677.47265625,
+                  513.20947265625,
+                  691.8193969726562
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              489.64400577545166,
+              673.8295478820801,
+              517.2816400527954,
+              694.9739685058594
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm chữ quy đổi",
+            "col_header": "9,5÷ 10",
+            "is_header": false,
+            "metadata": {},
+            "row": 1,
+            "col": 9
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              91.7040023803711,
+              699.5526123046875,
+              177.86351013183594,
+              713.8993530273438
+            ],
+            "text": "Điểm số quy đổi",
+            "confidence": 0.9997823238372803,
+            "source_boxes": [
+              [
+                91.7040023803711,
+                699.5526123046875,
+                120.50975799560547,
+                713.8993530273438
+              ],
+              [
+                123.75552368164062,
+                699.5526123046875,
+                135.27984619140625,
+                713.8993530273438
+              ],
+              [
+                138.52560424804688,
+                699.5526123046875,
+                158.0491180419922,
+                713.8993530273438
+              ],
+              [
+                161.2948760986328,
+                699.5526123046875,
+                177.86351013183594,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "Điểm",
+                "bbox": [
+                  91.7040023803711,
+                  699.5526123046875,
+                  120.50975799560547,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "số",
+                "bbox": [
+                  123.75552368164062,
+                  699.5526123046875,
+                  135.27984619140625,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "quy",
+                "bbox": [
+                  138.52560424804688,
+                  699.5526123046875,
+                  158.0491180419922,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              },
+              {
+                "text": "đổi",
+                "bbox": [
+                  161.2948760986328,
+                  699.5526123046875,
+                  177.86351013183594,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              90.89305996894836,
+              695.4365997314453,
+              211.30603122711182,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "Điểm học phần theo thang 10",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 0
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              234.64999389648438,
+              699.5526123046875,
+              241.12998962402344,
+              713.8993530273438
+            ],
+            "text": "0",
+            "confidence": 0.9997894167900085,
+            "source_boxes": [
+              [
+                234.64999389648438,
+                699.5526123046875,
+                241.12998962402344,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "0",
+                "bbox": [
+                  234.64999389648438,
+                  699.5526123046875,
+                  241.12998962402344,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              212.68921756744385,
+              695.4365997314453,
+              256.8754663467407,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "0,0÷ 3,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 1
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              268.1300048828125,
+              699.5526123046875,
+              274.6100158691406,
+              713.8993530273438
+            ],
+            "text": "1",
+            "confidence": 0.9997990131378174,
+            "source_boxes": [
+              [
+                268.1300048828125,
+                699.5526123046875,
+                274.6100158691406,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "1",
+                "bbox": [
+                  268.1300048828125,
+                  699.5526123046875,
+                  274.6100158691406,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              257.99565982818604,
+              695.4365997314453,
+              290.87098026275635,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "4,0÷ 4,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 2
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              296.69000244140625,
+              699.5526123046875,
+              312.8900146484375,
+              713.8993530273438
+            ],
+            "text": "1,5",
+            "confidence": 0.9997811913490295,
+            "source_boxes": [
+              [
+                296.69000244140625,
+                699.5526123046875,
+                312.8900146484375,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "1,5",
+                "bbox": [
+                  296.69000244140625,
+                  699.5526123046875,
+                  312.8900146484375,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              289.31206607818604,
+              695.4365997314453,
+              320.2602319717407,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "5,0÷ 5,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 3
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              330.19000244140625,
+              699.5526123046875,
+              346.3900146484375,
+              713.8993530273438
+            ],
+            "text": "2,0",
+            "confidence": 0.995048463344574,
+            "source_boxes": [
+              [
+                330.19000244140625,
+                699.5526123046875,
+                346.3900146484375,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "2,0",
+                "bbox": [
+                  330.19000244140625,
+                  699.5526123046875,
+                  346.3900146484375,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              320.25713443756104,
+              695.4365997314453,
+              350.5468683242798,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "5,5÷ 6,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 4
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              363.6700134277344,
+              699.5526123046875,
+              379.8700256347656,
+              713.8993530273438
+            ],
+            "text": "2,5",
+            "confidence": 0.999690443277359,
+            "source_boxes": [
+              [
+                363.6700134277344,
+                699.5526123046875,
+                379.8700256347656,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "2,5",
+                "bbox": [
+                  363.6700134277344,
+                  699.5526123046875,
+                  379.8700256347656,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              356.4090814590454,
+              695.4365997314453,
+              389.5986566543579,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "6,5÷ 6,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 5
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              397.1499938964844,
+              699.5526123046875,
+              413.3500061035156,
+              713.8993530273438
+            ],
+            "text": "3,0",
+            "confidence": 0.99977707862854,
+            "source_boxes": [
+              [
+                397.1499938964844,
+                699.5526123046875,
+                413.3500061035156,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "3,0",
+                "bbox": [
+                  397.1499938964844,
+                  699.5526123046875,
+                  413.3500061035156,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              390.5787591934204,
+              695.4365997314453,
+              423.61028385162354,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "7,0÷ 7,9",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 6
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              430.510009765625,
+              699.5526123046875,
+              446.71002197265625,
+              713.8993530273438
+            ],
+            "text": "3,5",
+            "confidence": 0.9998019933700562,
+            "source_boxes": [
+              [
+                430.510009765625,
+                699.5526123046875,
+                446.71002197265625,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "3,5",
+                "bbox": [
+                  430.510009765625,
+                  699.5526123046875,
+                  446.71002197265625,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              424.37447452545166,
+              695.4365997314453,
+              456.4381036758423,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "8,0÷ 8,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 7
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              464.0199890136719,
+              699.5526123046875,
+              480.2200012207031,
+              713.8993530273438
+            ],
+            "text": "4,0",
+            "confidence": 0.9997996091842651,
+            "source_boxes": [
+              [
+                464.0199890136719,
+                699.5526123046875,
+                480.2200012207031,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "4,0",
+                "bbox": [
+                  464.0199890136719,
+                  699.5526123046875,
+                  480.2200012207031,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              457.1690912246704,
+              695.4365997314453,
+              490.06841373443604,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "8,5÷ 9,4",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 8
+          },
+          {
+            "row_span": 1,
+            "col_span": 1,
+            "bbox": [
+              496.7799987792969,
+              699.5526123046875,
+              512.97998046875,
+              713.8993530273438
+            ],
+            "text": "4,0",
+            "confidence": 0.99978107213974,
+            "source_boxes": [
+              [
+                496.7799987792969,
+                699.5526123046875,
+                512.97998046875,
+                713.8993530273438
+              ]
+            ],
+            "source_words": [
+              {
+                "text": "4,0",
+                "bbox": [
+                  496.7799987792969,
+                  699.5526123046875,
+                  512.97998046875,
+                  713.8993530273438
+                ],
+                "confidence": 1.0,
+                "source": "pdf_text_words"
+              }
+            ],
+            "grid_bbox": [
+              489.64400577545166,
+              695.4365997314453,
+              517.2816400527954,
+              713.927131652832
+            ],
+            "page": 0,
+            "table_id": "p0000_tatr_0013",
+            "row_header": "Điểm số quy đổi",
+            "col_header": "9,5÷ 10",
+            "is_header": false,
+            "metadata": {},
+            "row": 2,
+            "col": 9
+          }
+        ],
+        "table_cell_count": 30,
+        "extraction_trace": {
+          "backend": "hybrid_tatr_region",
+          "row_count": 3,
+          "col_count": 10,
+          "cell_count": 30,
+          "has_cell_geometry": true
+        },
+        "citation_metadata": {
+          "block_type": "table",
+          "citation_target": "table",
+          "table_bbox": [
+            88.76400089263916,
+            639.7981567382812,
+            521.175048828125,
+            717.6018343838779
+          ]
+        },
+        "text_source": "pdf_text_words",
+        "text_source_missing_count": 0,
+        "word_box_count": 50,
+        "source_model_name": {
+          "detection": "microsoft/table-transformer-detection",
+          "structure": "microsoft/table-transformer-structure-recognition-v1.1-all"
+        },
+        "tatr_mode": "region_structure_recognition",
+        "tatr_rows": [
+          {
+            "label": "table row",
+            "bbox": [
+              88.76400089263916,
+              640.5874161720276,
+              521.175048828125,
+              673.8588638305664
+            ],
+            "score": 0.9913217425346375
+          },
+          {
+            "label": "table row",
+            "bbox": [
+              88.76400089263916,
+              673.8295478820801,
+              521.175048828125,
+              694.9739685058594
+            ],
+            "score": 0.9995635151863098
+          },
+          {
+            "label": "table row",
+            "bbox": [
+              88.76400089263916,
+              695.4365997314453,
+              521.175048828125,
+              713.927131652832
+            ],
+            "score": 0.9996696710586548
+          }
+        ],
+        "tatr_columns": [
+          {
+            "label": "table column",
+            "bbox": [
+              90.89305996894836,
+              639.7981567382812,
+              211.30603122711182,
+              717.6018343838779
+            ],
+            "score": 0.9998949766159058
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              212.68921756744385,
+              639.7981567382812,
+              256.8754663467407,
+              717.6018343838779
+            ],
+            "score": 0.9999091625213623
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              257.99565982818604,
+              639.7981567382812,
+              290.87098026275635,
+              717.6018343838779
+            ],
+            "score": 0.99992835521698
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              289.31206607818604,
+              639.7981567382812,
+              320.2602319717407,
+              717.6018343838779
+            ],
+            "score": 0.9998927116394043
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              320.25713443756104,
+              639.7981567382812,
+              350.5468683242798,
+              717.6018343838779
+            ],
+            "score": 0.9904272556304932
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              356.4090814590454,
+              639.7981567382812,
+              389.5986566543579,
+              717.6018343838779
+            ],
+            "score": 0.9997112154960632
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              390.5787591934204,
+              639.7981567382812,
+              423.61028385162354,
+              717.6018343838779
+            ],
+            "score": 0.9998844861984253
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              424.37447452545166,
+              639.7981567382812,
+              456.4381036758423,
+              717.6018343838779
+            ],
+            "score": 0.9999343156814575
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              457.1690912246704,
+              639.7981567382812,
+              490.06841373443604,
+              717.6018343838779
+            ],
+            "score": 0.9999295473098755
+          },
+          {
+            "label": "table column",
+            "bbox": [
+              489.64400577545166,
+              639.7981567382812,
+              517.2816400527954,
+              717.6018343838779
+            ],
+            "score": 0.9998924732208252
+          }
+        ],
+        "tatr_spanning_cells": [],
+        "coordinate_space": "pdf_page",
+        "cell_bbox_mode": "content_bbox_with_grid_bbox"
+      },
+      "table": {
+        "backend": "hybrid_tatr",
+        "row_count": 3,
+        "column_count": 10,
+        "cell_count": 30,
+        "markdown": "| Điểm học phần theo thang 10 | 0,0÷ 3,9 | 4,0÷ 4,9 | 5,0÷ 5,4 | 5,5÷ 6,4 | 6,5÷ 6,9 | 7,0÷ 7,9 | 8,0÷ 8,4 | 8,5÷ 9,4 | 9,5÷ 10 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Điểm chữ quy đổi | F | D | D+ | C | C+ | B | B+ | A | A+ |\n| Điểm số quy đổi | 0 | 1 | 1,5 | 2,0 | 2,5 | 3,0 | 3,5 | 4,0 | 4,0 |",
+        "csv": "Điểm học phần theo thang 10,\"0,0÷ 3,9\",\"4,0÷ 4,9\",\"5,0÷ 5,4\",\"5,5÷ 6,4\",\"6,5÷ 6,9\",\"7,0÷ 7,9\",\"8,0÷ 8,4\",\"8,5÷ 9,4\",\"9,5÷ 10\"\nĐiểm chữ quy đổi,F,D,D+,C,C+,B,B+,A,A+\nĐiểm số quy đổi,0,1,\"1,5\",\"2,0\",\"2,5\",\"3,0\",\"3,5\",\"4,0\",\"4,0\""
+      }
+    },
+    {
+      "block_id": "p0000_b0014",
+      "type": "text",
+      "original_type": "list_item",
+      "content": "7. Điểm đạt của học phần được quy định như sau:",
+      "markdown": "- 7. Điểm đạt của học phần được quy định như sau:",
+      "bbox": [
+        99.264,
+        724.533,
+        361.39,
+        738.879
+      ],
+      "confidence": 1.0,
+      "reading_order": 15,
+      "source_mode": "text",
+      "heading_path": [],
+      "extraction": {
+        "route": "text",
+        "source": "pdf_text_block",
+        "ocr_applied": false,
+        "ocr_reason": null
+      },
+      "metadata": {
+        "backend": "region_routed",
+        "region_id": "p0000_text_0027",
+        "region_type": "list_item",
+        "region_kind": "list_item",
+        "region_bbox": [
+          99.26399993896484,
+          724.5325927734375,
+          361.3899841308594,
+          738.8793334960938
+        ],
+        "page_number": 1,
+        "confidence": 1.0,
+        "source": "pdf_text_block",
+        "detection_source": "pdf_text_block",
+        "fallback_used": false,
+        "route_backend": "text",
+        "route_reason": "detected_text_region"
+      }
+    }
+  ],
+  "timing": {
+    "probe_time_ms": 11.798,
+    "layout_time_ms": 113.384,
+    "extraction_time_ms": 15480.964,
+    "total_time_ms": 15625.002
+  },
+  "config": {
+    "ocr_mode": "auto",
+    "table_extractor": "hybrid_tatr"
+  },
+  "warnings": [],
+  "output_files": {
+    "blocks_json": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_blocks.json",
+    "summary_json": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_summary.json",
+    "text_markdown": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_text.md",
+    "table_01_markdown": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_table_01.md",
+    "table_02_markdown": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_table_02.md",
+    "overlay_png": "C:\\Users\\admin\\Documents\\GitHub\\BOXTALK\\demo\\output\\table_hybrid_tatr\\page_01_overlay.png"
+  }
+}
