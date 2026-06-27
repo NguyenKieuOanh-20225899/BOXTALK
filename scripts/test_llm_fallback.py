@@ -107,7 +107,7 @@ class LLMFallbackTest(unittest.TestCase):
         self.assertFalse(result.called)
         self.assertFalse(result.used)
 
-    def test_table_rule_based_lookup_runs_before_llm(self) -> None:
+    def test_table_fallback_uses_llm_client(self) -> None:
         fallback = GroundedLLMFallback(
             config=LLMFallbackConfig(enable_llm_fallback=True, enable_table_llm_reasoning=True),
             client=DummyGroundedLLMClient(),
@@ -123,8 +123,8 @@ class LLMFallbackTest(unittest.TestCase):
 
         self.assertTrue(result.called)
         self.assertTrue(result.used)
-        self.assertFalse(result.llm_called)
-        self.assertEqual(result.final_answer_source, "table_rule_fallback")
+        self.assertTrue(result.llm_called)
+        self.assertEqual(result.final_answer_source, "llm_fallback")
         self.assertIn("C", result.answer or "")
 
     def test_table_rule_based_lookup_keeps_plus_grade(self) -> None:
@@ -160,7 +160,8 @@ class LLMFallbackTest(unittest.TestCase):
         )
 
         self.assertTrue(result.used)
-        self.assertFalse(result.llm_called)
+        self.assertTrue(result.llm_called)
+        self.assertEqual(result.final_answer_source, "llm_fallback")
         self.assertIn("8.0 - 8.9", result.answer or "")
         self.assertIn("3.5", result.answer or "")
 

@@ -1136,3 +1136,6 @@ class GroundedAnswerGenerator:
 
     def _has_numeric_phrase(self, sentence: str) -> bool:
         return bool(NUMBER_PHRASE_RE.search(sentence) or EN_NUMBER_PHRASE_RE.search(sentence))
+
+
+ExtractiveGroundedAnswerGenerator = GroundedAnswerGenerator

@@ -19,6 +19,8 @@ if str(ROOT) not in sys.path:
 
 from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
 from app.qa.answer_generator import GroundedAnswerGenerator
+from app.qa.answer_validator import AnswerValidationResult
+from app.qa.citation_builder import CitationBuildResult
 from app.qa.evidence_checker import EvidenceChecker
 from app.qa.llm_fallback import (
     GroundedLLMFallback,
@@ -51,6 +53,13 @@ DEFAULT_CONFIGS = [
     "no_router",
     "no_citation_grounding",
     "no_metadata_filter",
+]
+VALID_CONFIGS = DEFAULT_CONFIGS + [
+    "extractive_generator",
+    "llm_grounded_generator",
+    "llm_hybrid_rerank",
+    "llm_no_evidence_checker",
+    "llm_no_citation_grounding",
 ]
 
 
@@ -124,6 +133,24 @@ class PermissiveEvidenceChecker:
             selected_hit_ids=[hit.chunk_id for hit in selected],
             support_sentences=support_sentences,
             diagnostics={"checker_disabled": True, "support_hit_count": len(selected)},
+        )
+
+
+class NoCitationBuilder:
+    """Citation ablation for the LLM path: keep answers but emit no citations."""
+
+    def build(self, **_: Any) -> CitationBuildResult:
+        return CitationBuildResult(citations=[], invalid_evidence_ids=[])
+
+
+class PermissiveAnswerValidator:
+    """Validator ablation used when citation grounding is disabled."""
+
+    def validate(self, **_: Any) -> AnswerValidationResult:
+        return AnswerValidationResult(
+            valid=True,
+            reason=None,
+            details={"validator_disabled_for_citation_ablation": True},
         )
 
 
@@ -205,7 +232,7 @@ def expand_config_names(raw_names: Iterable[str] | None) -> list[str]:
     if any(name == "all" for name in names):
         return list(DEFAULT_CONFIGS)
 
-    valid = set(DEFAULT_CONFIGS)
+    valid = set(VALID_CONFIGS)
     unknown = [name for name in names if name not in valid]
     if unknown:
         raise ValueError(f"Unknown QA benchmark config(s): {', '.join(unknown)}")
@@ -270,10 +297,54 @@ def make_pipeline(
     query_router = QueryRouter()
     fixed_hybrid = fixed_retrieval_config(args)
 
+    if config_name == "extractive_generator":
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+            answer_generator=GroundedAnswerGenerator(),
+        )
+
+    if config_name == "llm_grounded_generator":
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+        )
+
+    if config_name == "llm_hybrid_rerank":
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=FixedRetrievalPlanner(
+                strategy="hybrid_rerank",
+                config=fixed_retrieval_config(args, use_rerank=True),
+                reason="Fixed hybrid retrieval with rerank for grounded LLM benchmark",
+            ),
+        )
+
+    if config_name == "llm_no_evidence_checker":
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+            evidence_checker=PermissiveEvidenceChecker(),  # type: ignore[arg-type]
+        )
+
+    if config_name == "llm_no_citation_grounding":
+        return GroundedQAPipeline(
+            retrieval_service=retrieval_service,
+            router=query_router,
+            retrieval_planner=QueryAwareRetrievalPlanner(),
+            citation_builder=NoCitationBuilder(),  # type: ignore[arg-type]
+            answer_validator=PermissiveAnswerValidator(),  # type: ignore[arg-type]
+        )
+
     if config_name == "bm25_only":
         return GroundedQAPipeline(
             retrieval_service=retrieval_service,
             router=query_router,
+            answer_generator=GroundedAnswerGenerator(),
             retrieval_planner=FixedRetrievalPlanner(
                 strategy="bm25",
                 config=fixed_retrieval_config(args),
@@ -285,6 +356,7 @@ def make_pipeline(
         return GroundedQAPipeline(
             retrieval_service=retrieval_service,
             router=query_router,
+            answer_generator=GroundedAnswerGenerator(),
             retrieval_planner=FixedRetrievalPlanner(
                 strategy="dense",
                 config=fixed_retrieval_config(args),
@@ -296,6 +368,7 @@ def make_pipeline(
         return GroundedQAPipeline(
             retrieval_service=retrieval_service,
             router=query_router,
+            answer_generator=GroundedAnswerGenerator(),
             retrieval_planner=FixedRetrievalPlanner(
                 strategy="hybrid",
                 config=fixed_hybrid,
@@ -313,6 +386,7 @@ def make_pipeline(
             retrieval_service=retrieval_service,
             router=query_router,
             retrieval_planner=QueryAwareRetrievalPlanner(),
+            answer_generator=GroundedAnswerGenerator(),
             llm_fallback=make_benchmark_llm_fallback(config_name, args),
         )
 
@@ -321,6 +395,7 @@ def make_pipeline(
             retrieval_service=retrieval_service,
             router=query_router,
             retrieval_planner=QueryAwareRetrievalPlanner(),
+            answer_generator=GroundedAnswerGenerator(),
             evidence_checker=PermissiveEvidenceChecker(),  # type: ignore[arg-type]
         )
 
@@ -348,6 +423,7 @@ def make_pipeline(
         return GroundedQAPipeline(
             retrieval_service=retrieval_service,
             router=FixedRouter("ambiguous"),
+            answer_generator=GroundedAnswerGenerator(),
             retrieval_planner=FixedRetrievalPlanner(
                 strategy="hybrid",
                 config=fixed_hybrid,
@@ -368,12 +444,14 @@ def make_pipeline(
             retrieval_service=retrieval_service,
             router=query_router,
             retrieval_planner=NoMetadataFilterPlanner(),
+            answer_generator=GroundedAnswerGenerator(),
         )
 
     return GroundedQAPipeline(
         retrieval_service=retrieval_service,
         router=query_router,
         retrieval_planner=QueryAwareRetrievalPlanner(),
+        answer_generator=GroundedAnswerGenerator(),
     )
 
 

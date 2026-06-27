@@ -20,8 +20,6 @@ from pydantic import BaseModel, Field
 from app.ingest.pipeline import ingest_pdf
 from app.loaders.pdf_loader import PDFLoader
 from app.qa.adaptive_pipeline import AdaptiveRouteRetryQAPipeline
-from app.qa.llm_fallback import make_llm_fallback_from_env
-from app.qa.llm_explainer import make_llm_explainer_from_env
 from app.qa.pipeline import GroundedQAPipeline
 from app.qa.table_query_utils import is_table_lookup_query
 from app.retrieval.reranker import make_reranker
@@ -441,24 +439,17 @@ class RoutedRAGService:
                 raise ValueError("RoutedRAGService requires either pdf_path or index_dir")
             self._load_pdf_data(pdf_path)
             self.retrieval_service = self._build_retrieval_service()
-        llm_fallback = make_llm_fallback_from_env()
-        llm_explainer = make_llm_explainer_from_env()
         if _qa_pipeline_mode() == "adaptive_route_retry":
-            enable_final_route_llm_fallback = _bool_env("BOXTALK_ENABLE_LLM_FALLBACK_ON_FINAL_ROUTE_ONLY", False)
             self.qa_pipeline = AdaptiveRouteRetryQAPipeline(
                 retrieval_service=self.retrieval_service,
                 router=self.router,
                 retrieval_planner=self.retrieval_planner,
-                llm_fallback=llm_fallback if enable_final_route_llm_fallback else None,
-                enable_final_route_llm_fallback=enable_final_route_llm_fallback,
             )
         else:
             self.qa_pipeline = GroundedQAPipeline(
                 retrieval_service=self.retrieval_service,
                 router=self.router,
                 retrieval_planner=self.retrieval_planner,
-                llm_fallback=llm_fallback,
-                llm_explainer=llm_explainer,
             )
         self.evidence_checker = EvidenceChecker()
         self.answer_generator = AnswerGenerator()

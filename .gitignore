@@ -51,6 +51,11 @@ coverage.xml
 # Environment variables
 .env
 .env.*
+*.env
+*.key
+*.pem
+secrets.*
+secret.*
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -69,10 +74,31 @@ coverage.xml
 /data/
 /results/
 /out/
+/docs/
+/demo/
+/models/
+/checkpoints/
+/artifacts/
 /Quyển đồ án/
+/labels.json
 
 # Logs
 *.log
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
 
 # SQLite database files
 *.sqlite3
@@ -81,7 +107,9 @@ coverage.xml
 *.tmp
 *.temp
 *.swp
+*.bak
 *~
 
 # OS files
 .DS_Store
+Thumbs.db

@@ -1,6 +1,0 @@
-benchmark,metric,value,source
-DocLayNet,F1@0.50,0.849148,results\ingest\chapter5_doclaynet_full_rerun\summary.json
-PubLayNet,F1@0.50,0.738772,results\ingest\chapter5_publaynet_full_rerun\summary.json
-PubTables detection,F1@0.50,0.975267,results\ingest\chapter5_pubtables_detection_500_rerun_model\summary.json
-OCR scan,OCR token F1,1.000000,results\ingest\chapter5_ocr_scan_25_rerun_fixed_seq\summary.json
-FUNSD OCR,OCR token F1,0.826001,results\ingest\chapter5_funsd_ocr_25_rerun_fixed_seq\summary.json

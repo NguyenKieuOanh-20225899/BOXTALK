@@ -8,14 +8,14 @@ import urllib.request
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from app.qa.llm_fallback import (
+from app.qa.grounded_llm_client import (
     OLLAMA_DEFAULT_API_KEY,
     OLLAMA_DEFAULT_BASE_URL,
     OLLAMA_DEFAULT_MODEL,
-    build_evidence_packets,
     normalize_llm_provider_name,
     parse_llm_json,
 )
+from app.qa.llm_fallback import build_evidence_packets
 from app.qa.schemas import EvidenceAssessment
 from app.retrieval.schemas import RetrievedHit
 

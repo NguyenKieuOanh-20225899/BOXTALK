@@ -24,6 +24,9 @@ class EvidenceAssessment:
     selected_hit_ids: list[str] = field(default_factory=list)
     support_sentences: list[str] = field(default_factory=list)
     diagnostics: dict[str, Any] = field(default_factory=dict)
+    sufficient: bool = False
+    missing_constraints: list[str] = field(default_factory=list)
+    coverage_details: dict[str, bool] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -68,6 +71,20 @@ class QAResult:
     fallback_trace: dict[str, Any] = field(default_factory=dict)
     explanation: str | None = None
     explanation_trace: dict[str, Any] = field(default_factory=dict)
+    selected_evidence_count: int = 0
+    selected_evidence_ids: list[str] = field(default_factory=list)
+    evidence_sufficient: bool = False
+    evidence_reason: str = ""
+    missing_constraints: list[str] = field(default_factory=list)
+    context_token_count: int | None = None
+    context_evidence: list[dict[str, Any]] = field(default_factory=list)
+    generator_type: str = "extractive"
+    generator_provider: str | None = None
+    generator_model: str | None = None
+    llm_latency_ms: float = 0.0
+    validation_passed: bool = True
+    validation_reason: str | None = None
+    used_evidence_ids: list[str] = field(default_factory=list)
 
     @property
     def total_latency_ms(self) -> float:
@@ -95,4 +112,18 @@ class QAResult:
             "fallback_trace": dict(self.fallback_trace),
             "explanation": self.explanation,
             "explanation_trace": dict(self.explanation_trace),
+            "selected_evidence_count": self.selected_evidence_count,
+            "selected_evidence_ids": list(self.selected_evidence_ids),
+            "evidence_sufficient": self.evidence_sufficient,
+            "evidence_reason": self.evidence_reason,
+            "missing_constraints": list(self.missing_constraints),
+            "context_token_count": self.context_token_count,
+            "context_evidence": [dict(item) for item in self.context_evidence],
+            "generator_type": self.generator_type,
+            "generator_provider": self.generator_provider,
+            "generator_model": self.generator_model,
+            "llm_latency_ms": self.llm_latency_ms,
+            "validation_passed": self.validation_passed,
+            "validation_reason": self.validation_reason,
+            "used_evidence_ids": list(self.used_evidence_ids),
         }

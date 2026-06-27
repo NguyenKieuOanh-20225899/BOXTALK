@@ -1,4 +1,0 @@
-Backend,Detection F1,Cell F1@0.75,Structure F1,Text Assign. F1,Exact CSV
-Default,0.94,0.149,0.199,0.909,0.0
-TATR,0.987,0.103,0.01,0.015,0.0
-Hybrid TATR,0.987,0.944,0.772,0.999,0.48
