@@ -9,7 +9,6 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -26,6 +25,7 @@ from app.retrieval.route_planner import QueryRetrievalPlan
 from app.retrieval.reranker import make_reranker
 from app.retrieval.schemas import RetrievalConfig
 from app.retrieval.service import RetrievalService
+from scripts.quick_qa_terminal_renderer import print_result
 
 
 DEFAULT_INDEX_DIR = Path("results/retrieval_index/qcdt_2025_5445_constraint_table_reconstruction")
@@ -172,125 +172,6 @@ def ollama_tags_url(args: argparse.Namespace) -> str:
     if base_url.endswith("/v1"):
         base_url = base_url[:-3]
     return f"{base_url}/api/tags"
-
-
-def print_result(result: Any, *, show_evidence: int = 5, show_context: bool = False) -> None:
-    hit_text_by_chunk_id = {hit.chunk_id: hit.text for hit in result.retrieved_hits}
-    print("\n" + "=" * 96)
-    print(f"Question: {result.question}")
-    print(f"Route: {result.query_type}")
-    print(f"Strategy: {result.retrieval_strategy}")
-    print(f"Decision: {result.decision}")
-    print(
-        "Latency: "
-        f"retrieval={result.retrieval_latency_ms:.1f} ms, "
-        f"answer={result.answer_latency_ms:.1f} ms, "
-        f"total={result.total_latency_ms:.1f} ms"
-    )
-    print(f"Grounded: {result.grounded} | final_source: {result.final_answer_source}")
-    print("-" * 96)
-    print("Evidence:")
-    print(f"  Retrieved: {len(result.retrieved_hits)}")
-    print(f"  Selected: {result.selected_evidence_count}")
-    print(f"  Sufficient: {result.evidence_sufficient}")
-    print(f"  Reason: {result.evidence_reason}")
-    if result.missing_constraints:
-        print(f"  Missing constraints: {', '.join(result.missing_constraints)}")
-
-    if result.context_token_count is not None:
-        print("-" * 96)
-        print("Context:")
-        print(f"  Evidence IDs: {', '.join(result.selected_evidence_ids) if result.selected_evidence_ids else '-'}")
-        print(f"  Context tokens: {result.context_token_count if result.context_token_count is not None else '-'}")
-        if show_context and result.context_evidence:
-            print_context_evidence(result.context_evidence)
-
-    if result.evidence_sufficient or result.generator_type != "llm_grounded":
-        print("-" * 96)
-        print("Generator:")
-        print(f"  Type: {result.generator_type}")
-        if result.generator_provider:
-            print(f"  Provider: {result.generator_provider}")
-        if result.generator_model:
-            print(f"  Model: {result.generator_model}")
-        print(f"  LLM latency: {result.llm_latency_ms:.1f} ms")
-
-    print("-" * 96)
-    print("Validation:")
-    print(f"  Passed: {result.validation_passed}")
-    if result.validation_reason:
-        print(f"  Reason: {result.validation_reason}")
-
-    print("-" * 96)
-    print("Answer:")
-    print(result.answer)
-
-    if result.citations:
-        print("-" * 96)
-        print("Citations:")
-        for idx, citation in enumerate(result.citations, start=1):
-            print(f"[{idx}] {format_citation(citation)}")
-            chunk_text = hit_text_by_chunk_id.get(str(citation.get("chunk_id") or ""))
-            if chunk_text:
-                print("    chunk:")
-                print(f"    {format_chunk_text(chunk_text)}")
-
-    hits = result.retrieved_hits[: max(0, show_evidence)]
-    if hits:
-        print("-" * 96)
-        print(f"Top evidence ({len(hits)}):")
-        for hit in hits:
-            meta = hit.chunk.metadata or {}
-            citation_target = meta.get("citation_target")
-            cell = ""
-            if citation_target == "cell":
-                cell = f" | row={meta.get('row_header')} | col={meta.get('col_header')} | cell={meta.get('cell_text')}"
-            elif citation_target == "row":
-                cell = f" | row={meta.get('row_header')}"
-            print(
-                f"#{hit.rank} score={float(hit.final_score or hit.score):.3f} "
-                f"page={hit.page} type={hit.chunk.block_type} "
-                f"strategy={meta.get('chunking_strategy')}{cell}"
-            )
-            print(f"   chunk_id={hit.chunk_id}")
-            print(f"   {format_chunk_text(hit.text)}")
-    print("=" * 96 + "\n")
-
-
-def format_citation(citation: dict[str, Any]) -> str:
-    parts = []
-    for key in ("source_name", "doc_id", "page", "section", "chunk_id", "citation_target"):
-        value = citation.get(key)
-        if value not in (None, "", []):
-            parts.append(f"{key}={value}")
-    metadata = citation.get("metadata") if isinstance(citation.get("metadata"), dict) else {}
-    for key in ("table_id", "row_header", "col_header", "cell_text"):
-        value = metadata.get(key) or citation.get(key)
-        if value not in (None, "", []):
-            parts.append(f"{key}={value}")
-    return " | ".join(parts) if parts else json.dumps(citation, ensure_ascii=False)
-
-
-def print_context_evidence(context_evidence: list[dict[str, Any]]) -> None:
-    print("  LLM context evidence:")
-    for item in context_evidence:
-        metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
-        parts = [
-            f"evidence_id={item.get('evidence_id')}",
-            f"page={item.get('page')}",
-            f"chunk_id={item.get('chunk_id')}",
-            f"citation_target={item.get('citation_target')}",
-        ]
-        for key in ("table_id", "row_header", "col_header", "cell_text"):
-            value = metadata.get(key)
-            if value not in (None, "", []):
-                parts.append(f"{key}={value}")
-        print(f"  - {' | '.join(parts)}")
-        print(f"    content: {format_chunk_text(str(item.get('text') or ''))}")
-
-
-def format_chunk_text(text: str) -> str:
-    return " ".join((text or "").split())
 
 
 def interactive_loop(pipeline: GroundedQAPipeline, args: argparse.Namespace) -> None:
